@@ -1,0 +1,2457 @@
+{
+    "appid": "3fe4875d-a4a7-47d3-9ef1-f9e63a6653a4",
+    "name": "VirusTotal v3",
+    "description": "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs",
+    "type": "reputation",
+    "product_vendor": "VirusTotal",
+    "logo": "virustotalv3.svg",
+    "logo_dark": "virustotalv3_dark.svg",
+    "product_name": "VirusTotal v3",
+    "python_version": "3",
+    "product_version_regex": ".*",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2021 Splunk Inc.",
+    "app_version": "1.0.1",
+    "utctime_updated": "2021-03-05T23:01:18.000000Z",
+    "package_name": "phantom_virustotalv3",
+    "main_module": "virustotalv3_connector.py",
+    "min_phantom_version": "4.9.39220",
+    "latest_tested_versions": [
+        "Cloud, API v3 virustotal.com/api/v3/, February 26 2021"
+    ],
+    "configuration": {
+        "apikey": {
+            "data_type": "password",
+            "order": 0,
+            "description": "VirusTotal API key",
+            "required": true
+        },
+        "poll_interval": {
+            "description": "Number of minutes to poll for a detonation result (Default: 5)",
+            "data_type": "numeric",
+            "order": 1,
+            "default": 5
+        },
+        "rate_limit": {
+            "description": "Limit number of requests to 4 per minute",
+            "data_type": "boolean",
+            "default": false,
+            "order": 2
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "domain reputation",
+            "identifier": "domain_reputation",
+            "description": "Queries VirusTotal for domain info",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "domain": {
+                    "description": "Domain to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "domain"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.domain",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ],
+                    "example_values": [
+                        "google.com"
+                    ],
+                    "column_name": "Domain",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Harmless: 90, Malicious: 0, Suspicious: 0, Undetected: 8"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "google.com"
+                    ],
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/domains/google.com"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.jarm",
+                    "data_type": "string",
+                    "example_values": [
+                        "27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.whois",
+                    "data_type": "string",
+                    "example_values": [
+                        "Creation Date: 1997-09-15T04:00:00Z\nDNSSEC: unsigned\nDomain Name: GOOGLE.COM\nDomain Status: clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited\nDomain Status: clientTransferProhibited https://icann.org/epp#clientTransferProhibited\nDomain Status: clientUpdateProhibited https://icann.org/epp#clientUpdateProhibited\nDomain Status: serverDeleteProhibited https://icann.org/epp#serverDeleteProhibited\nDomain Status: serverTransferProhibited https://icann.org/epp#serverTransferProhibited\nDomain Status: serverUpdateProhibited https://icann.org/epp#serverUpdateProhibited\nName Server: NS1.GOOGLE.COM\nName Server: NS2.GOOGLE.COM\nName Server: NS3.GOOGLE.COM\nName Server: NS4.GOOGLE.COM\nRegistrar Abuse Contact Email: abusecomplaints@markmonitor.com\nRegistrar Abuse Contact Phone: +1.2083895740\nRegistrar IANA ID: 292\nRegistrar URL: http://www.markmonitor.com\nRegistrar WHOIS Server: whois.markmonitor.com\nRegistrar: MarkMonitor Inc.\nRegistry Domain ID: 2138514_DOMAIN_COM-VRSN\nRegistry Expiry Date: 2028-09-14T04:00:00Z\nUpdated Date: 2019-09-09T15:39:04Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.registrar",
+                    "data_type": "string",
+                    "example_values": [
+                        "MarkMonitor Inc."
+                    ],
+                    "column_name": "Registrar",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.sophos",
+                    "data_type": "string",
+                    "example_values": [
+                        "search engines"
+                    ],
+                    "column_name": "Category",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.BitDefender",
+                    "data_type": "string",
+                    "example_values": [
+                        "searchengines"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.Comodo Valkyrie Verdict",
+                    "data_type": "string",
+                    "example_values": [
+                        "mobile communications"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.Forcepoint ThreatSeeker",
+                    "data_type": "string",
+                    "example_values": [
+                        "search engines and portals"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        256
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.whois_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1612787278
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        104
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        26
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.creation_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        874296000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.ttl",
+                    "data_type": "numeric",
+                    "example_values": [
+                        78
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "MX"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.value",
+                    "data_type": "string",
+                    "example_values": [
+                        "alt3.aspmx.l.google.com"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.priority",
+                    "data_type": "numeric",
+                    "example_values": [
+                        40
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.tag",
+                    "data_type": "string",
+                    "example_values": [
+                        "issue"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.flag",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.retry",
+                    "data_type": "numeric",
+                    "example_values": [
+                        900
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.rname",
+                    "data_type": "string",
+                    "example_values": [
+                        "dns-admin.google.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.expire",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1800
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.serial",
+                    "data_type": "numeric",
+                    "example_values": [
+                        357917103
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.minimum",
+                    "data_type": "numeric",
+                    "example_values": [
+                        60
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records.*.refresh",
+                    "data_type": "numeric",
+                    "example_values": [
+                        900
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_update_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1568043544
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Alexa.rank",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Alexa.timestamp",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613576161
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Statvoo.rank",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Statvoo.timestamp",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613576162
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Majestic.rank",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Majestic.timestamp",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613576163
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Quantcast.rank",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Quantcast.timestamp",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1585755370
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Cisco Umbrella.rank",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.popularity_ranks.Cisco Umbrella.timestamp",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613489762
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        90
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        8
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_dns_records_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613638555
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.size",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2441
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.issuer.C",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.issuer.O",
+                    "data_type": "string",
+                    "example_values": [
+                        "Google Trust Services"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.issuer.CN",
+                    "data_type": "string",
+                    "example_values": [
+                        "GTS CA 1O1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.subject.C",
+                    "data_type": "string",
+                    "example_values": [
+                        "US"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.subject.L",
+                    "data_type": "string",
+                    "example_values": [
+                        "Mountain View"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.subject.O",
+                    "data_type": "string",
+                    "example_values": [
+                        "Google LLC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.subject.CN",
+                    "data_type": "string",
+                    "example_values": [
+                        "*.google.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.subject.ST",
+                    "data_type": "string",
+                    "example_values": [
+                        "California"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.version",
+                    "data_type": "string",
+                    "example_values": [
+                        "V3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.validity.not_after",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-04-13 07:57:08"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.validity.not_before",
+                    "data_type": "string",
+                    "example_values": [
+                        "2021-01-19 07:57:09"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.CA",
+                    "data_type": "numeric",
+                    "example_values": [
+                        true
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.key_usage",
+                    "data_type": "string",
+                    "example_values": [
+                        "ff"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.extended_key_usage",
+                    "data_type": "string",
+                    "example_values": [
+                        "serverAuth"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.certificate_policies",
+                    "data_type": "string",
+                    "example_values": [
+                        "1.3.6.1.4.1.11129.2.5.3"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.ca_information_access.OCSP",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://ocsp.pki.goog/gts1o1core"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.ca_information_access.CA Issuers",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://pki.goog/gsr2/GTS1O1.crt"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.subject_key_identifier",
+                    "data_type": "string",
+                    "example_values": [
+                        "67bf0513cc1c9c4765c43f3fedd687cf88bcd93d"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.1.3.6.1.4.1.11129.2.4.2",
+                    "data_type": "string",
+                    "example_values": [
+                        "0481f100ef0076007d3ef2f88fff88556824c2c0ca9e5289792bc50e78097f2e"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.crl_distribution_points",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://crl.pki.goog/GTS1O1core.crl"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.authority_key_identifier.keyid",
+                    "data_type": "string",
+                    "example_values": [
+                        "98d1f86e10ebcf9bec609f18901ba0eb7d09fd2b"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.extensions.subject_alternative_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "yt.be"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.public_key.ec.oid",
+                    "data_type": "string",
+                    "example_values": [
+                        "secp256r1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.public_key.ec.pub",
+                    "data_type": "string",
+                    "example_values": [
+                        "0453d3053c10d8cc8d06a01c02171e8c2d91b355cc188112943a217edc2fe60e3592f329404573e124c077917dcf319f14a6a2c3e433ee695d60a7e9ba3883aa5b"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.public_key.algorithm",
+                    "data_type": "string",
+                    "example_values": [
+                        "EC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.thumbprint",
+                    "data_type": "string",
+                    "example_values": [
+                        "c25b1dc8be5f679087ecd28fb5eae7b3985cf604"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.serial_number",
+                    "data_type": "string",
+                    "example_values": [
+                        "c4ea98ea7e5e1f430200000000870182"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.cert_signature.signature",
+                    "data_type": "string",
+                    "example_values": [
+                        "811fa6e0af210a512fa773cf16fd62ecae6fdacab57fb71626791b9ad5bfb19841435e7480dba67b1fd17828204f05905379bccc98a7f39a037a5b4eb43f3bb54c51df02137b13abffc343b500319819854920af065afb70a3857657909b0d006de9b7aa2197fe94c2ccde7df14760dd8c5f87d5f89c3b1b835c81f06b727d5ea21fc04c0126ef1377cceb935ccedc969b6b503e5e3c783f0fb13f7dd465d67b807f9d268082449813eb0700e7bd472b238f8c551c07b3e130b88b7fb96799e6d9c1ac8b632603840eeb429e271856a94cd62f1d1bdfeda4f02ae0df7b1d0b80aceab4b73d137f4b4bec851555213fc540dc74defb81761304e3339062d65a60"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.cert_signature.signature_algorithm",
+                    "data_type": "string",
+                    "example_values": [
+                        "sha256RSA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.thumbprint_sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "a29f9d0d85bd02b3150267ac5a820e4aadc9becc7b5884530a549e6d98dac4a3"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate.signature_algorithm",
+                    "data_type": "string",
+                    "example_values": [
+                        "sha256RSA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613640948
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_https_certificate_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613638555
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        90
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        8
+                    ]
+                }
+            ],
+            "render": {
+                "type": "custom",
+                "width": 12,
+                "height": 5,
+                "view": "virustotalv3_view.display_view",
+                "title": "Domain Reputation"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "file reputation",
+            "identifier": "file_reputation",
+            "description": "Queries VirusTotal for file reputation info",
+            "type": "investigate",
+            "read_only": true,
+            "lock": {
+                "enabled": false
+            },
+            "parameters": {
+                "hash": {
+                    "description": "File hash to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "column_name": "Hash",
+                    "column_order": 0,
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Harmless: 0, Malicious: 0, Suspicious: 0, Undetected: 59"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "file"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/files/e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "2e65153f2c49c91a0206ee7a8c00e659"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.sha1",
+                    "data_type": "string",
+                    "example_values": [
+                        "6802169a19142292710254cde97df84e46dfe33a"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.size",
+                    "data_type": "numeric",
+                    "example_values": [
+                        6285
+                    ],
+                    "column_name": "Size",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.tags",
+                    "data_type": "string",
+                    "example_values": [
+                        "python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.tlsh",
+                    "data_type": "string",
+                    "example_values": [
+                        "T1F7D10E05AC5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.trid.*.file_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unix-like shebang (var.1) (gen)"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.trid.*.probability",
+                    "data_type": "numeric",
+                    "example_values": [
+                        100
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.magic",
+                    "data_type": "string",
+                    "example_values": [
+                        "a python2.7\\015script text executable"
+                    ],
+                    "column_name": "File Description",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.names",
+                    "data_type": "string",
+                    "example_values": [
+                        "update_cr.py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.ssdeep",
+                    "data_type": "string",
+                    "example_values": [
+                        "192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygi6OLxgUHzYu7ThPBLkv:pq7Mgg0/NdMu/1BLkv"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_tag",
+                    "data_type": "string",
+                    "example_values": [
+                        "python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_extension",
+                    "data_type": "string",
+                    "example_values": [
+                        "py"
+                    ],
+                    "column_name": "File Extension",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.unique_sources",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.meaningful_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "update_cr.py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.times_submitted",
+                    "data_type": "numeric",
+                    "example_values": [
+                        13
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_description",
+                    "data_type": "string",
+                    "example_values": [
+                        "Python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.failure",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.type-unsupported",
+                    "data_type": "numeric",
+                    "example_values": [
+                        16
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.first_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1612961082
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "undetected"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CMC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_update",
+                    "data_type": "string",
+                    "example_values": [
+                        "20210218"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_version",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.10.2019.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635210
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get file",
+            "identifier": "get_file",
+            "description": "Downloads a file from VirusTotal, and adds it to the vault",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "hash": {
+                    "description": "Hash of file to get",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "column_name": "Hash",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ip reputation",
+            "identifier": "ip_reputation",
+            "description": "Queries VirusTotal for IP info",
+            "type": "investigate",
+            "read_only": true,
+            "lock": {
+                "enabled": false
+            },
+            "parameters": {
+                "ip": {
+                    "description": "IP to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "ip"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.ip",
+                    "data_type": "string",
+                    "contains": [
+                        "ip"
+                    ],
+                    "column_name": "IP",
+                    "column_order": 0,
+                    "example_values": [
+                        "2.3.4.5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Harmless: 86, Malicious: 0, Suspicious: 0, Undetected: 11"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.3.4.5"
+                    ],
+                    "contains": [
+                        "ip"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "ip_address"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/ip_addresses/2.3.4.5"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.asn",
+                    "data_type": "numeric",
+                    "example_values": [
+                        3215
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.whois",
+                    "data_type": "string",
+                    "example_values": [
+                        "NetRange: 2.0.0.0 - 2.255.255.255\nCIDR: 2.0.0.0/8\nNetName: 2-RIPE\nNetHandle: NET-2-0-0-0-1\nParent: ()\nNetType: Allocated to RIPE NCC\nOriginAS: \nOrganization: RIPE Network Coordination Centre (RIPE)\nRegDate: 2009-09-29\nUpdated: 2009-09-30\nComment: These addresses have been further assigned to users in\nComment: the RIPE NCC region. Contact information can be found in\nComment: the RIPE database at http://www.ripe.net/whois\nRef: https://rdap.arin.net/registry/ip/2.0.0.0\nResourceLink: https://apps.db.ripe.net/search/query.html\nResourceLink: whois.ripe.net\nOrgName: RIPE Network Coordination Centre\nOrgId: RIPE\nAddress: P.O. Box 10096\nCity: Amsterdam\nStateProv: \nPostalCode: 1001EB\nCountry: NL\nRegDate: \nUpdated: 2013-07-29\nRef: https://rdap.arin.net/registry/entity/RIPE\nReferralServer: whois://whois.ripe.net\nResourceLink: https://apps.db.ripe.net/search/query.html\nOrgAbuseHandle: ABUSE3850-ARIN\nOrgAbuseName: Abuse Contact\nOrgAbusePhone: +31205354444 \nOrgAbuseEmail: abuse@ripe.net\nOrgAbuseRef: https://rdap.arin.net/registry/entity/ABUSE3850-ARIN\nOrgTechHandle: RNO29-ARIN\nOrgTechName: RIPE NCC Operations\nOrgTechPhone: +31 20 535 4444 \nOrgTechEmail: hostmaster@ripe.net\nOrgTechRef: https://rdap.arin.net/registry/entity/RNO29-ARIN\ninetnum: 2.3.0.0 - 2.3.7.255\nnetname: IP2000-ADSL-BAS\ndescr: POP CLE\ncountry: FR\nadmin-c: WITR1-RIPE\ntech-c: WITR1-RIPE\nstatus: ASSIGNED PA\nremarks: for hacking, spamming or security problems send mail to\nremarks: abuse@orange.fr\nmnt-by: FT-BRX\ncreated: 2017-07-27T08:58:11Z\nlast-modified: 2017-07-27T08:58:11Z\nsource: RIPE\nrole: Wanadoo France Technical Role\naddress: FRANCE TELECOM/SCR\naddress: 48 rue Camille Desmoulins\naddress: 92791 ISSY LES MOULINEAUX CEDEX 9\naddress: FR\nphone: +33 1 58 88 50 00\nabuse-mailbox: abuse@orange.fr\nadmin-c: BRX1-RIPE\ntech-c: BRX1-RIPE\nnic-hdl: WITR1-RIPE\nmnt-by: FT-BRX\ncreated: 2001-12-04T17:57:08Z\nlast-modified: 2013-07-16T14:09:50Z\nsource: RIPE # Filtered\nroute: 2.3.0.0/16\ndescr: France Telecom Orange\norigin: AS3215\nmnt-by: RAIN-TRANSPAC\nmnt-by: FT-BRX\ncreated: 2012-11-22T09:32:05Z\nlast-modified: 2012-11-22T09:32:05Z\nsource: RIPE\n"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.country",
+                    "data_type": "string",
+                    "example_values": [
+                        "FR"
+                    ],
+                    "column_name": "Country",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.network",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.0.0.0/12"
+                    ],
+                    "column_name": "Network",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.as_owner",
+                    "data_type": "string",
+                    "example_values": [
+                        "Orange"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.continent",
+                    "data_type": "string",
+                    "example_values": [
+                        "EU"
+                    ],
+                    "column_name": "Continent",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.whois_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1612735030
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        86
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        11
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1612735030
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.regional_internet_registry",
+                    "data_type": "string",
+                    "example_values": [
+                        "RIPE NCC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        86
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        11
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "url reputation",
+            "identifier": "url_reputation",
+            "description": "Queries VirusTotal for URL info",
+            "type": "investigate",
+            "read_only": true,
+            "lock": {
+                "enabled": false
+            },
+            "parameters": {
+                "url": {
+                    "description": "URL to query",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "url",
+                        "domain"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url",
+                        "domain"
+                    ],
+                    "column_name": "URL",
+                    "column_order": 0,
+                    "example_values": [
+                        "http://www.test123.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Scan id: u-8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669, Harmless: 74, Malicious: 0, Suspicious: 0, Undetected: 9"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669"
+                    ],
+                    "contains": [
+                        "virustotal scan id"
+                    ],
+                    "column_name": "Scan ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "analysis"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613644669
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        74
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        9
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "completed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://www.test123.com/"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        74
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        9
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "detonate url",
+            "identifier": "detonate_url",
+            "description": "Load a URL to Virus Total and retrieve analysis results",
+            "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "url": {
+                    "description": "URL to detonate",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "url",
+                        "domain"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url",
+                        "domain"
+                    ],
+                    "column_name": "URL",
+                    "column_order": 0,
+                    "example_values": [
+                        "https://www.123test.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Scan id: u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861"
+                    ],
+                    "contains": [
+                        "virustotal scan id"
+                    ],
+                    "column_name": "Scan ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "analysis"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613648861
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        76
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        7
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "completed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.123test.com/"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        76
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        7
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "detonate file",
+            "identifier": "detonate_file",
+            "description": "Upload a file to Virus Total and retrieve the analysis results",
+            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "vault_id": {
+                    "description": "The Vault ID of the file to scan",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "vault id",
+                        "sha1"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.vault_id",
+                    "data_type": "string",
+                    "contains": [
+                        "vault id",
+                        "sha1"
+                    ],
+                    "column_name": "Vault ID",
+                    "column_order": 0,
+                    "example_values": [
+                        "6802169a19142292710254cde97df84e46dfe33a"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Scan id: MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw==, Harmless: 0, Malicious: 0, Suspicious: 0, Undetected: 59"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw=="
+                    ],
+                    "contains": [
+                        "virustotal scan id"
+                    ],
+                    "column_name": "Scan ID",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.data.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "analysis"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613651763
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.failure",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.type-unsupported",
+                    "data_type": "numeric",
+                    "example_values": [
+                        16
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.confirmed-timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "completed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.result",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "undetected"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CMC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_update",
+                    "data_type": "string",
+                    "example_values": [
+                        "20210218"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_version",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.10.2019.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.file_info.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "2e65153f2c49c91a0206ee7a8c00e659"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.file_info.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "update_cr.py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.file_info.sha1",
+                    "data_type": "string",
+                    "example_values": [
+                        "6802169a19142292710254cde97df84e46dfe33a"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.file_info.size",
+                    "data_type": "numeric",
+                    "example_values": [
+                        6285
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.file_info.sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ],
+                    "column_name": "SHA256",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw=="
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get report",
+            "identifier": "get_report",
+            "description": "Get the results using the scan id from a detonate file or detonate url action",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "scan_id": {
+                    "description": "Scan ID",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [
+                        "virustotal scan id"
+                    ],
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.scan_id",
+                    "data_type": "string",
+                    "contains": [
+                        "virustotal scan id"
+                    ],
+                    "column_name": "Scan ID",
+                    "column_order": 0,
+                    "example_values": [
+                        "u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Scan id: u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "analysis"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/analyses/u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613467266
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        76
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        7
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "completed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_update",
+                    "data_type": "string",
+                    "example_values": [
+                        "20210218"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.data.attributes.results.*.engine_version",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.10.2019.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        76
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        7
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        }
+    ]
+}
