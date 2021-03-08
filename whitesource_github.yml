@@ -1,0 +1,18 @@
+include:
+  - project: 'prodsec/whitesource'
+    ref: latest
+    file: '/templates/.whitesource.yml'
+
+stages:
+  - WhiteSource Scan for ProdSec
+
+whitesource:
+  image: repo.splunk.com/splunk/products/whitesource:latest
+  extends: .whitesource
+  stage: WhiteSource Scan for ProdSec
+  when: manual
+  variables:
+    ws_user_key: ${WHITESOURCE_USER_KEY}
+    product_id: ${WHITESOURCE_ID}
+    config: python-pip
+    lib_path: ${CI_PROJECT_DIR}/${APP_FOLDER}
