@@ -31,6 +31,7 @@ VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
 # Other constants used in the connector
 BASE_URL = 'https://www.virustotal.com/api/v3/'
 FILE_REPUTATION_ENDPOINT = 'files/{id}'
+URL_REPUTATION_ENDPOINT = 'urls/{id}'
 FILE_TEST_CONN_ENDPOINT = 'files/upload_url'
 FILE_REPORT_ENDPOINT = 'files'
 GET_FILE_API_ENDPOINT = 'files/{id}/download'
