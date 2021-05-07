@@ -75,7 +75,7 @@ class VirustotalV3Connector(BaseConnector):
         try:
             if input_str and self._python_version < 3:
                 input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except:
+        except Exception:
             self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
 
         return input_str
@@ -95,14 +95,14 @@ class VirustotalV3Connector(BaseConnector):
                 elif len(e.args) == 1:
                     error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
                     error_msg = e.args[0]
-        except:
+        except Exception:
             pass
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
             error_msg = VIRUSTOTAL_TYPE_ERROR_MSG
-        except:
+        except Exception:
             error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MSG
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
@@ -121,7 +121,7 @@ class VirustotalV3Connector(BaseConnector):
                     return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key)), None
                 parameter = int(parameter)
 
-            except:
+            except Exception:
                 return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key)), None
 
             if parameter < 0:
@@ -153,7 +153,7 @@ class VirustotalV3Connector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         error_text = self._handle_py_ver_compat_for_input_str(error_text)
@@ -196,7 +196,7 @@ class VirustotalV3Connector(BaseConnector):
         ip_address_input = input_ip_address
         try:
             ipaddress.ip_address(UnicodeDammit(ip_address_input).unicode_markup)
-        except:
+        except Exception:
             return False
         return True
 
@@ -823,14 +823,14 @@ class VirustotalV3Connector(BaseConnector):
         # Fetching the Python major version
         try:
             self._python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             return self.set_status(phantom.APP_ERROR,
                                    "Error occurred while getting the Phantom server's Python major version.")
 
         # get the asset config
         try:
             config = self.get_config()
-        except:
+        except Exception:
             return phantom.APP_ERROR
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
