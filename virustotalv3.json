@@ -4,20 +4,20 @@
     "description": "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs",
     "type": "reputation",
     "product_vendor": "VirusTotal",
-    "logo": "virustotalv3.svg",
-    "logo_dark": "virustotalv3_dark.svg",
+    "logo": "logo_virustotalv3.svg",
+    "logo_dark": "logo_virustotalv3_dark.svg",
     "product_name": "VirusTotal v3",
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021 Splunk Inc.",
-    "app_version": "1.0.2",
-    "utctime_updated": "2021-03-08T18:58:28.000000Z",
+    "app_version": "1.1.4",
+    "utctime_updated": "2021-05-07T10:22:12.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
     "min_phantom_version": "4.9.39220",
     "latest_tested_versions": [
-        "Cloud, API v3 virustotal.com/api/v3/, February 26 2021"
+        "Cloud, API v3 virustotal.com/api/v3/, April 29 2021"
     ],
     "configuration": {
         "apikey": {
@@ -32,11 +32,17 @@
             "order": 1,
             "default": 5
         },
+        "waiting_time": {
+            "description": "Number of seconds to wait before polling for a detonation result (Default: 0)",
+            "data_type": "numeric",
+            "default": 0,
+            "order": 2
+        },
         "rate_limit": {
             "description": "Limit number of requests to 4 per minute",
             "data_type": "boolean",
             "default": false,
-            "order": 2
+            "order": 3
         }
     },
     "actions": [
@@ -1223,6 +1229,14 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -1246,7 +1260,8 @@
                     "required": true,
                     "primary": true,
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "order": 0
                 }
@@ -1256,7 +1271,8 @@
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
-                        "ip"
+                        "ip",
+                        "ipv6"
                     ],
                     "column_name": "IP",
                     "column_order": 0,
@@ -1552,6 +1568,18 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        9
+                    ],
+                    "column_name": "Scan ID",
+                    "column_order": 1,
+                    "contains": [
+                        "virustotal scan id"
+                    ]
+                },
+                {
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
@@ -1573,133 +1601,288 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.id",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "u-8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669"
-                    ],
-                    "contains": [
-                        "virustotal scan id"
-                    ],
-                    "column_name": "Scan ID",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.data.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "analysis"
+                        "e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.date",
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_final_url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.test.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.times_submitted",
                     "data_type": "numeric",
                     "example_values": [
-                        1613644669
+                        1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.stats.timeout",
+                    "data_path": "action_result.data.*.attributes.last_analysis_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
                     "data_type": "numeric",
                     "example_values": [
                         0
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.stats.harmless",
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
                     "data_type": "numeric",
                     "example_values": [
-                        74
+                        78
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.stats.malicious",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.data.attributes.stats.suspicious",
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
                     "data_type": "numeric",
                     "example_values": [
                         0
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.stats.undetected",
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
                     "data_type": "numeric",
                     "example_values": [
-                        9
+                        1
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.status",
-                    "data_type": "string",
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
                     "example_values": [
-                        "completed"
+                        8
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.results.*.method",
+                    "data_path": "action_result.data.*.attributes.last_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.first_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
                     "data_type": "string",
                     "example_values": [
                         "blacklist"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.results.*.result",
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
                     "data_type": "string",
                     "example_values": [
                         "clean"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.results.*.category",
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
                         "harmless"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.data.attributes.results.*.engine_name",
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
                     "data_type": "string",
                     "example_values": [
                         "CRDF"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meta.url_info.id",
-                    "data_type": "string",
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
                     "example_values": [
-                        "8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f"
-                    ],
-                    "contains": [
-                        "sha256"
+                        0
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meta.url_info.url",
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399456
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.*",
                     "data_type": "string",
                     "example_values": [
-                        "http://www.test123.com/"
-                    ],
+                        "searchengines"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.google.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.title",
+                    "data_type": "string",
+                    "example_values": [
+                        "Google"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_headers.*",
+                    "data_type": "string",
+                    "example_values": [
+                        "same-origin-allow-popups; report-to=\"TestUi\""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_content_length",
+                    "data_type": "numeric",
+                    "example_values": [
+                        154896
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_content_sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "e84603534b9c77669d1ebc821aed90fb34e31b587a4df32eba708193b25770d9"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.Dr.Web",
+                    "data_type": "string",
+                    "example_values": [
+                        "e-mail"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/urls/e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"
+                    ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "detonate url",
+            "identifier": "detonate_url",
+            "description": "Load a URL to Virus Total and retrieve analysis results",
+            "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "url": {
+                    "description": "URL to detonate",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
                     "contains": [
-                        "url"
+                        "url",
+                        "domain"
+                    ],
+                    "order": 0
+                },
+                "wait_time": {
+                    "description": "Number of seconds to wait",
+                    "data_type": "numeric",
+                    "order": 1
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url",
+                        "domain"
+                    ],
+                    "example_values": [
+                        "https://www.123test.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.wait_time",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
                     ]
                 },
                 {
                     "data_path": "action_result.summary.scan_id",
                     "data_type": "string",
                     "example_values": [
-                        "u-8d63a6cc87718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669"
+                        9
+                    ],
+                    "contains": [
+                        "virustotal scan id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Scan id: u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7"
                     ]
                 },
                 {
                     "data_path": "action_result.summary.harmless",
                     "data_type": "numeric",
                     "example_values": [
-                        74
+                        80
                     ]
                 },
                 {
@@ -1720,62 +1903,7 @@
                     "data_path": "action_result.summary.undetected",
                     "data_type": "numeric",
                     "example_values": [
-                        9
-                    ]
-                }
-            ],
-            "render": {
-                "type": "table"
-            },
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "detonate url",
-            "identifier": "detonate_url",
-            "description": "Load a URL to Virus Total and retrieve analysis results",
-            "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.",
-            "type": "investigate",
-            "read_only": true,
-            "parameters": {
-                "url": {
-                    "description": "URL to detonate",
-                    "data_type": "string",
-                    "required": true,
-                    "primary": true,
-                    "contains": [
-                        "url",
-                        "domain"
-                    ],
-                    "order": 0
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.parameter.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url",
-                        "domain"
-                    ],
-                    "column_name": "URL",
-                    "column_order": 0,
-                    "example_values": [
-                        "https://www.123test.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Scan id: u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7"
+                        7
                     ]
                 },
                 {
@@ -1800,9 +1928,7 @@
                     ],
                     "contains": [
                         "virustotal scan id"
-                    ],
-                    "column_name": "Scan ID",
-                    "column_order": 1
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.data.type",
@@ -1942,10 +2068,217 @@
                     "example_values": [
                         7
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_final_url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.test.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.times_submitted",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        78
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        8
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.first_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
+                    "data_type": "string",
+                    "example_values": [
+                        "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "harmless"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CRDF"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1618399456
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.*",
+                    "data_type": "string",
+                    "example_values": [
+                        "searchengines"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.google.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.title",
+                    "data_type": "string",
+                    "example_values": [
+                        "Google"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_code",
+                    "data_type": "numeric",
+                    "example_values": [
+                        200
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_headers.*",
+                    "data_type": "string",
+                    "example_values": [
+                        "same-origin-allow-popups; report-to=\"TestUi\""
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_content_length",
+                    "data_type": "numeric",
+                    "example_values": [
+                        154896
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_http_response_content_sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "e84603534b9c77669d1ebc821aed90fb34e31b587a4df32eba708193b25770d9"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.categories.Dr.Web",
+                    "data_type": "string",
+                    "example_values": [
+                        "e-mail"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/urls/e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"
+                    ]
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "width": 12,
+                "height": 5,
+                "view": "virustotalv3_view.display_view",
+                "title": "Detonate URL"
             },
             "versions": "EQ(*)"
         },
@@ -1953,7 +2286,7 @@
             "action": "detonate file",
             "identifier": "detonate_file",
             "description": "Upload a file to Virus Total and retrieve the analysis results",
-            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.",
+            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1967,6 +2300,11 @@
                         "sha1"
                     ],
                     "order": 0
+                },
+                "wait_time": {
+                    "description": "Number of seconds to wait",
+                    "data_type": "numeric",
+                    "order": 1
                 }
             },
             "output": [
@@ -1977,10 +2315,15 @@
                         "vault id",
                         "sha1"
                     ],
-                    "column_name": "Vault ID",
-                    "column_order": 0,
                     "example_values": [
                         "6802169a19142292710254cde97df84e46dfe33a"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.wait_time",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
                     ]
                 },
                 {
@@ -2020,9 +2363,17 @@
                     ],
                     "contains": [
                         "virustotal scan id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.scan_id",
+                    "data_type": "string",
+                    "example_values": [
+                        9
                     ],
-                    "column_name": "Scan ID",
-                    "column_order": 1
+                    "contains": [
+                        "virustotal scan id"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.data.type",
@@ -2182,9 +2533,7 @@
                     ],
                     "contains": [
                         "sha256"
-                    ],
-                    "column_name": "SHA256",
-                    "column_order": 2
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.scan_id",
@@ -2220,10 +2569,341 @@
                     "example_values": [
                         59
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "file"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.links.self",
+                    "data_type": "string",
+                    "example_values": [
+                        "https://www.virustotal.com/api/v3/files/e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "2e65153f2c49c91a0206ee7a8c00e659"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.sha1",
+                    "data_type": "string",
+                    "example_values": [
+                        "6802169a19142292710254cde97df84e46dfe33a"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.size",
+                    "data_type": "numeric",
+                    "example_values": [
+                        6285
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.tags",
+                    "data_type": "string",
+                    "example_values": [
+                        "python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.tlsh",
+                    "data_type": "string",
+                    "example_values": [
+                        "T1F7D10E05AC5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.trid.*.file_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "Unix-like shebang (var.1) (gen)"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.trid.*.probability",
+                    "data_type": "numeric",
+                    "example_values": [
+                        100
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.magic",
+                    "data_type": "string",
+                    "example_values": [
+                        "a python2.7\\015script text executable"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.names",
+                    "data_type": "string",
+                    "example_values": [
+                        "update_cr.py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.ssdeep",
+                    "data_type": "string",
+                    "example_values": [
+                        "192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygi6OLxgUHzYu7ThPBLkv:pq7Mgg0/NdMu/1BLkv"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_tag",
+                    "data_type": "string",
+                    "example_values": [
+                        "python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.reputation",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.total_votes.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_extension",
+                    "data_type": "string",
+                    "example_values": [
+                        "py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.unique_sources",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.meaningful_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "update_cr.py"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.times_submitted",
+                    "data_type": "numeric",
+                    "example_values": [
+                        13
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.type_description",
+                    "data_type": "string",
+                    "example_values": [
+                        "Python"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.failure",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.type-unsupported",
+                    "data_type": "numeric",
+                    "example_values": [
+                        16
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.first_submission_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1612961082
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "blacklist"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
+                    "data_type": "string",
+                    "example_values": [
+                        "undetected"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_name",
+                    "data_type": "string",
+                    "example_values": [
+                        "CMC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_update",
+                    "data_type": "string",
+                    "example_values": [
+                        "20210218"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.engine_version",
+                    "data_type": "string",
+                    "example_values": [
+                        "2.10.2019.1"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_modification_date",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1613635210
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.harmless",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.malicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.suspicious",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.undetected",
+                    "data_type": "numeric",
+                    "example_values": [
+                        59
+                    ]
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "width": 12,
+                "height": 5,
+                "view": "virustotalv3_view.display_view",
+                "title": "Detonate File"
             },
             "versions": "EQ(*)"
         },
@@ -2231,6 +2911,7 @@
             "action": "get report",
             "identifier": "get_report",
             "description": "Get the results using the scan id from a detonate file or detonate url action",
+            "verbose": "For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -2243,6 +2924,11 @@
                         "virustotal scan id"
                     ],
                     "order": 0
+                },
+                "wait_time": {
+                    "description": "Number of seconds to wait",
+                    "data_type": "numeric",
+                    "order": 1
                 }
             },
             "output": [
@@ -2256,6 +2942,13 @@
                     "column_order": 0,
                     "example_values": [
                         "u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.wait_time",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
                     ]
                 },
                 {
