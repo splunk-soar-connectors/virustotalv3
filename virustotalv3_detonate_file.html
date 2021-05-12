@@ -9,7 +9,7 @@
 
 {% block widget_content %} <!-- Main Start Block -->
 
-<!-- # File: virustotalv3_domain_reputation.html
+<!-- # File: virustotalv3_detonate_file.html
 # Copyright (c) 2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
@@ -90,13 +90,13 @@
         <h4 class="wf-h4-style">No data found</h4>
 
     {% else %}
-        <h4 class="wf-h3-style">Info</h4>
+    <h4 class="wf-h3-style">Info</h4>
         <table class="wf-table-vertical">
             <tr>
-                <td>Domain</td>
+                <td>Vault ID</td>
                 <td>
-                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['domain'], 'value':'{{ result.param.domain }}' }], 0, {{ container.id }}, null, false);">
-                        {{ result.param.domain }}
+                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.param.vault_id }}' }], 0, {{ container.id }}, null, false);">
+                        {{ result.param.vault_id }}
                         &nbsp;
                         <span class="fa fa-caret-down" style="font-size: smaller;"></span>
                     </a>
@@ -105,63 +105,62 @@
         </table>
         {% for data in result.data %}
             <div class="results">
-                <h4 class="wf-h4-style">Domain Info</h4>
-
+                <h4 class="wf-h4-style">File Info</h4>
                 <!--Default View-->
                 <table class="wf-table-horizontal datatable">
                     <thead>
                         <tr>
-                            <th>Bitdefender Category</th>
-                            <th>Dr. Web Category</th>
-                            <th>Forcepoint Threatseeker Category</th>
-                            <th>Sophos Category</th>
-                            <th>Comodo Valkyrie Verdict Category</th>
-                            <th>Registrar</th>
+                            <th>Vault ID</th>
+                            <th>Scan ID</th>
+                            <th>SHA256</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'BitDefender' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'BitDefender' }}</td>
+                        {% if result|by_key:'param'|by_key:'vault_id' %}
+                                <td>
+                                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.param.vault_id }}' }], 0, {{ container.id }}, null, false);">
+                                        {{ result.param.vault_id }}
+                                        &nbsp;
+                                        <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                    </a>
+                                </td>
                             {% else %}
                                 <td>None</td>
                             {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Dr.Web' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Dr.Web' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Forcepoint ThreatSeeker' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Forcepoint ThreatSeeker' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'sophos' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'sophos' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Comodo Valkyrie Verdict' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Comodo Valkyrie Verdict' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'registrar' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'registrar' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                        </tr>
+                        {% if result|by_key:'summary'|by_key:'scan_id' %}
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['virustotal scan id'], 'value':'{{ result.summary.scan_id }}' }], 0, {{ container.id }}, null, false);">
+                                    {{ result.summary.scan_id }}
+                                    &nbsp;
+                                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                        {% if  data|by_key:'meta'%}
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['sha256'], 'value':'{{ data.meta.file_info.sha256}}' }], 0, {{ container.id }}, null, false);">
+                                    {{ data.meta.file_info.sha256 }}
+                                    &nbsp;
+                                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                        {% elif  data|by_key:'attributes'|by_key:'sha256'%}
+                            <td>
+                                <a href="javascript:;" onclick="context_menu(this, [{'contains': ['sha256'], 'value':'{{ data.attributes.sha256}}' }], 0, {{ container.id }}, null, false);">
+                                    {{ data.attributes.sha256 }}
+                                    &nbsp;
+                                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                                </a>
+                            </td>
+                        {% else %}
+                            <td>None</td>
+                        {% endif %}
+                    </tr>
                     </tbody>
                 </table>
-
             </div>
         {% endfor %}
     {% endif %}

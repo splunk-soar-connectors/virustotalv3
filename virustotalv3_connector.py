@@ -20,6 +20,7 @@ import re
 import uuid
 import time
 import magic
+import base64
 import shutil
 # import hashlib
 import requests
@@ -27,6 +28,7 @@ from bs4 import BeautifulSoup
 from bs4 import UnicodeDammit
 import sys
 import json
+import ipaddress
 import calendar
 
 
@@ -58,6 +60,7 @@ class VirustotalV3Connector(BaseConnector):
         self._rate_limit = None
         self._verify_ssl = None
         self._poll_interval = None
+        self._wait_time = None
         self._headers = dict()
 
     def _handle_py_ver_compat_for_input_str(self, input_str):
@@ -72,7 +75,7 @@ class VirustotalV3Connector(BaseConnector):
         try:
             if input_str and self._python_version < 3:
                 input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except:
+        except Exception:
             self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
 
         return input_str
@@ -92,14 +95,14 @@ class VirustotalV3Connector(BaseConnector):
                 elif len(e.args) == 1:
                     error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
                     error_msg = e.args[0]
-        except:
+        except Exception:
             pass
 
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
             error_msg = VIRUSTOTAL_TYPE_ERROR_MSG
-        except:
+        except Exception:
             error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MSG
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
@@ -115,22 +118,18 @@ class VirustotalV3Connector(BaseConnector):
         if parameter is not None:
             try:
                 if not float(parameter).is_integer():
-                    action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key))
-                    return None
+                    return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key)), None
                 parameter = int(parameter)
 
-            except:
-                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key))
-                return None
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key)), None
 
             if parameter < 0:
-                action_result.set_status(phantom.APP_ERROR, "Please provide a valid non-negative integer value in the {} parameter".format(key))
-                return None
+                return action_result.set_status(phantom.APP_ERROR, "Please provide a valid non-negative integer value in the {} parameter".format(key)), None
             if not allow_zero and parameter == 0:
-                action_result.set_status(phantom.APP_ERROR, "Please provide non-zero positive integer in {}".format(key))
-                return None
+                return action_result.set_status(phantom.APP_ERROR, "Please provide non-zero positive integer in {}".format(key)), None
 
-        return parameter
+        return phantom.APP_SUCCESS, parameter
 
     def _process_empty_response(self, response, action_result):
 
@@ -154,7 +153,7 @@ class VirustotalV3Connector(BaseConnector):
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
-        except:
+        except Exception:
             error_text = "Cannot parse error details"
 
         error_text = self._handle_py_ver_compat_for_input_str(error_text)
@@ -186,6 +185,20 @@ class VirustotalV3Connector(BaseConnector):
         else:
             message = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
             return RetVal( action_result.set_status(phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+
+    def _is_ip(self, input_ip_address):
+        """
+        Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+
+        :param input_ip_address: IP address
+        :return: status (success/failure)
+        """
+        ip_address_input = input_ip_address
+        try:
+            ipaddress.ip_address(UnicodeDammit(ip_address_input).unicode_markup)
+        except Exception:
+            return False
+        return True
 
     def _process_response(self, r, action_result):
         # store the r_text in debug data, it will get dumped in the logs if the action fails
@@ -442,7 +455,7 @@ class VirustotalV3Connector(BaseConnector):
             return ret_val
 
         if 'data' not in json_resp:
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
 
         action_result.add_data(json_resp['data'])
 
@@ -542,18 +555,37 @@ class VirustotalV3Connector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        data = {'url': param['url']}
+        url = param['url']
 
-        ret_val, json_resp = self._make_rest_call(action_result, URL_API_ENDPOINT, body=data, headers=self._headers, method="post")
+        data = {'url': url}
+
+        # API requires base64 url without padding
+        url_id = base64.urlsafe_b64encode(str(data.get('url')).encode()).decode().strip("=")
+
+        item_summary = action_result.set_summary({})
+        ret_val, json_resp = self._make_rest_call(action_result, URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
+
         if phantom.is_fail(ret_val):
             return ret_val
 
-        try:
-            scan_id = json_resp['data']['id']
-        except KeyError:
-            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+        if 'data' not in json_resp:
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
 
-        return self._poll_for_result(action_result, scan_id, self._poll_interval)
+        action_result.add_data(json_resp['data'])
+
+        response = json_resp['data']['attributes']
+        new_scan_id = 'u-{}-{}'.format(json_resp['data']['id'], response['last_submission_date'])
+
+        if 'last_analysis_stats' in response:
+            item_summary['harmless'] = response['last_analysis_stats']['harmless']
+            item_summary['malicious'] = response['last_analysis_stats']['malicious']
+            item_summary['suspicious'] = response['last_analysis_stats']['suspicious']
+            item_summary['undetected'] = response['last_analysis_stats']['undetected']
+            item_summary['scan_id'] = new_scan_id
+
+        action_result.update_summary(item_summary)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_detonate_url(self, param):
 
@@ -563,22 +595,59 @@ class VirustotalV3Connector(BaseConnector):
 
         data = {'url': param['url']}
 
-        ret_val, json_resp = self._make_rest_call(action_result, URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
+        ret_val, wait_time = self._validate_integers(action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
+
         if phantom.is_fail(ret_val):
-            return ret_val
+            return action_result.get_status()
 
-        try:
-            scan_id = json_resp['data']['id']
-        except KeyError:
-            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+        url_id = base64.urlsafe_b64encode(str(data.get('url')).encode()).decode().strip("=")
+        ret_val, json_resp = self._make_rest_call(action_result, URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
+        if phantom.is_fail(ret_val):
+            if json_resp:
+                if json_resp['error']['code'] == 'NotFoundError' and 'Status Code: 404' in action_result.get_message():
+                    ret_val, json_resp = self._make_rest_call(action_result, URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
+                    if phantom.is_fail(ret_val):
+                        return ret_val
 
-        return self._poll_for_result(action_result, scan_id, self._poll_interval)
+                    try:
+                        scan_id = json_resp['data']['id']
+                    except KeyError:
+                        return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+                    return self._poll_for_result(action_result, scan_id, self._poll_interval, wait_time)
+
+            return action_result.get_status()
+
+        if 'data' not in json_resp:
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+
+        item_summary = action_result.set_summary({})
+        # add the data
+        action_result.add_data(json_resp['data'])
+
+        response = json_resp['data']['attributes']
+
+        new_scan_id = 'u-{}-{}'.format(json_resp['data']['id'], response['last_submission_date'])
+        if 'last_analysis_stats' in response:
+            item_summary['harmless'] = response['last_analysis_stats']['harmless']
+            item_summary['malicious'] = response['last_analysis_stats']['malicious']
+            item_summary['suspicious'] = response['last_analysis_stats']['suspicious']
+            item_summary['undetected'] = response['last_analysis_stats']['undetected']
+            item_summary['scan_id'] = new_scan_id
+
+        action_result.update_summary(item_summary)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_detonate_file(self, param):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(param))
+
+        ret_val, wait_time = self._validate_integers(action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         vault_id = param['vault_id']
 
@@ -597,26 +666,53 @@ class VirustotalV3Connector(BaseConnector):
             else:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(error_message))
 
-        try:
-            files = [
-                ('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))
-            ]
-        except Exception as e:
-            error_message = self._get_error_message_from_exception(e)
-            return action_result.set_status(phantom.APP_ERROR, 'Error occurred while reading file. {}'.format(error_message))
+        file_hash = file_info['metadata']['sha256']
 
         # check if report already exists
-        ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT, headers=self._headers, files=files, method='post')
+        ret_val, json_resp = self._make_rest_call(action_result, FILE_REPUTATION_ENDPOINT.format(id=file_hash), headers=self._headers)
         if phantom.is_fail(ret_val):
-            return ret_val
+            if json_resp:
+                # Not found on server, detonate now
+                if json_resp['error']['code'] == 'NotFoundError' and 'Status Code: 404' in action_result.get_message():
+                    try:
+                        files = [('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))]
+                    except Exception as e:
+                        error_message = self._get_error_message_from_exception(e)
+                        return action_result.set_status(phantom.APP_ERROR, 'Error occurred while reading file. {}'.format(error_message))
 
-        # Not found on server, detonate now
-        try:
-            scan_id = json_resp['data']['id']
-        except KeyError:
-            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+                    ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT, headers=self._headers, files=files, method='post')
+                    if phantom.is_fail(ret_val):
+                        return ret_val
 
-        return self._poll_for_result(action_result, scan_id, self._poll_interval)
+                    try:
+                        scan_id = json_resp['data']['id']
+                    except KeyError:
+                        return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+
+                    return self._poll_for_result(action_result, scan_id, self._poll_interval, wait_time)
+
+            return action_result.get_status()
+
+        if 'data' not in json_resp:
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
+
+        item_summary = action_result.set_summary({})
+        # add the data
+        action_result.add_data(json_resp['data'])
+
+        response = json_resp['data']['attributes']
+        new_scan_id = '{}:{}'.format(response['md5'], response['last_submission_date'])
+        new_scan_id = base64.b64encode(new_scan_id.encode()).decode()
+        if 'last_analysis_stats' in response:
+            item_summary['harmless'] = response['last_analysis_stats']['harmless']
+            item_summary['malicious'] = response['last_analysis_stats']['malicious']
+            item_summary['suspicious'] = response['last_analysis_stats']['suspicious']
+            item_summary['undetected'] = response['last_analysis_stats']['undetected']
+            item_summary['scan_id'] = new_scan_id
+
+        action_result.update_summary(item_summary)
+
+        return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_report(self, param):
 
@@ -626,14 +722,19 @@ class VirustotalV3Connector(BaseConnector):
 
         scan_id = param['scan_id']
 
-        return self._poll_for_result(action_result, scan_id, self._poll_interval)
+        ret_val, wait_time = self._validate_integers(action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
 
-    def _poll_for_result(self, action_result, scan_id, poll_interval):
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        return self._poll_for_result(action_result, scan_id, self._poll_interval, wait_time)
+
+    def _poll_for_result(self, action_result, scan_id, poll_interval, wait_time):
 
         attempt = 1
 
         endpoint = ANALYSES_ENDPOINT.format(id=scan_id)
-
+        time.sleep(wait_time)
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval
@@ -718,17 +819,18 @@ class VirustotalV3Connector(BaseConnector):
         if self._state is None:
             self._state = dict()
 
+        self.set_validator('ipv6', self._is_ip)
         # Fetching the Python major version
         try:
             self._python_version = int(sys.version_info[0])
-        except:
+        except Exception:
             return self.set_status(phantom.APP_ERROR,
                                    "Error occurred while getting the Phantom server's Python major version.")
 
         # get the asset config
         try:
             config = self.get_config()
-        except:
+        except Exception:
             return phantom.APP_ERROR
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
@@ -743,8 +845,12 @@ class VirustotalV3Connector(BaseConnector):
                 Exception('KeyError: {0}'.format(ke))
             )
 
-        self._poll_interval = self._validate_integers(self, config.get("poll_interval", 5), "poll_interval")
-        if self._poll_interval is None:
+        ret_val, self._poll_interval = self._validate_integers(self, config.get("poll_interval", 5), "poll_interval")
+        if phantom.is_fail(ret_val):
+            return self.get_status()
+
+        ret_val, self._wait_time = self._validate_integers(self, config.get("waiting_time", 0), "waiting_time", allow_zero=True)
+        if phantom.is_fail(ret_val):
             return self.get_status()
 
         return phantom.APP_SUCCESS

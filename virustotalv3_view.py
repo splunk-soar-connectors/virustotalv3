@@ -43,3 +43,7 @@ def display_view(provides, all_app_runs, context):
 
     if provides == 'domain reputation':
         return 'virustotalv3_domain_reputation.html'
+    elif provides == 'detonate url':
+        return 'virustotalv3_detonate_url.html'
+    elif provides == 'detonate file':
+        return 'virustotalv3_detonate_file.html'
