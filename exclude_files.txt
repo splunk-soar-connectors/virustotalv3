@@ -3,3 +3,5 @@ docker-compose.yml
 Makefile
 .git*
 whitesource-results
+whitesource*
+gl-*.csv
