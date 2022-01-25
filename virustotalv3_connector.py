@@ -1,35 +1,43 @@
 # File: virustotalv3_connector.py
-# Copyright (c) 2021 Splunk Inc.
 #
-# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
-# without a valid written license from Splunk Inc. is PROHIBITED.
-
+# Copyright (c) 2021-2022 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+#
+#
 # Phantom imports
-import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
-from phantom.vault import Vault
-import phantom.rules as ph_rules
-
-# THIS Connector imports
-from virustotalv3_consts import *
-
+import base64
+import calendar
+import ipaddress
+import json
 # Other imports used by this connector
 import os
 import re
-import uuid
-import time
-import magic
-import base64
 import shutil
+import sys
+import time
+import uuid
+
+import magic
+import phantom.app as phantom
+import phantom.rules as ph_rules
 # import hashlib
 import requests
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
-import sys
-import json
-import ipaddress
-import calendar
+from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.app import ActionResult, BaseConnector
+from phantom.vault import Vault
+
+# THIS Connector imports
+from virustotalv3_consts import *
 
 
 class RetVal(tuple):
@@ -125,9 +133,11 @@ class VirustotalV3Connector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MSG.format(key=key)), None
 
             if parameter < 0:
-                return action_result.set_status(phantom.APP_ERROR, "Please provide a valid non-negative integer value in the {} parameter".format(key)), None
+                return action_result.set_status(phantom.APP_ERROR,
+                                                "Please provide a valid non-negative integer value in the {} parameter".format(key)), None
             if not allow_zero and parameter == 0:
-                return action_result.set_status(phantom.APP_ERROR, "Please provide non-zero positive integer in {}".format(key)), None
+                return action_result.set_status(phantom.APP_ERROR,
+                                                "Please provide non-zero positive integer in {}".format(key)), None
 
         return phantom.APP_SUCCESS, parameter
 
@@ -181,10 +191,14 @@ class VirustotalV3Connector(BaseConnector):
                 'message': self._handle_py_ver_compat_for_input_str(error_info.get('code')),
                 'detail': self._handle_py_ver_compat_for_input_str(error_info.get('message'))
             }
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, error_details)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR,
+                                                   "Error from server, Status Code: {0} data returned: {1}".format
+                                                   (r.status_code, error_details)), resp_json)
         else:
             message = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
-            return RetVal( action_result.set_status(phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+            return RetVal( action_result.set_status(phantom.APP_ERROR,
+                                                    "Error from server, Status Code: {0} data returned: {1}".format
+                                                    (r.status_code, message)), resp_json)
 
     def _is_ip(self, input_ip_address):
         """
@@ -263,7 +277,8 @@ class VirustotalV3Connector(BaseConnector):
         self.debug_print(response.url)
 
         if response.status_code == 429:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
+            return RetVal(action_result.set_status(phantom.APP_ERROR,
+                                                   VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
         return self._process_response(response, action_result)
 
@@ -295,7 +310,8 @@ class VirustotalV3Connector(BaseConnector):
         if len(timestamps) >= 4:
             wait_time = 61 - (current_time - min(t for t in timestamps))
 
-            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
+            self.send_progress('Rate limit check #{0}. '
+                               'Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
             time.sleep(wait_time)
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
@@ -363,7 +379,8 @@ class VirustotalV3Connector(BaseConnector):
         file_name = '{}{}'.format(file_hash, file_ext)
 
         # move the file to the vault
-        status, vault_ret_message, vault_id = ph_rules.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name, metadata={'contains': contains})
+        status, vault_ret_message, vault_id = ph_rules.vault_add(file_location=file_path, container=self.get_container_id(),
+                                                                 file_name=file_name, metadata={'contains': contains})
 
         curr_data = {}
 
@@ -422,7 +439,8 @@ class VirustotalV3Connector(BaseConnector):
             return ret_val
 
         if 'data' not in json_resp:
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+            return action_result.set_status(phantom.APP_ERROR,
+                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
         # add the data
         action_result.add_data(json_resp['data'])
@@ -488,7 +506,7 @@ class VirustotalV3Connector(BaseConnector):
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL)
         try:
-            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl)
+            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=DEFAULT_TIMEOUT)
         except Exception as e:
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
@@ -532,7 +550,8 @@ class VirustotalV3Connector(BaseConnector):
             return ret_val
 
         if 'data' not in json_resp:
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+            return action_result.set_status(phantom.APP_ERROR,
+                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
         # add the data
         action_result.add_data(json_resp['data'])
@@ -678,9 +697,11 @@ class VirustotalV3Connector(BaseConnector):
                         files = [('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))]
                     except Exception as e:
                         error_message = self._get_error_message_from_exception(e)
-                        return action_result.set_status(phantom.APP_ERROR, 'Error occurred while reading file. {}'.format(error_message))
+                        return action_result.set_status(phantom.APP_ERROR,
+                                                        'Error occurred while reading file. {}'.format(error_message))
 
-                    ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT, headers=self._headers, files=files, method='post')
+                    ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT,
+                                                              headers=self._headers, files=files, method='post')
                     if phantom.is_fail(ret_val):
                         return ret_val
 
@@ -862,8 +883,9 @@ class VirustotalV3Connector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
@@ -872,12 +894,14 @@ if __name__ == '__main__':
     argparser.add_argument('input_test_json', help='Input Test JSON file')
     argparser.add_argument('-u', '--username', help='username', required=False)
     argparser.add_argument('-p', '--password', help='password', required=False)
+    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
 
     username = args.username
     password = args.password
+    verify = args.verify
 
     if username is not None and password is None:
 
@@ -889,7 +913,7 @@ if __name__ == '__main__':
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print("Accessing the Login page")
-            r = requests.get(login_url, verify=False)
+            r = requests.get(login_url, verify=verify, timeout=DEFAULT_TIMEOUT)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -902,18 +926,18 @@ if __name__ == '__main__':
             headers['Referer'] = login_url
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=verify, data=data, headers=headers, timeout=DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print("Unable to get session id from the platfrom. Error: " + str(e))
-            exit(1)
+            sys.exit(1)
 
     with open(args.input_test_json) as f:
         in_json = f.read()
         in_json = json.loads(in_json)
         print(json.dumps(in_json, indent=4))
 
-        connector = VirustotalConnector()
+        connector = VirustotalV3Connector()
         connector.print_progress_message = True
 
         if (session_id is not None):
@@ -923,4 +947,4 @@ if __name__ == '__main__':
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
 
-    exit(0)
+    sys.exit(0)
