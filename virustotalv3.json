@@ -10,12 +10,12 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2021 Splunk Inc.",
+    "license": "Copyright (c) 2021-2022 Splunk Inc.",
     "app_version": "1.2.12",
     "utctime_updated": "2022-01-19T19:18:07.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
-    "min_phantom_version": "4.9.39220",
+    "min_phantom_version": "5.0.0",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, API v3 virustotal.com/api/v3/, August 12 2021"
