@@ -884,6 +884,7 @@ class VirustotalV3Connector(BaseConnector):
 if __name__ == '__main__':
 
     import argparse
+
     import pudb
 
     pudb.set_trace()
