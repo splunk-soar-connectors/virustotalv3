@@ -15,31 +15,31 @@
 #
 #
 # Phantom imports
-import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
-from phantom.vault import Vault
-import phantom.rules as ph_rules
-
-# THIS Connector imports
-from virustotalv3_consts import *
-
+import base64
+import calendar
+import ipaddress
+import json
 # Other imports used by this connector
 import os
 import re
-import uuid
-import time
-import magic
-import base64
 import shutil
+import sys
+import time
+import uuid
+
+import magic
+import phantom.app as phantom
+import phantom.rules as ph_rules
+
 # import hashlib
 import requests
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
-import sys
-import json
-import ipaddress
-import calendar
+
+from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.app import ActionResult, BaseConnector
+from phantom.vault import Vault
+
+# THIS Connector imports
+from virustotalv3_consts import *
 
 
 class RetVal(tuple):
