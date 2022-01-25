@@ -30,10 +30,8 @@ import uuid
 import magic
 import phantom.app as phantom
 import phantom.rules as ph_rules
-
 # import hashlib
 import requests
-
 from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.app import ActionResult, BaseConnector
 from phantom.vault import Vault
@@ -885,8 +883,8 @@ class VirustotalV3Connector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+    import pudb
 
     pudb.set_trace()
 
