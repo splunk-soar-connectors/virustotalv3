@@ -194,11 +194,13 @@ class VirustotalV3Connector(BaseConnector):
                 'detail': self._handle_py_ver_compat_for_input_str(error_info.get('message'))
             }
             return RetVal(action_result.set_status(phantom.APP_ERROR,
-                                                   "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, error_details)), resp_json)
+                                                   "Error from server, Status Code: {0} data returned: {1}".format
+                                                   (r.status_code, error_details)), resp_json)
         else:
             message = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
             return RetVal( action_result.set_status(phantom.APP_ERROR,
-                                                    "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+                                                    "Error from server, Status Code: {0} data returned: {1}".format
+                                                    (r.status_code, message)), resp_json)
 
     def _is_ip(self, input_ip_address):
         """
