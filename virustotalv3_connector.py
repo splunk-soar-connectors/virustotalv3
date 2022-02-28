@@ -265,7 +265,8 @@ class VirustotalV3Connector(BaseConnector):
             self._check_rate_limit()
 
         try:
-            response = request_func(url, params=params, data=body, headers=headers, files=files, verify=self._verify_ssl)
+            response = request_func(url, params=params, data=body, headers=headers, files=files, verify=self._verify_ssl,
+                timeout=DEFAULT_TIMEOUT)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
             error_message = self._get_error_message_from_exception(e)
