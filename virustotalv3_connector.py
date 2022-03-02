@@ -749,6 +749,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        self.save_progress("Polling for results")
         return self._poll_for_result(action_result, scan_id, self._poll_interval, wait_time)
 
     def _poll_for_result(self, action_result, scan_id, poll_interval, wait_time):
