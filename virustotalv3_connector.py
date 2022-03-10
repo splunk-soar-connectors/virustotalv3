@@ -159,7 +159,7 @@ class VirustotalV3Connector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
 
-            error_text = soup.text.encode('utf-8')
+            error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
