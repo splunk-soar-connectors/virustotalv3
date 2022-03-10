@@ -11,7 +11,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021-2022 Splunk Inc.",
-    "app_version": "1.2.14",
+    "app_version": "1.2.15",
     "utctime_updated": "2022-01-25T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
@@ -155,6 +155,16 @@
                     "data_type": "string",
                     "example_values": [
                         "27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {
@@ -865,6 +875,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {
@@ -1645,6 +1665,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2088,6 +2118,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2449,6 +2489,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {
@@ -3209,6 +3259,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {

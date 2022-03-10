@@ -68,6 +68,7 @@ action\_result\.data\.\*\.attributes\.categories\.alphaMountain\.ai | string |
 action\_result\.data\.\*\.attributes\.categories\.sophos | string | 
 action\_result\.data\.\*\.attributes\.creation\_date | numeric | 
 action\_result\.data\.\*\.attributes\.jarm | string | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -173,6 +174,7 @@ action\_result\.data\.\*\.attributes\.authentihash | string |
 action\_result\.data\.\*\.attributes\.creation\_date | numeric | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_update | string | 
@@ -303,6 +305,7 @@ action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.source | string
 action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.timestamp | numeric | 
 action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.title | string | 
 action\_result\.data\.\*\.attributes\.jarm | string | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -375,6 +378,7 @@ action\_result\.data\.\*\.attributes\.categories\.Dr\.Web | string |
 action\_result\.data\.\*\.attributes\.categories\.alphaMountain\.ai | string | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -439,6 +443,7 @@ action\_result\.data\.\*\.attributes\.categories\.\* | string |
 action\_result\.data\.\*\.attributes\.categories\.Dr\.Web | string | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -558,6 +563,7 @@ action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric |
 action\_result\.data\.\*\.attributes\.html\_info\.iframes\.\*\.attributes\.\* | string | 
 action\_result\.data\.\*\.attributes\.html\_info\.scripts\.\*\.attributes\.src | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string |
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_update | string | 
