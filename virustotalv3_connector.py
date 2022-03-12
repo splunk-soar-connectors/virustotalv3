@@ -244,10 +244,13 @@ class VirustotalV3Connector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get"):
+    def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get", large_file=False):
         # **kwargs can be any additional parameters that requests.request accepts
 
-        url = "{}{}".format(BASE_URL, endpoint)
+        if large_file:
+            url = endpoint
+        else:
+            url = "{}{}".format(BASE_URL, endpoint)
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL)
 
         try:
@@ -266,7 +269,7 @@ class VirustotalV3Connector(BaseConnector):
 
         try:
             response = request_func(url, params=params, data=body, headers=headers, files=files, verify=self._verify_ssl,
-                timeout=DEFAULT_TIMEOUT)
+                timeout=self._timeout)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
             error_message = self._get_error_message_from_exception(e)
@@ -408,7 +411,7 @@ class VirustotalV3Connector(BaseConnector):
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
 
-        ret_val, json_resp = self._make_rest_call(action_result, FILE_TEST_CONN_ENDPOINT, headers=self._headers)
+        ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
         if phantom.is_fail(ret_val):
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
 
@@ -679,6 +682,7 @@ class VirustotalV3Connector(BaseConnector):
 
             file_path = file_info['path']
             file_name = file_info['name']
+            file_size = file_info['size']
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
             if VIRUSTOTAL_EXPECTED_ERROR_MSG in error_message:
@@ -701,8 +705,23 @@ class VirustotalV3Connector(BaseConnector):
                         return action_result.set_status(phantom.APP_ERROR,
                                                         'Error occurred while reading file. {}'.format(error_message))
 
-                    ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT,
-                                                              headers=self._headers, files=files, method='post')
+                    if (file_size / 1000000) > 32:
+                        ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
+                        if phantom.is_fail(ret_val):
+                            return ret_val
+
+                        try:
+                            upload_url = json_resp['data']
+                        except KeyError:
+                            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+
+                        ret_val, json_resp = self._make_rest_call(action_result, upload_url, headers=self._headers,
+                            files=files, method='post', large_file=True)
+
+                    else:
+                        ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT,
+                            headers=self._headers, files=files, method='post')
+
                     if phantom.is_fail(ret_val):
                         return ret_val
 
@@ -857,6 +876,10 @@ class VirustotalV3Connector(BaseConnector):
             return phantom.APP_ERROR
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
+
+        ret_val, self._timeout = self._validate_integers(self, config.get(VIRUSTOTAL_JSON_TIMEOUT, DEFAULT_TIMEOUT), VIRUSTOTAL_JSON_TIMEOUT)
+        if phantom.is_fail(ret_val):
+            return self.get_status()
 
         self._headers = {'x-apikey': self._apikey}
 

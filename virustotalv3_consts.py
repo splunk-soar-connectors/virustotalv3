@@ -38,12 +38,13 @@ VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
 VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
+VIRUSTOTAL_JSON_TIMEOUT = "timeout"
 
 # Other constants used in the connector
 BASE_URL = 'https://www.virustotal.com/api/v3/'
 FILE_REPUTATION_ENDPOINT = 'files/{id}'
 URL_REPUTATION_ENDPOINT = 'urls/{id}'
-FILE_TEST_CONN_ENDPOINT = 'files/upload_url'
+FILE_UPLOAD_URL_ENDPOINT = 'files/upload_url'
 FILE_REPORT_ENDPOINT = 'files'
 GET_FILE_API_ENDPOINT = 'files/{id}/download'
 URL_API_ENDPOINT = 'urls'

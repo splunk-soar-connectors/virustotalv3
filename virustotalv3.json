@@ -44,6 +44,12 @@
             "data_type": "boolean",
             "default": false,
             "order": 3
+        },
+        "timeout": {
+            "description": "Request Timeout (Default: 30 seconds)",
+            "data_type": "numeric",
+            "order": 4,
+            "default": 30
         }
     },
     "actions": [
