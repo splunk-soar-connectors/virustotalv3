@@ -164,6 +164,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -871,6 +881,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {
@@ -1651,6 +1671,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2094,6 +2124,16 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2455,6 +2495,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1618399455
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {
@@ -3215,6 +3265,16 @@
                     "data_type": "numeric",
                     "example_values": [
                         1613635130
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec",
+                        "CrowdStrike",
+                        "SentinelOne",
+                        "Microsoft"
                     ]
                 },
                 {

@@ -446,6 +446,14 @@ class VirustotalV3Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR,
                                             VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
+
         # add the data
         action_result.add_data(json_resp['data'])
 
@@ -478,6 +486,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         action_result.add_data(json_resp['data'])
 
@@ -557,6 +573,14 @@ class VirustotalV3Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR,
                                             VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
+
         # add the data
         action_result.add_data(json_resp['data'])
 
@@ -593,6 +617,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         action_result.add_data(json_resp['data'])
 
@@ -642,6 +674,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         item_summary = action_result.set_summary({})
         # add the data
@@ -736,6 +776,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         item_summary = action_result.set_summary({})
         # add the data
