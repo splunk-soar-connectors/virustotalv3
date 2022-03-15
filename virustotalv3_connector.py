@@ -289,7 +289,10 @@ class VirustotalV3Connector(BaseConnector):
 
             self.send_progress('Rate limit check #{0}. '
                                'Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
-            time.sleep(wait_time)
+            try:
+                time.sleep(wait_time)
+            except Exception as e:
+                return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
 
@@ -386,7 +389,8 @@ class VirustotalV3Connector(BaseConnector):
 
         ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
+            self.save_progress(VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            return action_result.get_status()
 
         if 'data' in json_resp:
             action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
@@ -797,7 +801,10 @@ class VirustotalV3Connector(BaseConnector):
         attempt = 1
 
         endpoint = ANALYSES_ENDPOINT.format(id=scan_id)
-        time.sleep(wait_time)
+        try:
+            time.sleep(wait_time)
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval

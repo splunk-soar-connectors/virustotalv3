@@ -20,7 +20,6 @@ VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{obje
 VIRUSTOTAL_MSG_CONNECTING = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
-VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'   # pragma: allowlist secret
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
                                      "Exceeded API request rate limit. Try enabling rate limitation for this asset."
@@ -32,6 +31,7 @@ VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
 VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
 VIRUSTOTAL_UNKNOWN_ERROR_MSG = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {key} parameter"
+VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Test connectivity failed"
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"   # pragma: allowlist secret
