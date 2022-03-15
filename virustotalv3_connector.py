@@ -526,7 +526,7 @@ class VirustotalV3Connector(BaseConnector):
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL)
         try:
-            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=DEFAULT_TIMEOUT)
+            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=self._timeout)
         except Exception as e:
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
