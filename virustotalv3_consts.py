@@ -31,8 +31,6 @@ VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the 
 VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
 VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
 VIRUSTOTAL_UNKNOWN_ERROR_MSG = "Unknown error occurred. Please check the asset configuration and|or action parameters."
-VIRUSTOTAL_TYPE_ERROR_MSG = "Error occurred while connecting to the VirusTotal server. " \
-                            "Please check the asset configuration and|or the action parameters."
 VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {key} parameter"
 
 # Jsons used in params, result, summary etc.

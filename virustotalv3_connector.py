@@ -62,7 +62,6 @@ class VirustotalV3Connector(BaseConnector):
         # Call the BaseConnectors init first
         super(VirustotalV3Connector, self).__init__()
 
-        self._python_version = None
         self._state = None
         self._apikey = None
         self._rate_limit = None
@@ -71,23 +70,6 @@ class VirustotalV3Connector(BaseConnector):
         self._wait_time = None
         self._headers = dict()
         self._timeout = None
-
-    def _handle_py_ver_compat_for_input_str(self, input_str):
-
-        """
-        This method returns the encoded|original string based on the Python version.
-
-        :param input_str: Input string to be processed
-        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str -
-        Python 2')
-        """
-        try:
-            if input_str and self._python_version < 3:
-                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except Exception:
-            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
-
-        return input_str
 
     def _get_error_message_from_exception(self, e):
         """ This function is used to get appropriate error message from the exception.
@@ -105,14 +87,7 @@ class VirustotalV3Connector(BaseConnector):
                     error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
                     error_msg = e.args[0]
         except Exception:
-            pass
-
-        try:
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
-        except TypeError:
-            error_msg = VIRUSTOTAL_TYPE_ERROR_MSG
-        except Exception:
-            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MSG
+            self.debug_print("Error occurred while retrieving exception information")
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
@@ -167,8 +142,6 @@ class VirustotalV3Connector(BaseConnector):
         except Exception:
             error_text = "Cannot parse error details"
 
-        error_text = self._handle_py_ver_compat_for_input_str(error_text)
-
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
@@ -189,17 +162,16 @@ class VirustotalV3Connector(BaseConnector):
         error_info = resp_json.get('error', {})
         if error_info.get('code') and error_info.get('message'):
             error_details = {
-                'message': self._handle_py_ver_compat_for_input_str(error_info.get('code')),
-                'detail': self._handle_py_ver_compat_for_input_str(error_info.get('message'))
+                'message': error_info.get('code'),
+                'detail': error_info.get('message')
             }
             return RetVal(action_result.set_status(phantom.APP_ERROR,
                                                    "Error from server, Status Code: {0} data returned: {1}".format
                                                    (r.status_code, error_details)), resp_json)
         else:
-            message = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
             return RetVal( action_result.set_status(phantom.APP_ERROR,
                                                     "Error from server, Status Code: {0} data returned: {1}".format
-                                                    (r.status_code, message)), resp_json)
+                                                    (r.status_code, r.text.replace('{', '{{').replace('}', '}}'))), resp_json)
 
     def _is_ip(self, input_ip_address):
         """
@@ -241,7 +213,7 @@ class VirustotalV3Connector(BaseConnector):
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}')))
+                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -911,12 +883,6 @@ class VirustotalV3Connector(BaseConnector):
             self._state = dict()
 
         self.set_validator('ipv6', self._is_ip)
-        # Fetching the Python major version
-        try:
-            self._python_version = int(sys.version_info[0])
-        except Exception:
-            return self.set_status(phantom.APP_ERROR,
-                                   "Error occurred while getting the Phantom server's Python major version.")
 
         # get the asset config
         try:
