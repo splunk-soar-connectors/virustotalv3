@@ -70,6 +70,7 @@ class VirustotalV3Connector(BaseConnector):
         self._poll_interval = None
         self._wait_time = None
         self._headers = dict()
+        self._timeout = None
 
     def _handle_py_ver_compat_for_input_str(self, input_str):
 
