@@ -722,6 +722,7 @@ class VirustotalV3Connector(BaseConnector):
                         return action_result.set_status(phantom.APP_ERROR,
                                                         'Error occurred while reading file. {}'.format(error_message))
 
+                    # Convert file_size in bytes to MB
                     if (file_size / 1000000) > 32:
                         ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
                         if phantom.is_fail(ret_val):
@@ -730,7 +731,7 @@ class VirustotalV3Connector(BaseConnector):
                         try:
                             upload_url = json_resp['data']
                         except KeyError:
-                            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+                            return action_result.set_status(phantom.APP_ERROR, "Couldn't fetch URL for uploading file")
 
                         ret_val, json_resp = self._make_rest_call(action_result, upload_url, headers=self._headers,
                             files=files, method='post', large_file=True)
