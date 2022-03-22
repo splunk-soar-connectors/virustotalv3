@@ -62,7 +62,6 @@ class VirustotalV3Connector(BaseConnector):
         # Call the BaseConnectors init first
         super(VirustotalV3Connector, self).__init__()
 
-        self._python_version = None
         self._state = None
         self._apikey = None
         self._rate_limit = None
@@ -70,23 +69,7 @@ class VirustotalV3Connector(BaseConnector):
         self._poll_interval = None
         self._wait_time = None
         self._headers = dict()
-
-    def _handle_py_ver_compat_for_input_str(self, input_str):
-
-        """
-        This method returns the encoded|original string based on the Python version.
-
-        :param input_str: Input string to be processed
-        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str -
-        Python 2')
-        """
-        try:
-            if input_str and self._python_version < 3:
-                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
-        except Exception:
-            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
-
-        return input_str
+        self._timeout = None
 
     def _get_error_message_from_exception(self, e):
         """ This function is used to get appropriate error message from the exception.
@@ -104,14 +87,7 @@ class VirustotalV3Connector(BaseConnector):
                     error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
                     error_msg = e.args[0]
         except Exception:
-            pass
-
-        try:
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
-        except TypeError:
-            error_msg = VIRUSTOTAL_TYPE_ERROR_MSG
-        except Exception:
-            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MSG
+            self.debug_print("Error occurred while retrieving exception information")
 
         return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
 
@@ -159,14 +135,12 @@ class VirustotalV3Connector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
 
-            error_text = soup.text.encode('utf-8')
+            error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
         except Exception:
             error_text = "Cannot parse error details"
-
-        error_text = self._handle_py_ver_compat_for_input_str(error_text)
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
@@ -188,17 +162,16 @@ class VirustotalV3Connector(BaseConnector):
         error_info = resp_json.get('error', {})
         if error_info.get('code') and error_info.get('message'):
             error_details = {
-                'message': self._handle_py_ver_compat_for_input_str(error_info.get('code')),
-                'detail': self._handle_py_ver_compat_for_input_str(error_info.get('message'))
+                'message': error_info.get('code'),
+                'detail': error_info.get('message')
             }
             return RetVal(action_result.set_status(phantom.APP_ERROR,
                                                    "Error from server, Status Code: {0} data returned: {1}".format
                                                    (r.status_code, error_details)), resp_json)
         else:
-            message = self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}'))
             return RetVal( action_result.set_status(phantom.APP_ERROR,
                                                     "Error from server, Status Code: {0} data returned: {1}".format
-                                                    (r.status_code, message)), resp_json)
+                                                    (r.status_code, r.text.replace('{', '{{').replace('}', '}}'))), resp_json)
 
     def _is_ip(self, input_ip_address):
         """
@@ -240,14 +213,17 @@ class VirustotalV3Connector(BaseConnector):
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, self._handle_py_ver_compat_for_input_str(r.text.replace('{', '{{').replace('}', '}}')))
+                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get"):
+    def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get", large_file=False):
         # **kwargs can be any additional parameters that requests.request accepts
 
-        url = "{}{}".format(BASE_URL, endpoint)
+        if large_file:
+            url = endpoint
+        else:
+            url = "{}{}".format(BASE_URL, endpoint)
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL)
 
         try:
@@ -265,7 +241,8 @@ class VirustotalV3Connector(BaseConnector):
             self._check_rate_limit()
 
         try:
-            response = request_func(url, params=params, data=body, headers=headers, files=files, verify=self._verify_ssl)
+            response = request_func(url, params=params, data=body, headers=headers, files=files, verify=self._verify_ssl,
+                timeout=self._timeout)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
             error_message = self._get_error_message_from_exception(e)
@@ -312,7 +289,10 @@ class VirustotalV3Connector(BaseConnector):
 
             self.send_progress('Rate limit check #{0}. '
                                'Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
-            time.sleep(wait_time)
+            try:
+                time.sleep(wait_time)
+            except Exception as e:
+                return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
 
@@ -407,9 +387,10 @@ class VirustotalV3Connector(BaseConnector):
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
 
-        ret_val, json_resp = self._make_rest_call(action_result, FILE_TEST_CONN_ENDPOINT, headers=self._headers)
+        ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
+            self.save_progress(VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            return action_result.get_status()
 
         if 'data' in json_resp:
             action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
@@ -441,6 +422,14 @@ class VirustotalV3Connector(BaseConnector):
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR,
                                             VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         # add the data
         action_result.add_data(json_resp['data'])
@@ -475,6 +464,14 @@ class VirustotalV3Connector(BaseConnector):
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
 
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
+
         action_result.add_data(json_resp['data'])
 
         response = json_resp['data']['attributes']
@@ -506,7 +503,7 @@ class VirustotalV3Connector(BaseConnector):
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL)
         try:
-            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=DEFAULT_TIMEOUT)
+            r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=self._timeout)
         except Exception as e:
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
@@ -553,6 +550,14 @@ class VirustotalV3Connector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR,
                                             VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
+
         # add the data
         action_result.add_data(json_resp['data'])
 
@@ -589,6 +594,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         action_result.add_data(json_resp['data'])
 
@@ -639,6 +652,14 @@ class VirustotalV3Connector(BaseConnector):
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
 
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
+
         item_summary = action_result.set_summary({})
         # add the data
         action_result.add_data(json_resp['data'])
@@ -678,6 +699,7 @@ class VirustotalV3Connector(BaseConnector):
 
             file_path = file_info['path']
             file_name = file_info['name']
+            file_size = file_info['size']
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
             if VIRUSTOTAL_EXPECTED_ERROR_MSG in error_message:
@@ -700,8 +722,24 @@ class VirustotalV3Connector(BaseConnector):
                         return action_result.set_status(phantom.APP_ERROR,
                                                         'Error occurred while reading file. {}'.format(error_message))
 
-                    ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT,
-                                                              headers=self._headers, files=files, method='post')
+                    # Convert file_size in bytes to MB
+                    if (file_size / 1000000) > 32:
+                        ret_val, json_resp = self._make_rest_call(action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
+                        if phantom.is_fail(ret_val):
+                            return ret_val
+
+                        try:
+                            upload_url = json_resp['data']
+                        except KeyError:
+                            return action_result.set_status(phantom.APP_ERROR, "Couldn't fetch URL for uploading file")
+
+                        ret_val, json_resp = self._make_rest_call(action_result, upload_url, headers=self._headers,
+                            files=files, method='post', large_file=True)
+
+                    else:
+                        ret_val, json_resp = self._make_rest_call(action_result, FILE_REPORT_ENDPOINT,
+                            headers=self._headers, files=files, method='post')
+
                     if phantom.is_fail(ret_val):
                         return ret_val
 
@@ -716,6 +754,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
+
+        # if last_analysis_results exists, reorganize to support standard data path format of
+        # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+        if json_resp['data'].get('attributes', {}).get('last_analysis_results'):
+            last_analysis_results = []
+            for vendor, results in json_resp['data']['attributes']['last_analysis_results'].items():
+                last_analysis_results.append({"vendor": vendor, **results})
+            json_resp['data']['attributes']['last_analysis_results'] = last_analysis_results
 
         item_summary = action_result.set_summary({})
         # add the data
@@ -748,6 +794,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        self.save_progress("Polling for results")
         return self._poll_for_result(action_result, scan_id, self._poll_interval, wait_time)
 
     def _poll_for_result(self, action_result, scan_id, poll_interval, wait_time):
@@ -755,7 +802,10 @@ class VirustotalV3Connector(BaseConnector):
         attempt = 1
 
         endpoint = ANALYSES_ENDPOINT.format(id=scan_id)
-        time.sleep(wait_time)
+        try:
+            time.sleep(wait_time)
+        except Exception as e:
+            return action_result.set_status(phantom.APP_ERROR, self._get_error_message_from_exception(e))
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval
@@ -841,12 +891,6 @@ class VirustotalV3Connector(BaseConnector):
             self._state = dict()
 
         self.set_validator('ipv6', self._is_ip)
-        # Fetching the Python major version
-        try:
-            self._python_version = int(sys.version_info[0])
-        except Exception:
-            return self.set_status(phantom.APP_ERROR,
-                                   "Error occurred while getting the Phantom server's Python major version.")
 
         # get the asset config
         try:
@@ -855,6 +899,10 @@ class VirustotalV3Connector(BaseConnector):
             return phantom.APP_ERROR
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
+
+        ret_val, self._timeout = self._validate_integers(self, config.get(VIRUSTOTAL_JSON_TIMEOUT, DEFAULT_TIMEOUT), VIRUSTOTAL_JSON_TIMEOUT)
+        if phantom.is_fail(ret_val):
+            return self.get_status()
 
         self._headers = {'x-apikey': self._apikey}
 
