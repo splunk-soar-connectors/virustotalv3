@@ -2,13 +2,38 @@
 # VirusTotal v3
 
 Publisher: Splunk  
-Connector Version: 1\.2\.14  
+Connector Version: 1\.3\.0  
 Product Vendor: VirusTotal  
 Product Name: VirusTotal v3  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.0\.0  
+Minimum Product Version: 5\.1\.0  
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
+
+[comment]: # "File: README.md"
+[comment]: # "Copyright (c) 2021-2022 Splunk Inc."
+[comment]: # ""
+[comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
+[comment]: # "you may not use this file except in compliance with the License."
+[comment]: # "You may obtain a copy of the License at"
+[comment]: # ""
+[comment]: # "    http://www.apache.org/licenses/LICENSE-2.0"
+[comment]: # ""
+[comment]: # "Unless required by applicable law or agreed to in writing, software distributed under"
+[comment]: # "the License is distributed on an 'AS IS' BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,"
+[comment]: # "either express or implied. See the License for the specific language governing permissions"
+[comment]: # "and limitations under the License."
+[comment]: # ""
+## Port Information
+
+The app uses HTTP/ HTTPS protocol for communicating with the VirusTotal server. Below are the
+default ports used by Splunk SOAR.
+
+|         Service Name | Transport Protocol | Port |
+|----------------------|--------------------|------|
+|         http         | tcp                | 80   |
+|         https        | tcp                | 443  |
+
 
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a VirusTotal v3 asset in SOAR.
@@ -19,6 +44,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **poll\_interval** |  optional  | numeric | Number of minutes to poll for a detonation result \(Default\: 5\)
 **waiting\_time** |  optional  | numeric | Number of seconds to wait before polling for a detonation result \(Default\: 0\)
 **rate\_limit** |  optional  | boolean | Limit number of requests to 4 per minute
+**timeout** |  optional  | numeric | Request Timeout \(Default\: 30 seconds\)
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -68,6 +94,7 @@ action\_result\.data\.\*\.attributes\.categories\.alphaMountain\.ai | string |
 action\_result\.data\.\*\.attributes\.categories\.sophos | string | 
 action\_result\.data\.\*\.attributes\.creation\_date | numeric | 
 action\_result\.data\.\*\.attributes\.jarm | string | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -173,6 +200,7 @@ action\_result\.data\.\*\.attributes\.authentihash | string |
 action\_result\.data\.\*\.attributes\.creation\_date | numeric | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_update | string | 
@@ -303,6 +331,7 @@ action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.source | string
 action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.timestamp | numeric | 
 action\_result\.data\.\*\.attributes\.crowdsourced\_context\.\*\.title | string | 
 action\_result\.data\.\*\.attributes\.jarm | string | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -375,6 +404,7 @@ action\_result\.data\.\*\.attributes\.categories\.Dr\.Web | string |
 action\_result\.data\.\*\.attributes\.categories\.alphaMountain\.ai | string | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -439,6 +469,7 @@ action\_result\.data\.\*\.attributes\.categories\.\* | string |
 action\_result\.data\.\*\.attributes\.categories\.Dr\.Web | string | 
 action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.method | string | 
@@ -558,6 +589,7 @@ action\_result\.data\.\*\.attributes\.first\_submission\_date | numeric |
 action\_result\.data\.\*\.attributes\.html\_info\.iframes\.\*\.attributes\.\* | string | 
 action\_result\.data\.\*\.attributes\.html\_info\.scripts\.\*\.attributes\.src | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_date | numeric | 
+action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.vendor | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.category | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_name | string | 
 action\_result\.data\.\*\.attributes\.last\_analysis\_results\.\*\.engine\_update | string | 
