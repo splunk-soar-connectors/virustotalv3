@@ -446,6 +446,42 @@ class VirustotalV3Connector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _remove_accents(self, data):
+
+        if isinstance(data, str):
+            try:
+                return data.encode('utf-8', 'surrogateescape').decode('utf-8', 'replace')
+            except:
+                return data.encode('raw_unicode_escape')
+        else:
+            return data
+
+    def _decode_list(self, data):
+
+        ret = []
+        for item in data:
+            if isinstance(item, list):
+                item = self._decode_list(item)
+            elif isinstance(item, dict):
+                item = self._decode_dict(item)
+            else:
+                item = self._remove_accents(item)
+            ret.append(item)
+        return ret
+
+    def _decode_dict(self, data):
+
+        ret = {}
+        for key, value in data.items():
+            if isinstance(value, list):
+                value = self._decode_list(value)
+            elif isinstance(value, dict):
+                value = self._decode_dict(value)
+            else:
+                value = self._remove_accents(value)
+            ret[key] = value
+        return ret
+
     def _handle_file_reputation(self, param):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -460,6 +496,10 @@ class VirustotalV3Connector(BaseConnector):
         ret_val, json_resp = self._make_rest_call(action_result, FILE_REPUTATION_ENDPOINT.format(id=hash), headers=self._headers)
         if phantom.is_fail(ret_val):
             return ret_val
+
+        # if the Virustotal server returns any invalid characters, decode them to utf-8 characters
+        if isinstance(json_resp, dict):
+            json_resp = self._decode_dict(json_resp)
 
         if 'data' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
