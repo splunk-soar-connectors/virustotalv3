@@ -751,6 +751,11 @@ class VirustotalV3Connector(BaseConnector):
 
         # check if report already exists
         ret_val, json_resp = self._make_rest_call(action_result, FILE_REPUTATION_ENDPOINT.format(id=file_hash), headers=self._headers)
+
+        # if the Virustotal server returns any invalid characters, decode them to utf-8 characters
+        if isinstance(json_resp, dict):
+            json_resp = self._decode_dict(json_resp)
+
         if phantom.is_fail(ret_val):
             if json_resp:
                 # Not found on server, detonate now
@@ -854,6 +859,10 @@ class VirustotalV3Connector(BaseConnector):
             ret_val, json_resp = self._make_rest_call(action_result, endpoint, headers=self._headers, method="get")
             if phantom.is_fail(ret_val):
                 return ret_val
+
+            if isinstance(json_resp, dict):
+                json_resp = self._decode_dict(json_resp)
+
             self.debug_print(json_resp)
             if 'data' in json_resp and json_resp.get('data', {}).get('attributes', {}).get('results'):
                 action_result.add_data(json_resp)
