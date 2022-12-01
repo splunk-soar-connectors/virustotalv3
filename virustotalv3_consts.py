@@ -17,7 +17,7 @@
 # Status/Progress Messages
 VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL"
 VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
-VIRUSTOTAL_MSG_CONNECTING = "Querying VirusTotal"
+VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
@@ -25,7 +25,7 @@ VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
                                      "Exceeded API request rate limit. Try enabling rate limitation for this asset."
 VIRUSTOTAL_SERVER_ERROR_FORBIDDEN = "Server returned error code: {code}. API key does not have permission for this action."
 VIRUSTOTAL_SERVER_ERROR_NOT_FOUND = "Server returned error code: {code}. Requested file not found."
-VIRUSTOTAL_SERVER_CONNECTION_ERROR = "Server connection error"
+VIRUSTOTAL_SERVER_CONNECTIVITY_ERROR = "Server connection error"
 VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action"
 VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
 VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
