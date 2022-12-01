@@ -72,24 +72,33 @@ class VirustotalV3Connector(BaseConnector):
         self._timeout = None
 
     def _get_error_message_from_exception(self, e):
-        """ This function is used to get appropriate error message from the exception.
+        """
+        Get appropriate error message from the exception.
         :param e: Exception object
         :return: error message
         """
-        error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
+
+        error_code = None
         error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MSG
+
+        self.error_print("Error occurred.", e)
+
         try:
-            if hasattr(e, 'args'):
+            if hasattr(e, "args"):
                 if len(e.args) > 1:
                     error_code = e.args[0]
                     error_msg = e.args[1]
                 elif len(e.args) == 1:
-                    error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG
                     error_msg = e.args[0]
-        except Exception:
-            self.debug_print("Error occurred while retrieving exception information")
+        except Exception as e:
+            self.error_print("Error occurred while fetching exception information. Details: {}".format(str(e)))
 
-        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        if not error_code:
+            error_text = "Error Message: {}".format(error_msg)
+        else:
+            error_text = "Error Code: {}. Error Message: {}".format(error_code, error_msg)
+
+        return error_text
 
     def _validate_integers(self, action_result, parameter, key, allow_zero=False):
         """ This method is to check if the provided input parameter value
@@ -387,7 +396,7 @@ class VirustotalV3Connector(BaseConnector):
 
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
         if phantom.is_fail(ret_val):
-            self.save_progress(VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            self.save_progress(VIRUSTOTAL_ERROR_CONNECTIVITY_TEST)
             return self.virustotalv3_action_result.get_status()
 
         if 'data' in json_resp:
@@ -469,7 +478,9 @@ class VirustotalV3Connector(BaseConnector):
 
         hash = param['hash']
 
-        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_REPUTATION_ENDPOINT.format(id=hash), headers=self._headers)
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                                FILE_REPUTATION_ENDPOINT.format(id=hash),
+                                                headers=self._headers)
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -478,7 +489,8 @@ class VirustotalV3Connector(BaseConnector):
             json_resp = self._decode_object(json_resp)
 
         if 'data' not in json_resp:
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -537,7 +549,8 @@ class VirustotalV3Connector(BaseConnector):
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_NOT_FOUND.format(code=r.status_code))
 
         if (r.status_code != 200):
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE.format(code=r.status_code))
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE.format(code=r.status_code))
 
         return self._save_file_to_vault(self.virustotalv3_action_result, r, file_hash)
 
@@ -597,13 +610,15 @@ class VirustotalV3Connector(BaseConnector):
         url_id = base64.urlsafe_b64encode(str(data.get('url')).encode()).decode().strip("=")
 
         item_summary = self.virustotalv3_action_result.set_summary({})
-        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                            URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
 
         if phantom.is_fail(ret_val):
             return ret_val
 
         if 'data' not in json_resp:
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -635,17 +650,20 @@ class VirustotalV3Connector(BaseConnector):
 
         data = {'url': param['url']}
 
-        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
+        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result,
+                            param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
 
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()
 
         url_id = base64.urlsafe_b64encode(str(data.get('url')).encode()).decode().strip("=")
-        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                            URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
         if phantom.is_fail(ret_val):
             if json_resp:
                 if json_resp['error']['code'] == 'NotFoundError' and 'Status Code: 404' in self.virustotalv3_action_result.get_message():
-                    ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
+                    ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                        URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
                     if phantom.is_fail(ret_val):
                         return ret_val
 
@@ -658,7 +676,8 @@ class VirustotalV3Connector(BaseConnector):
             return self.virustotalv3_action_result.get_status()
 
         if 'data' not in json_resp:
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -690,7 +709,8 @@ class VirustotalV3Connector(BaseConnector):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
-        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
+        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result,
+        param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
 
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()
@@ -709,14 +729,17 @@ class VirustotalV3Connector(BaseConnector):
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
             if VIRUSTOTAL_EXPECTED_ERROR_MSG in error_message:
-                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
+                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                        "Unable to retrieve file from vault. Invalid vault_id.")
             else:
-                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(error_message))
+                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                        "Unable to retrieve file from vault: {0}".format(error_message))
 
         file_hash = file_info['metadata']['sha256']
 
         # check if report already exists
-        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_REPUTATION_ENDPOINT.format(id=file_hash), headers=self._headers)
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                            FILE_REPUTATION_ENDPOINT.format(id=file_hash), headers=self._headers)
 
         if phantom.is_fail(ret_val):
             if json_resp:
@@ -731,7 +754,8 @@ class VirustotalV3Connector(BaseConnector):
 
                     # Convert file_size in bytes to MB
                     if (file_size / 1000000) > 32:
-                        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
+                        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                            FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
                         if phantom.is_fail(ret_val):
                             return ret_val
 
@@ -764,7 +788,8 @@ class VirustotalV3Connector(BaseConnector):
                 json_resp = self._decode_object(json_resp)
 
         if 'data' not in json_resp:
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -798,7 +823,9 @@ class VirustotalV3Connector(BaseConnector):
 
         scan_id = param['scan_id']
 
-        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result, param.get('wait_time', self._wait_time), 'wait_time', allow_zero=True)
+        ret_val, wait_time = self._validate_integers(self.virustotalv3_action_result,
+                                                    param.get('wait_time', self._wait_time),
+                                                    'wait_time', allow_zero=True)
 
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()

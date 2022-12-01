@@ -31,7 +31,6 @@ VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
 VIRUSTOTAL_UNKNOWN_ERROR_CODE_MSG = "Error code unavailable"
 VIRUSTOTAL_UNKNOWN_ERROR_MSG = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {key} parameter"
-VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Test connectivity failed"
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"   # pragma: allowlist secret
