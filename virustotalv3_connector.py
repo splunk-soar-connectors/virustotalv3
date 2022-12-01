@@ -392,7 +392,7 @@ class VirustotalV3Connector(BaseConnector):
 
     def _handle_test_connectivity(self, param):
 
-        self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
+        self.save_progress(VIRUSTOTAL_MSG_CONNECTIVITY)
 
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
         if phantom.is_fail(ret_val):
@@ -418,7 +418,7 @@ class VirustotalV3Connector(BaseConnector):
 
         item_summary = self.virustotalv3_action_result.set_summary({})
 
-        self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
+        self.save_progress(VIRUSTOTAL_MSG_CONNECTIVITY)
 
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, query_url, headers=self._headers)
         if phantom.is_fail(ret_val):
@@ -532,7 +532,7 @@ class VirustotalV3Connector(BaseConnector):
             r = requests.get(query_url, headers=self._headers, verify=self._verify_ssl, timeout=self._timeout)
         except Exception as e:
             self.debug_print("_get_file", e)
-            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTIVITY_ERROR, e)
 
         if self._rate_limit:
             self._track_rate_limit(r.headers.get('Date'))
@@ -565,7 +565,7 @@ class VirustotalV3Connector(BaseConnector):
 
         item_summary = self.virustotalv3_action_result.set_summary({})
 
-        self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
+        self.save_progress(VIRUSTOTAL_MSG_CONNECTIVITY)
 
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, query_url, headers=self._headers)
         if phantom.is_fail(ret_val):
