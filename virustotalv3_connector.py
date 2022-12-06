@@ -614,7 +614,7 @@ class VirustotalV3Connector(BaseConnector):
                             URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
 
         if phantom.is_fail(ret_val):
-            return ret_val
+            return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message().replace(url_id, url))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
