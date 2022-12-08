@@ -2,11 +2,11 @@
 # VirusTotal v3
 
 Publisher: Splunk  
-Connector Version: 1\.4\.0  
+Connector Version: 1\.5\.0  
 Product Vendor: VirusTotal  
 Product Name: VirusTotal v3  
 Product Version Supported (regex): "\.\*"  
-Minimum Product Version: 5\.2\.0  
+Minimum Product Version: 5\.3\.5  
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
 
@@ -50,7 +50,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
 [domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info  
 [file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info  
-[get file](#action-get-file) - Downloads a file from VirusTotal, and adds it to the vault  
+[get file](#action-get-file) - Downloads a file from VirusTotal and adds it to the vault  
 [ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info  
 [url reputation](#action-url-reputation) - Queries VirusTotal for URL info  
 [detonate url](#action-detonate-url) - Load a URL to Virus Total and retrieve analysis results  
@@ -284,7 +284,7 @@ summary\.total\_objects | numeric |
 summary\.total\_objects\_successful | numeric |   
 
 ## action: 'get file'
-Downloads a file from VirusTotal, and adds it to the vault
+Downloads a file from VirusTotal and adds it to the vault
 
 Type: **investigate**  
 Read only: **True**
@@ -451,7 +451,7 @@ Load a URL to Virus Total and retrieve analysis results
 Type: **investigate**  
 Read only: **True**
 
-<b>detonate url</b> will send a URL to Virus Total for analysis\. Virus Total, however, takes an indefinite amount of time to complete this scan\. This action will poll for the results for a short amount of time\. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>\. This should be used with the <b>get report</b> action to finish the scan\.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results\.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server\. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter\.
+<b>detonate url</b> will send a URL to Virus Total for analysis\. Virus Total, however, takes an indefinite amount of time to complete this scan\. This action will poll for the results for a short amount of time\. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>\. This should be used with the <b>get report</b> action to finish the scan\.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results\.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server\. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -527,7 +527,7 @@ Upload a file to Virus Total and retrieve the analysis results
 Type: **investigate**  
 Read only: **True**
 
-<b>detonate file</b> will send a file to Virus Total for analysis\. Virus Total, however, takes an indefinite amount of time to complete this scan\. This action will poll for the results for a short amount of time\. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>\. This should be used with the <b>get report</b> action to finish the scan\.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results\.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server\. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter\.
+<b>detonate file</b> will send a file to Virus Total for analysis\. Virus Total, however, takes an indefinite amount of time to complete this scan\. This action will poll for the results for a short amount of time\. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>\. This should be used with the <b>get report</b> action to finish the scan\.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results\.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server\. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter\.
 
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
