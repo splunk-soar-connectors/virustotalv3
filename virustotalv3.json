@@ -11,14 +11,14 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021-2022 Splunk Inc.",
-    "app_version": "1.4.0",
-    "utctime_updated": "2022-01-25T21:04:52.000000Z",
+    "app_version": "1.5.0",
+    "utctime_updated": "2022-11-30T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
-    "min_phantom_version": "5.2.0",
+    "min_phantom_version": "5.3.5",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, API v3 virustotal.com/api/v3/, May 12 2022"
+        "Cloud, API v3 virustotal.com/api/v3/, Nov 30 2022"
     ],
     "configuration": {
         "apikey": {
@@ -1481,7 +1481,7 @@
         {
             "action": "get file",
             "identifier": "get_file",
-            "description": "Downloads a file from VirusTotal, and adds it to the vault",
+            "description": "Downloads a file from VirusTotal and adds it to the vault",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -1850,7 +1850,7 @@
                     "data_path": "action_result.data.*.attributes.last_https_certificate.subject.CN",
                     "data_type": "string",
                     "example_values": [
-                        "dns.google"
+                        "dns.test"
                     ]
                 },
                 {
@@ -2409,7 +2409,7 @@
             "action": "detonate url",
             "identifier": "detonate_url",
             "description": "Load a URL to Virus Total and retrieve analysis results",
-            "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+            "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -2868,7 +2868,7 @@
             "action": "detonate file",
             "identifier": "detonate_file",
             "description": "Upload a file to Virus Total and retrieve the analysis results",
-            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -4318,7 +4318,7 @@
             },
             {
                 "module": "certifi",
-                "input_file": "wheels/shared/certifi-2021.10.8-py2.py3-none-any.whl"
+                "input_file": "wheels/py3/certifi-2022.9.24-py3-none-any.whl"
             },
             {
                 "module": "chardet",
@@ -4338,11 +4338,11 @@
             },
             {
                 "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.1-py3-none-any.whl"
+                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
             },
             {
                 "module": "urllib3",
-                "input_file": "wheels/shared/urllib3-1.26.8-py2.py3-none-any.whl"
+                "input_file": "wheels/shared/urllib3-1.26.13-py2.py3-none-any.whl"
             }
         ]
     }
