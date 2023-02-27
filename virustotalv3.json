@@ -11,6 +11,7 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021-2022 Splunk Inc.",
+    "contributors": [ { "name": "jang@splunk.com" } ],
     "app_version": "1.5.0",
     "utctime_updated": "2022-11-30T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
@@ -50,6 +51,25 @@
             "data_type": "numeric",
             "order": 4,
             "default": 30
+        },
+        "cache_reputation_checks": {
+            "description": "Cache virustotal reputation checks",
+            "data_type": "boolean",
+            "default": false,
+            "order": 5
+        },
+        "cache_expiration_interval": {
+            "description": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching",
+            "verbose": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching",
+            "data_type": "numeric",
+            "default": 3600,
+            "order": 6
+        },
+        "cache_size": {
+            "description": "Maximum number of entries in cache. Values of zero or less will not limit size",
+            "data_type": "numeric",
+            "default": 1000,
+            "order": 7
         }
     },
     "actions": [
@@ -4302,6 +4322,89 @@
                     "example_values": [
                         1
                     ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get cached entries",
+            "identifier": "get_cached_entries",
+            "description": "Get listing of cached entries",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.count",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.key",
+                    "data_type": "string",
+                    "column_name": "key",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.date_added",
+                    "data_type": "string",
+                    "column_name": "date_add",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.date_expires",
+                    "data_type": "string",
+                    "column_name": "date_expires",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.seconds_left",
+                    "data_type": "numeric",
+                    "column_name": "seconds till expiration",
+                    "column_order": 3
+                }
+            ],
+            "render": {
+                "type": "table",
+                "title": "cached reputation entries"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "clear cache",
+            "identifier": "clear_cache",
+            "description": "clear all cached entries",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.status",
+                    "data_type": "string"
                 }
             ],
             "render": {
