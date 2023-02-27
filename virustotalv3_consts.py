@@ -36,6 +36,9 @@ VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {
 VIRUSTOTAL_JSON_APIKEY = "apikey"   # pragma: allowlist secret
 VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
 VIRUSTOTAL_JSON_TIMEOUT = "timeout"
+VIRUSTOTAL_JSON_ENABLE_REPUTATION_CHECK = "cache_reputation_checks"
+VIRUSTOTAL_JSON_CACHE_EXPIRATION_INTERVAL = "cache_expiration_interval"
+VIRUSTOTAL_JSON_CACHE_EXPIRATION_LENGTH = "cache_size"
 
 # Other constants used in the connector
 BASE_URL = 'https://www.virustotal.com/api/v3/'
@@ -49,3 +52,5 @@ ANALYSES_ENDPOINT = 'analyses/{id}'
 DOMAIN_API_ENDPOINT = 'domains/{id}'
 IP_API_ENDPOINT = 'ip_addresses/{id}'
 DEFAULT_TIMEOUT = 30
+DEFAULT_CACHE_INTERVAL = 3600
+DEFAULT_CACHE_SIZE = 1000
