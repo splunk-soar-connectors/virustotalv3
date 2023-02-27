@@ -920,6 +920,7 @@ class VirustotalV3Connector(BaseConnector):
 
         self.virustotalv3_action_result.update_summary({"status": "success"})
         self.virustotalv3_action_result.add_data({"status": "success"})
+        self.debug_print(self.virustotalv3_action_result.get_summary())
         return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, "cache cleared")
 
     def _handle_get_cached_entries(self, param):
@@ -955,6 +956,7 @@ class VirustotalV3Connector(BaseConnector):
             "max_cache_length": self._reputation_cache_length
         })
         self.virustotalv3_action_result.update_data(data)
+        self.debug_print(self.virustotalv3_action_result.get_summary())
         return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS)
 
     # ---------- caching code ends -----------------------------------------------------------------------

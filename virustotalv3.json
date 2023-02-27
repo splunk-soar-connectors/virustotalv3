@@ -4384,7 +4384,7 @@
         {
             "action": "clear cache",
             "identifier": "clear_cache",
-            "description": "clear all cached entries",
+            "description": "Clear all cached entries",
             "type": "generic",
             "read_only": false,
             "parameters": {
