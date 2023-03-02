@@ -10,13 +10,17 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2021-2022 Splunk Inc.",
-    "contributors": [ { "name": "jang@splunk.com" } ],
-    "app_version": "1.5.0",
+    "license": "Copyright (c) 2021-2023 Splunk Inc.",
+    "contributors": [
+        {
+            "name": "jang@splunk.com"
+        }
+    ],
+    "app_version": "1.6.0",
     "utctime_updated": "2022-11-30T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
-    "min_phantom_version": "5.3.5",
+    "min_phantom_version": "5.5.0",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, API v3 virustotal.com/api/v3/, Nov 30 2022"
@@ -60,7 +64,7 @@
         },
         "cache_expiration_interval": {
             "description": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching",
-            "verbose": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching",
+            "verbose": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching.",
             "data_type": "numeric",
             "default": 3600,
             "order": 6
@@ -4335,12 +4339,23 @@
             "description": "Get listing of cached entries",
             "type": "investigate",
             "read_only": true,
-            "parameters": {
-            },
+            "parameters": {},
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_object",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.summary.count",
@@ -4353,25 +4368,25 @@
                 {
                     "data_path": "action_result.data.*.key",
                     "data_type": "string",
-                    "column_name": "key",
+                    "column_name": "Key",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.data.*.date_added",
                     "data_type": "string",
-                    "column_name": "date_add",
+                    "column_name": "Date Add",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.data.*.date_expires",
                     "data_type": "string",
-                    "column_name": "date_expires",
+                    "column_name": "Date Expires",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.data.*.seconds_left",
                     "data_type": "numeric",
-                    "column_name": "seconds till expiration",
+                    "column_name": "Seconds Till Expiration",
                     "column_order": 3
                 }
             ],
@@ -4387,12 +4402,23 @@
             "description": "Clear all cached entries",
             "type": "generic",
             "read_only": false,
-            "parameters": {
-            },
+            "parameters": {},
             "output": [
                 {
                     "data_path": "action_result.status",
-                    "data_type": "string"
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.summary.status",

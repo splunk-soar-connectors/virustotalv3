@@ -1,6 +1,6 @@
 # File: virustotalv3_connector.py
 #
-# Copyright (c) 2021-2022 Splunk Inc.
+# Copyright (c) 2021-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ from phantom.app import ActionResult, BaseConnector
 from phantom.vault import Vault
 
 # for reputation check caching
-from DataCache import DataCache as datacache
+from virustotalv3_DataCache import DataCache as datacache
 # THIS Connector imports
 from virustotalv3_consts import *
 
