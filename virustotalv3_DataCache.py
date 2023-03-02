@@ -1,4 +1,4 @@
-# File virustotalv3_DataCache.py
+# File: virustotalv3_DataCache.py
 #
 # Copyright (c) 2021-2023 Splunk Inc.
 #
@@ -13,7 +13,6 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 #
-
 import time
 
 
