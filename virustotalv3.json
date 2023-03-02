@@ -188,13 +188,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -220,6 +213,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -905,13 +905,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -949,6 +942,13 @@
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
@@ -1689,13 +1689,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -1721,6 +1714,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -2139,13 +2139,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2171,6 +2164,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -2510,13 +2510,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2542,6 +2535,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -3123,14 +3123,28 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.lowest_datetime",
+                    "data_path": "action_result.data.*.attributes.bundle_info.extensions.*",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.bundle_info.file_types.*",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.bundle_info.highest_datetime",
                     "data_type": "string",
                     "example_values": [
                         "2019-01-03 12:33:40"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.highest_datetime",
+                    "data_path": "action_result.data.*.attributes.bundle_info.lowest_datetime",
                     "data_type": "string",
                     "example_values": [
                         "2019-01-03 12:33:40"
@@ -3144,13 +3158,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.uncompressed_size",
-                    "data_type": "numeric",
-                    "example_values": [
-                        481
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.bundle_info.type",
                     "data_type": "string",
                     "example_values": [
@@ -3158,17 +3165,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.extensions.*",
+                    "data_path": "action_result.data.*.attributes.bundle_info.uncompressed_size",
                     "data_type": "numeric",
                     "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attributes.bundle_info.file_types.*",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
+                        481
                     ]
                 },
                 {
@@ -3277,13 +3277,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -3321,6 +3314,13 @@
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
@@ -4248,13 +4248,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meta.url_info.url",
-                    "data_type": "string",
-                    "example_values": [
-                        "http://shinedezign.tk/"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.meta.file_info.sha256",
                     "data_type": "string",
                     "example_values": [
@@ -4269,6 +4262,13 @@
                     ],
                     "contains": [
                         "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://shinedezign.tk/"
                     ]
                 },
                 {
@@ -4350,28 +4350,6 @@
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.count",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.key",
-                    "data_type": "string",
-                    "column_name": "Key",
-                    "column_order": 0
-                },
-                {
                     "data_path": "action_result.data.*.date_added",
                     "data_type": "string",
                     "column_name": "Date Add",
@@ -4384,10 +4362,32 @@
                     "column_order": 2
                 },
                 {
+                    "data_path": "action_result.data.*.key",
+                    "data_type": "string",
+                    "column_name": "Key",
+                    "column_order": 0
+                },
+                {
                     "data_path": "action_result.data.*.seconds_left",
                     "data_type": "numeric",
                     "column_name": "Seconds Till Expiration",
                     "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary.count",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "render": {
@@ -4413,12 +4413,8 @@
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.status",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.status",
@@ -4429,8 +4425,12 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.status",
-                    "data_type": "string"
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "render": {
