@@ -4350,7 +4350,7 @@
                     ]
                 },
                 {
-                    "data_path": "summary.total_object",
+                    "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {

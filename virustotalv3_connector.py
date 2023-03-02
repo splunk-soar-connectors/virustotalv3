@@ -38,10 +38,10 @@ from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.app import ActionResult, BaseConnector
 from phantom.vault import Vault
 
-# for reputation check caching
-from virustotalv3_DataCache import DataCache as datacache
 # THIS Connector imports
 from virustotalv3_consts import *
+# for reputation check caching
+from virustotalv3_DataCache import DataCache as datacache
 
 
 class RetVal(tuple):
