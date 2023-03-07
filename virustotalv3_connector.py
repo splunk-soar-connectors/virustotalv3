@@ -911,7 +911,7 @@ class VirustotalV3Connector(BaseConnector):
 
     # ---------- caching code starts ---------------------------------------------------------------------
 
-    def _handle_clear_cache(self, param):
+    def _handle_clear_cache(self):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         saved_state = self.get_state() or {}
         if 'vt_cache_data' in saved_state:
@@ -923,7 +923,7 @@ class VirustotalV3Connector(BaseConnector):
         self.debug_print(self.virustotalv3_action_result.get_summary())
         return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, "cache cleared")
 
-    def _handle_get_cached_entries(self, param):
+    def _handle_get_cached_entries(self):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
         saved_state = self.get_state() or {}
 
@@ -957,7 +957,7 @@ class VirustotalV3Connector(BaseConnector):
         })
         self.virustotalv3_action_result.update_data(data)
         self.debug_print(self.virustotalv3_action_result.get_summary())
-        return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS)
+        return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, f'count: {len(data)}')
 
     # ---------- caching code ends -----------------------------------------------------------------------
 
@@ -1042,10 +1042,10 @@ class VirustotalV3Connector(BaseConnector):
             result = self._handle_get_report(param)
 
         elif action_id == 'clear_cache':
-            result = self._handle_clear_cache(param)
+            result = self._handle_clear_cache()
 
         elif action_id == 'get_cached_entries':
-            result = self._handle_get_cached_entries(param)
+            result = self._handle_get_cached_entries()
 
         self.virustotalv3_action_result._ActionResult__data = json.loads(json.dumps(
             self.virustotalv3_action_result._ActionResult__data).replace('\\u0000', '\\\\u0000'))

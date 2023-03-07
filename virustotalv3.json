@@ -2062,7 +2062,7 @@
         {
             "action": "url reputation",
             "identifier": "url_reputation",
-            "description": "Queries VirusTotal for URL info",
+            "description": "Queries VirusTotal for URL info (run this action after running detonate url)",
             "type": "investigate",
             "read_only": true,
             "lock": {
