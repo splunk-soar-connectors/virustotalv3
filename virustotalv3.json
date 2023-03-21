@@ -63,14 +63,14 @@
             "order": 5
         },
         "cache_expiration_interval": {
-            "description": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching",
+            "description": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching (Default: 3600 seconds)",
             "verbose": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching.",
             "data_type": "numeric",
             "default": 3600,
             "order": 6
         },
         "cache_size": {
-            "description": "Maximum number of entries in cache. Values of zero or less will not limit size",
+            "description": "Maximum number of entries in cache. Values of zero or less will not limit size (Default: 1000 seconds)",
             "data_type": "numeric",
             "default": 1000,
             "order": 7

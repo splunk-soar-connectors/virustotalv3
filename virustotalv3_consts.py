@@ -18,8 +18,8 @@
 VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL"
 VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
 VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
-VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
-VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
+VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Test connectivity passed"
+VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Test connectivity failed"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
                                      "Exceeded API request rate limit. Try enabling rate limitation for this asset."
