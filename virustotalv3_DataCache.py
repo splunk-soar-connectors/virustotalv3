@@ -32,8 +32,11 @@ class DataCache(object):
             interval = self.expiration_interval()
         current_time = time.time()
         for key, value, timestamp in self.items():
-            if timestamp + interval <= current_time:
-                self.delete(key)
+            try:
+                if timestamp + interval <= current_time:
+                    self.delete(key)
+            except Exception:
+                return "Invalid timestamp value found. Please run clear cache action first and try again."
         return self
 
     def set_expiration_interval(self, interval):

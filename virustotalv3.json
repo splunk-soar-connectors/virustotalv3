@@ -63,8 +63,7 @@
             "order": 5
         },
         "cache_expiration_interval": {
-            "description": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching (Default: 3600 seconds)",
-            "verbose": "Number of seconds until cached reputation checks expire. Values zero or less will disable caching.",
+            "description": "Number of seconds until cached reputation checks expire. Any other value than positive integer will disable caching (Default: 3600 seconds)",
             "data_type": "numeric",
             "default": 3600,
             "order": 6
