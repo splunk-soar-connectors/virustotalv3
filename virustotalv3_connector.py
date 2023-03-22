@@ -248,7 +248,12 @@ class VirustotalV3Connector(BaseConnector):
 
             # expire old cache data and search ioc in cache
             call = self.get_action_identifier()
-            cache_key = "{}:{}".format(call, endpoint)
+            if call == "url_reputation":
+                tmp_value = endpoint[5:].encode(encoding = 'UTF-8')
+                tmp_value = base64.urlsafe_b64decode(tmp_value + b'=' * (-len(tmp_value) % 4)).decode()
+                cache_key = "{}:{}".format(call, "urls/"+tmp_value)
+            else:
+                cache_key = "{}:{}".format(call, endpoint)
             entry = cache.expire().search(cache_key)
 
             # save cache data to save_state
@@ -1094,9 +1099,7 @@ class VirustotalV3Connector(BaseConnector):
 
         if config.get(VIRUSTOTAL_JSON_ENABLE_REPUTATION_CHECK):
             cache_interval = config.get(VIRUSTOTAL_JSON_CACHE_EXPIRATION_INTERVAL, DEFAULT_CACHE_INTERVAL)
-            if not isinstance(cache_interval, float) and not isinstance(cache_interval, int):
-                cache_interval = 0
-            elif cache_interval < 0:
+            if cache_interval < 0 or (not isinstance(cache_interval, float) and not isinstance(cache_interval, int)):
                 cache_interval = 0
         else:
             cache_interval = 0
