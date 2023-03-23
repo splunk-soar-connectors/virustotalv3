@@ -238,9 +238,9 @@ class VirustotalV3Connector(BaseConnector):
         cache = None
         cache_key = None
         call = self.get_action_identifier()
-        if self._reputation_cache_interval and call.endswith("_reputation"):
+        if self._reputation_cache_length and self._reputation_cache_interval and call.endswith("_reputation"):
             expiration_interval = self._reputation_cache_interval
-            cache_size = self._reputation_cache_length
+            cache_size = int(float(self._reputation_cache_length))
             # if saved cached data, retrieve cache otherwise create empty cache
             saved_state = self.get_state() or {}
             saved_cache = saved_state.get('vt_cache_data')
@@ -1061,10 +1061,9 @@ class VirustotalV3Connector(BaseConnector):
 
         data = self.virustotalv3_action_result.get_data()
         summary = self.virustotalv3_action_result.get_summary()
-        if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
-            if 'results-source' in data[0]:
-                summary['source'] = data[0].get('results-source')
-                del data[0]['results-source']
+        if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict) and 'results-source' in data[0]:
+            summary['source'] = data[0].get('results-source')
+            del data[0]['results-source']
 
         # ---------- caching code ends -----------------------------------------------------------------------
 
@@ -1101,7 +1100,7 @@ class VirustotalV3Connector(BaseConnector):
 
         if config.get(VIRUSTOTAL_JSON_ENABLE_REPUTATION_CHECK):
             cache_interval = config.get(VIRUSTOTAL_JSON_CACHE_EXPIRATION_INTERVAL, DEFAULT_CACHE_INTERVAL)
-            if cache_interval < 0 or (not isinstance(cache_interval, float) and not isinstance(cache_interval, int)):
+            if (not isinstance(cache_interval, float) and not isinstance(cache_interval, int)) or cache_interval < 0:
                 cache_interval = 0
         else:
             cache_interval = 0
@@ -1114,10 +1113,9 @@ class VirustotalV3Connector(BaseConnector):
 
         # if cache is disabled, delete any cached data
         # cache size can be significant and can affect execution time, delete cache if not used
-        if not self._reputation_cache_interval:
-            if 'vt_cache_data' in self._state:
-                del self._state['vt_cache_data']
-                self.save_state(self._state)
+        if not self._reputation_cache_interval and 'vt_cache_data' in self._state:
+            del self._state['vt_cache_data']
+            self.save_state(self._state)
 
         # ---------- caching code ends -----------------------------------------------------------------------
 
