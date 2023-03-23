@@ -251,7 +251,7 @@ class VirustotalV3Connector(BaseConnector):
             if call == "url_reputation":
                 tmp_value = endpoint[5:].encode(encoding='UTF-8')
                 tmp_value = base64.urlsafe_b64decode(tmp_value + b'=' * (-len(tmp_value) % 4)).decode()
-                cache_key = "{}:{}".format(call, "urls/"+tmp_value)
+                cache_key = "{}:{}".format(call, "urls/" + tmp_value)
             else:
                 cache_key = "{}:{}".format(call, endpoint)
             entry = cache.expire().search(cache_key)
