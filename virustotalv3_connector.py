@@ -262,7 +262,7 @@ class VirustotalV3Connector(BaseConnector):
 
             # return entry if exists
             if entry:
-                self.debug_print("Key {{{}}} retrieved from cache".format(cache_key))
+                self.debug_print("Key {} retrieved from cache".format(cache_key))
                 cached_status = entry[0]
                 cached_data = entry[1]
                 if phantom.is_fail(cached_status):
@@ -328,7 +328,7 @@ class VirustotalV3Connector(BaseConnector):
             # expire old cache data and add ioc results to cache, then trim cache to size
             # cache size is trimmed only when adding new cache entry
             cache.expire().add(cache_key, (cached_status, cached_data)).trim()
-            self.debug_print("Key {{{}}} saved to cache".format(cache_key))
+            self.debug_print("Key {} saved to cache".format(cache_key))
 
             # save cache data to save_state
             saved_state['vt_cache_data'] = cache._cache()
@@ -1144,7 +1144,7 @@ class VirustotalV3Connector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def finalize(self):
-
+    
         return phantom.APP_SUCCESS
 
 
