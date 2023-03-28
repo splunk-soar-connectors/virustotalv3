@@ -1144,7 +1144,7 @@ class VirustotalV3Connector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def finalize(self):
-    
+
         return phantom.APP_SUCCESS
 
 
