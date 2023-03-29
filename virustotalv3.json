@@ -10,12 +10,17 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2021-2022 Splunk Inc.",
-    "app_version": "1.5.0",
+    "license": "Copyright (c) 2021-2023 Splunk Inc.",
+    "contributors": [
+        {
+            "name": "jang@splunk.com"
+        }
+    ],
+    "app_version": "1.6.0",
     "utctime_updated": "2022-11-30T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
-    "min_phantom_version": "5.3.5",
+    "min_phantom_version": "5.5.0",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, API v3 virustotal.com/api/v3/, Nov 30 2022"
@@ -50,6 +55,24 @@
             "data_type": "numeric",
             "order": 4,
             "default": 30
+        },
+        "cache_reputation_checks": {
+            "description": "Cache virustotal reputation checks",
+            "data_type": "boolean",
+            "default": false,
+            "order": 5
+        },
+        "cache_expiration_interval": {
+            "description": "Number of seconds until cached reputation checks expire. Any other value than positive integer will disable caching (Default: 3600 seconds)",
+            "data_type": "numeric",
+            "default": 3600,
+            "order": 6
+        },
+        "cache_size": {
+            "description": "Maximum number of entries in cache. Values of zero or less will not limit size and decimal value will be converted to floor value (Default: 1000)",
+            "data_type": "numeric",
+            "default": 1000,
+            "order": 7
         }
     },
     "actions": [
@@ -164,13 +187,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -196,6 +212,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -881,13 +904,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -925,6 +941,13 @@
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
@@ -1665,13 +1688,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -1697,6 +1713,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -2038,7 +2061,7 @@
         {
             "action": "url reputation",
             "identifier": "url_reputation",
-            "description": "Queries VirusTotal for URL info",
+            "description": "Queries VirusTotal for URL info (run this action after running detonate url)",
             "type": "investigate",
             "read_only": true,
             "lock": {
@@ -2115,13 +2138,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2147,6 +2163,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -2486,13 +2509,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -2518,6 +2534,13 @@
                     "data_type": "string",
                     "example_values": [
                         "clean"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
                     ]
                 },
                 {
@@ -3099,14 +3122,28 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.lowest_datetime",
+                    "data_path": "action_result.data.*.attributes.bundle_info.extensions.*",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.bundle_info.file_types.*",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.bundle_info.highest_datetime",
                     "data_type": "string",
                     "example_values": [
                         "2019-01-03 12:33:40"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.highest_datetime",
+                    "data_path": "action_result.data.*.attributes.bundle_info.lowest_datetime",
                     "data_type": "string",
                     "example_values": [
                         "2019-01-03 12:33:40"
@@ -3120,13 +3157,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.uncompressed_size",
-                    "data_type": "numeric",
-                    "example_values": [
-                        481
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.bundle_info.type",
                     "data_type": "string",
                     "example_values": [
@@ -3134,17 +3164,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.bundle_info.extensions.*",
+                    "data_path": "action_result.data.*.attributes.bundle_info.uncompressed_size",
                     "data_type": "numeric",
                     "example_values": [
-                        1
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attributes.bundle_info.file_types.*",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1
+                        481
                     ]
                 },
                 {
@@ -3253,13 +3276,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
-                    "data_type": "string",
-                    "example_values": [
-                        "Symantec"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.category",
                     "data_type": "string",
                     "example_values": [
@@ -3297,6 +3313,13 @@
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_results.*.result",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.attributes.last_analysis_results.*.vendor",
+                    "data_type": "string",
+                    "example_values": [
+                        "Symantec"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.attributes.last_analysis_stats.confirmed-timeout",
@@ -4224,13 +4247,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meta.url_info.url",
-                    "data_type": "string",
-                    "example_values": [
-                        "http://shinedezign.tk/"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.meta.file_info.sha256",
                     "data_type": "string",
                     "example_values": [
@@ -4245,6 +4261,13 @@
                     ],
                     "contains": [
                         "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meta.url_info.url",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://shinedezign.tk/"
                     ]
                 },
                 {
@@ -4302,6 +4325,111 @@
                     "example_values": [
                         1
                     ]
+                }
+            ],
+            "render": {
+                "type": "table"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "get cached entries",
+            "identifier": "get_cached_entries",
+            "description": "Get listing of cached entries",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.date_added",
+                    "data_type": "string",
+                    "column_name": "Date Add",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.data.*.date_expires",
+                    "data_type": "string",
+                    "column_name": "Date Expires",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.key",
+                    "data_type": "string",
+                    "column_name": "Key",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.seconds_left",
+                    "data_type": "numeric",
+                    "column_name": "Seconds Till Expiration",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.summary.count",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "table",
+                "title": "cached reputation entries"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "clear cache",
+            "identifier": "clear_cache",
+            "description": "Clear all cached entries",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {},
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "render": {

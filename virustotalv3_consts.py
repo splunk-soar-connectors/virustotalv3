@@ -1,6 +1,6 @@
 # File: virustotalv3_consts.py
 #
-# Copyright (c) 2021-2022 Splunk Inc.
+# Copyright (c) 2021-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@
 VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL"
 VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
 VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
-VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
-VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
+VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Test connectivity passed"
+VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Test connectivity failed"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
                                      "Exceeded API request rate limit. Try enabling rate limitation for this asset."
@@ -36,6 +36,9 @@ VIRUSTOTAL_VALIDATE_INTEGER_MSG = "Please provide a valid integer value in the {
 VIRUSTOTAL_JSON_APIKEY = "apikey"   # pragma: allowlist secret
 VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
 VIRUSTOTAL_JSON_TIMEOUT = "timeout"
+VIRUSTOTAL_JSON_ENABLE_REPUTATION_CHECK = "cache_reputation_checks"
+VIRUSTOTAL_JSON_CACHE_EXPIRATION_INTERVAL = "cache_expiration_interval"
+VIRUSTOTAL_JSON_CACHE_EXPIRATION_LENGTH = "cache_size"
 
 # Other constants used in the connector
 BASE_URL = 'https://www.virustotal.com/api/v3/'
@@ -49,3 +52,5 @@ ANALYSES_ENDPOINT = 'analyses/{id}'
 DOMAIN_API_ENDPOINT = 'domains/{id}'
 IP_API_ENDPOINT = 'ip_addresses/{id}'
 DEFAULT_TIMEOUT = 30
+DEFAULT_CACHE_INTERVAL = 3600
+DEFAULT_CACHE_SIZE = 1000
