@@ -1,6 +1,6 @@
 # File: virustotalv3_connector.py
 #
-# Copyright (c) 2021-2022 Splunk Inc.
+# Copyright (c) 2021-2023 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 # Phantom imports
 import base64
 import calendar
+import datetime
 import ipaddress
 import json
 # Other imports used by this connector
@@ -26,6 +27,7 @@ import shutil
 import sys
 import time
 import uuid
+from copy import deepcopy as deepcopy
 
 import magic
 import phantom.app as phantom
@@ -38,6 +40,8 @@ from phantom.vault import Vault
 
 # THIS Connector imports
 from virustotalv3_consts import *
+# for reputation check caching
+from virustotalv3_DataCache import DataCache as datacache
 
 
 class RetVal(tuple):
@@ -229,6 +233,47 @@ class VirustotalV3Connector(BaseConnector):
     def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get", large_file=False):
         # **kwargs can be any additional parameters that requests.request accepts
 
+        # ---------- caching code starts ---------------------------------------------------------------------
+
+        cache = None
+        cache_key = None
+        call = self.get_action_identifier()
+        if self._reputation_cache_length and self._reputation_cache_interval and call.endswith("_reputation"):
+            expiration_interval = self._reputation_cache_interval
+            cache_size = int(float(self._reputation_cache_length))
+            # if saved cached data, retrieve cache otherwise create empty cache
+            saved_state = self.get_state() or {}
+            saved_cache = saved_state.get('vt_cache_data')
+            cache = datacache(expiration_interval, cache_size, saved_cache)
+
+            # expire old cache data and search ioc in cache
+            call = self.get_action_identifier()
+            if call == "url_reputation":
+                tmp_value = endpoint[5:].encode(encoding='UTF-8')
+                tmp_value = base64.urlsafe_b64decode(tmp_value + b'=' * (-len(tmp_value) % 4)).decode()
+                cache_key = "{}:{}".format(call, "urls/" + tmp_value)
+            else:
+                cache_key = "{}:{}".format(call, endpoint)
+            entry = cache.expire().search(cache_key)
+
+            # save cache data to save_state
+            saved_state['vt_cache_data'] = cache._cache()
+            self.save_state(saved_state)
+
+            # return entry if exists
+            if entry:
+                self.debug_print("Key {} retrieved from cache".format(cache_key))
+                cached_status = entry[0]
+                cached_data = entry[1]
+                if phantom.is_fail(cached_status):
+                    return RetVal(action_result.set_status(cached_status, "Cached: " + cached_data, None))
+                if 'data' in cached_data:
+                    cached_data['data']['results-source'] = "retrieved from cache on soar"
+                # we deepcopy the data because if caller methods changes the data, it will affect the cached entry
+                return RetVal(action_result.set_status(cached_status, "Entry retrieved from cache"), deepcopy(cached_data))
+
+        # ---------- caching code ends -----------------------------------------------------------------------
+
         if large_file:
             url = endpoint
         else:
@@ -266,7 +311,38 @@ class VirustotalV3Connector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR,
                                                    VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
-        return self._process_response(response, action_result)
+        processed_response = self._process_response(response, action_result)
+
+        # ---------- caching code starts ---------------------------------------------------------------------
+
+        if cache and cache_key:
+            # reform processed_response for our use.
+            cached_status = processed_response[0]
+            if phantom.is_fail(cached_status):
+                cached_data = action_result.get_message()
+            else:
+                cached_data = processed_response[1]
+                if isinstance(cached_data, dict) and 'data' in cached_data:
+                    cached_data['data']['results-source'] = "new from virustotal"
+
+            # expire old cache data and add ioc results to cache, then trim cache to size
+            # cache size is trimmed only when adding new cache entry
+            cache.expire().add(cache_key, (cached_status, cached_data)).trim()
+            self.debug_print("Key {} saved to cache".format(cache_key))
+
+            # save cache data to save_state
+            saved_state['vt_cache_data'] = cache._cache()
+            self.save_state(saved_state)
+
+            if phantom.is_fail(cached_status):
+                return RetVal(action_result.set_status(cached_status, cached_data), None)
+            else:
+                # we deepcopy the data because if caller methods changes the data, it will affect the cached entry
+                return RetVal(action_result.set_status(cached_status, "Entry saved to cache"), deepcopy(cached_data))
+
+        # ---------- caching code ends -----------------------------------------------------------------------
+
+        return processed_response
 
     def _check_rate_limit(self, count=1):
         """ Check to see if the rate limit is within the "4 requests per minute". Wait and check again if the request is too soon.
@@ -277,8 +353,11 @@ class VirustotalV3Connector(BaseConnector):
         self.debug_print('Checking rate limit')
 
         state = self.load_state()
-        if not state or not state.get('rate_limit_timestamps'):
-            self.save_state({'rate_limit_timestamps': []})
+        if not state:
+            state = {}
+        if not state.get('rate_limit_timestamps'):
+            state['rate_limit_timestamps'] = []
+            self.save_state(state)
             return True
 
         # Cleanup existing timestamp list to only have the timestamps within the last 60 seconds
@@ -290,7 +369,8 @@ class VirustotalV3Connector(BaseConnector):
                 timestamps.remove(timestamp)
 
         # Save new cleaned list
-        self.save_state({'rate_limit_timestamps': timestamps})
+        state['rate_limit_timestamps'] = timestamps
+        self.save_state(state)
 
         # If there are too many within the last minute, we will wait the min_time_diff and try again
         if len(timestamps) >= 4:
@@ -327,7 +407,8 @@ class VirustotalV3Connector(BaseConnector):
         timestamps = state.get('rate_limit_timestamps', [])
         timestamps.append(epoch)
 
-        self.save_state({'rate_limit_timestamps': timestamps})
+        state['rate_limit_timestamps'] = timestamps
+        self.save_state(state)
 
         return True
 
@@ -833,6 +914,60 @@ class VirustotalV3Connector(BaseConnector):
         self.save_progress("Polling for results")
         return self._poll_for_result(self.virustotalv3_action_result, scan_id, self._poll_interval, wait_time)
 
+    # ---------- caching code starts ---------------------------------------------------------------------
+
+    def _handle_clear_cache(self):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        saved_state = self.get_state() or {}
+        if 'vt_cache_data' in saved_state:
+            del saved_state['vt_cache_data']
+            self.save_state(saved_state)
+
+        self.virustotalv3_action_result.update_summary({"status": "success"})
+        self.virustotalv3_action_result.add_data({"status": "success"})
+        self.debug_print(self.virustotalv3_action_result.get_summary())
+        return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, "cache cleared")
+
+    def _handle_get_cached_entries(self):
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        saved_state = self.get_state() or {}
+
+        # if saved cached data, retrieve cache otherwise create empty cache
+        expiration_interval = self._reputation_cache_interval
+        saved_cache = saved_state.get('vt_cache_data')
+        cache = datacache(expiration_interval, 0, saved_cache)
+
+        # expire old cache data
+        ret_val = cache.expire()
+        if isinstance(ret_val, str):
+            return RetVal(self.virustotalv3_action_result.set_status(phantom.APP_ERROR, ret_val), None)
+
+        # save cache data to save_state
+        saved_state['vt_cache_data'] = cache._cache()
+        self.save_state(saved_state)
+
+        entries = cache.items()
+        data = sorted( [
+            {
+                'key': x[0],
+                'date_added': datetime.datetime.utcfromtimestamp(x[2]).isoformat(),
+                'date_expires': datetime.datetime.utcfromtimestamp(x[2] + self._reputation_cache_interval).isoformat(),
+                'seconds_left': int(x[2] + self._reputation_cache_interval - time.time())
+            }
+            for x in entries
+        ], key=lambda x: x['key'])
+
+        self.virustotalv3_action_result.update_summary({
+            "count": len(data),
+            "expiration_interval": self._reputation_cache_interval,
+            "max_cache_length": self._reputation_cache_length
+        })
+        self.virustotalv3_action_result.update_data(data)
+        self.debug_print(self.virustotalv3_action_result.get_summary())
+        return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, f'count: {len(data)}')
+
+    # ---------- caching code ends -----------------------------------------------------------------------
+
     def _poll_for_result(self, action_result, scan_id, poll_interval, wait_time):
 
         attempt = 1
@@ -913,8 +1048,24 @@ class VirustotalV3Connector(BaseConnector):
         elif action_id == 'get_report':
             result = self._handle_get_report(param)
 
+        elif action_id == 'clear_cache':
+            result = self._handle_clear_cache()
+
+        elif action_id == 'get_cached_entries':
+            result = self._handle_get_cached_entries()
+
         self.virustotalv3_action_result._ActionResult__data = json.loads(json.dumps(
             self.virustotalv3_action_result._ActionResult__data).replace('\\u0000', '\\\\u0000'))
+
+        # ---------- caching code starts ---------------------------------------------------------------------
+
+        data = self.virustotalv3_action_result.get_data()
+        summary = self.virustotalv3_action_result.get_summary()
+        if isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict) and 'results-source' in data[0]:
+            summary['source'] = data[0].get('results-source')
+            del data[0]['results-source']
+
+        # ---------- caching code ends -----------------------------------------------------------------------
 
         return result
 
@@ -944,6 +1095,29 @@ class VirustotalV3Connector(BaseConnector):
             return phantom.APP_ERROR
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
+
+        # ---------- caching code starts ---------------------------------------------------------------------
+
+        if config.get(VIRUSTOTAL_JSON_ENABLE_REPUTATION_CHECK):
+            cache_interval = config.get(VIRUSTOTAL_JSON_CACHE_EXPIRATION_INTERVAL, DEFAULT_CACHE_INTERVAL)
+            if (not isinstance(cache_interval, float) and not isinstance(cache_interval, int)) or cache_interval < 0:
+                cache_interval = 0
+        else:
+            cache_interval = 0
+
+        # cache is disabled if expiration interval is not > 0
+        self._reputation_cache_interval = cache_interval
+
+        # cache size is trimmed only when adding new cache entry
+        self._reputation_cache_length = config.get(VIRUSTOTAL_JSON_CACHE_EXPIRATION_LENGTH, DEFAULT_CACHE_SIZE)
+
+        # if cache is disabled, delete any cached data
+        # cache size can be significant and can affect execution time, delete cache if not used
+        if not self._reputation_cache_interval and 'vt_cache_data' in self._state:
+            del self._state['vt_cache_data']
+            self.save_state(self._state)
+
+        # ---------- caching code ends -----------------------------------------------------------------------
 
         ret_val, self._timeout = self._validate_integers(self, config.get(VIRUSTOTAL_JSON_TIMEOUT, DEFAULT_TIMEOUT), VIRUSTOTAL_JSON_TIMEOUT)
         if phantom.is_fail(ret_val):
