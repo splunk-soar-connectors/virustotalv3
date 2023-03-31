@@ -34,6 +34,13 @@ default ports used by Splunk SOAR.
 |         http         | tcp                | 80   |
 |         https        | tcp                | 443  |
 
+## Cache Flow
+
+If caching is enabled and whenever you run any reputation action then the output of the action will
+be cached in the state file of the asset for which it is run. This cache will have an expiration
+time and maximum length, after the expiration time you have set in asset configuration if you run
+the get cached entries it will clear the cache.
+
 
 ### Configuration Variables
 The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a VirusTotal v3 asset in SOAR.
@@ -47,7 +54,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **timeout** |  optional  | numeric | Request Timeout (Default: 30 seconds)
 **cache_reputation_checks** |  optional  | boolean | Cache virustotal reputation checks
 **cache_expiration_interval** |  optional  | numeric | Number of seconds until cached reputation checks expire. Any other value than positive integer will disable caching (Default: 3600 seconds)
-**cache_size** |  optional  | numeric | Maximum number of entries in cache. Values of zero or less will not limit size (Default: 1000)
+**cache_size** |  optional  | numeric | Maximum number of entries in cache. Values of zero or less will not limit size and decimal value will be converted to floor value (Default: 1000)
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
