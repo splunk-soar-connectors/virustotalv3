@@ -32,7 +32,6 @@ from copy import deepcopy as deepcopy
 import magic
 import phantom.app as phantom
 import phantom.rules as ph_rules
-# import hashlib
 import requests
 from bs4 import BeautifulSoup, UnicodeDammit
 from phantom.app import ActionResult, BaseConnector
@@ -980,7 +979,7 @@ class VirustotalV3Connector(BaseConnector):
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval
-        while attempt <= poll_attempts:
+        while True:
             self.save_progress("Polling attempt {0} of {1}".format(attempt, poll_attempts))
             ret_val, json_resp = self._make_rest_call(action_result, endpoint, headers=self._headers, method="get")
             if phantom.is_fail(ret_val):
@@ -1003,6 +1002,8 @@ class VirustotalV3Connector(BaseConnector):
                 })
 
                 return action_result.set_status(phantom.APP_SUCCESS)
+            if attempt > poll_attempts:
+                break
 
             attempt += 1
             time.sleep(60)
@@ -1133,7 +1134,7 @@ class VirustotalV3Connector(BaseConnector):
                 Exception('KeyError: {0}'.format(ke))
             )
 
-        ret_val, self._poll_interval = self._validate_integers(self, config.get("poll_interval", 5), "poll_interval")
+        ret_val, self._poll_interval = self._validate_integers(self, config.get("poll_interval", 5), "poll_interval", allow_zero=True)
         if phantom.is_fail(ret_val):
             return self.get_status()
 
