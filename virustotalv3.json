@@ -20,7 +20,7 @@
     "utctime_updated": "2022-11-30T21:04:52.000000Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
-    "min_phantom_version": "6.0.0",
+    "min_phantom_version": "6.0.2",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, API v3 virustotal.com/api/v3/, July 06 2023"
