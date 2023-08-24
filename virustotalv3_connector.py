@@ -884,7 +884,11 @@ class VirustotalV3Connector(BaseConnector):
         self.virustotalv3_action_result.add_data(json_resp['data'])
 
         response = json_resp['data']['attributes']
-        new_scan_id = '{}:{}'.format(response['md5'], response['last_submission_date'])
+        if response.get('last_analysis_date'):
+            new_scan_id = '{}:{}'.format(response['md5'], response['last_analysis_date'])
+        else:
+            new_scan_id = '{}:{}'.format(response['md5'], response['last_submission_date'])
+
         new_scan_id = base64.b64encode(new_scan_id.encode()).decode()
         if 'last_analysis_stats' in response:
             item_summary['harmless'] = response['last_analysis_stats']['harmless']
