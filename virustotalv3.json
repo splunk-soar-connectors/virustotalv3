@@ -23,7 +23,7 @@
     "min_phantom_version": "6.0.2",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, API v3 virustotal.com/api/v3/, July 06 2023"
+        "Cloud, API v3 virustotal.com/api/v3/, Aug 24 2023"
     ],
     "configuration": {
         "apikey": {
