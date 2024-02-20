@@ -13529,6 +13529,392 @@
                 "type": "table"
             },
             "versions": "EQ(*)"
+        },
+        {
+            "action": "get quotas",
+            "identifier": "get_quotas",
+            "description": "Get Quotas",
+            "type": "generic",
+            "read_only": true,
+            "parameters": {
+                "userid": {
+                    "description": "The userid to use to fetch quotas",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": false,
+                    "order": 0
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "User hourly api ratio: 0, User daily api ratio: 0, User monthly api ratio: 0"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_hourly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_hourly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        240
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_hourly.group.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_hourly.group.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        240
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_hourly.group.inherited_from",
+                    "data_type": "string",
+                    "example_values": [
+                        "vt_group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_daily.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_daily.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        500
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_daily.group.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_daily.group.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        500
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_daily.group.inherited_from",
+                    "data_type": "string",
+                    "example_values": [
+                        "vt_group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1000000000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_monthly.group.used",
+                    "data_type": "numeric",
+                    "example_values": []
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_monthly.group.allowed",
+                    "data_type": "numeric",
+                    "example_values": []
+                },
+                {
+                    "data_path": "action_result.data.*.api_requests_monthly.group.inherited_from",
+                    "data_type": "string",
+                    "example_values": []
+                },
+                {
+                    "data_path": "action_result.summary.user_hourly_api_ratio",
+                    "data_type": "string",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_daily_api_ratio",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.user_monthly_api_ratio",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.group_hourly_api_ratio",
+                    "data_type": "string",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.group_daily_api_ratio",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.group_monthly_api_ratio",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_storage_bytes.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_storage_bytes.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_storage_files.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_storage_files.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.private_scans_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.private_scans_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_uploaded_bytes.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_uploaded_bytes.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_uploaded_files.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.monitor_uploaded_files.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.private_scans_per_minute.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.private_scans_per_minute.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_hunting_rules.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_hunting_rules.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_graphs_private.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_graphs_private.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.collections_creation_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.collections_creation_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        20
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_searches_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_searches_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_downloads_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_downloads_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_retrohunt_jobs_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_retrohunt_jobs_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_vtdiff_creation_monthly.user.used",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.intelligence_vtdiff_creation_monthly.user.allowed",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.userid",
+                    "data_type": "string",
+                    "example_values": [
+                        "vt_user"
+                    ]
+                }
+            ],
+            "render": {
+                "type": "custom",
+                "width": 12,
+                "height": 5,
+                "view": "virustotalv3_view.display_view",
+                "title": "Get Quotas"
+            },
+            "versions": "EQ(*)"
         }
     ],
     "pip_dependencies": {

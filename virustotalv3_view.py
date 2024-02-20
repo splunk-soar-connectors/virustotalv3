@@ -55,3 +55,5 @@ def display_view(provides, all_app_runs, context):
         return 'virustotalv3_detonate_url.html'
     elif provides == 'detonate file':
         return 'virustotalv3_detonate_file.html'
+    elif provides == 'get quotas':
+        return 'virustotalv3_quotas.html'
