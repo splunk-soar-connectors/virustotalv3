@@ -1037,21 +1037,33 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'api_requests_hourly' in response:
             if 'user' in response['api_requests_hourly']:
-                item_summary['user_hourly_api_ratio'] = int(response['api_requests_hourly']['user']['used'] / response['api_requests_hourly']['user']['allowed'])
+                u_h_used = response['api_requests_hourly']['user']['used']
+                u_h_allowed = response['api_requests_hourly']['user']['allowed']
+                item_summary['user_hourly_api_ratio'] = int(u_h_used / u_h_allowed)
             if 'group' in response['api_requests_hourly']:
-                item_summary['group_hourly_api_ratio'] = int(response['api_requests_hourly']['group']['used'] / response['api_requests_hourly']['group']['allowed'])
+                g_h_used = response['api_requests_hourly']['group']['used']
+                g_h_allowed = response['api_requests_hourly']['group']['allowed']
+                item_summary['group_hourly_api_ratio'] = int(g_h_used / g_h_allowed)
 
         if 'api_requests_daily' in response:
             if 'user' in response['api_requests_daily']:
-                item_summary['user_daily_api_ratio'] = int(response['api_requests_daily']['user']['used'] / response['api_requests_daily']['user']['allowed'])
+                u_d_used = response['api_requests_daily']['user']['used']
+                u_d_allowed = response['api_requests_daily']['user']['allowed']
+                item_summary['user_daily_api_ratio'] = int(u_d_used / u_d_allowed)
             if 'group' in response['api_requests_daily']:
-                item_summary['group_daily_api_ratio'] = int(response['api_requests_daily']['group']['used'] / response['api_requests_daily']['group']['allowed'])
+                g_d_used = response['api_requests_daily']['group']['used']
+                g_d_allowed = response['api_requests_daily']['group']['allowed']
+                item_summary['group_daily_api_ratio'] = int(g_d_used / g_d_allowed)
 
         if 'api_requests_monthly' in response:
             if 'user' in response['api_requests_monthly']:
-                item_summary['user_monthly_api_ratio'] = int(response['api_requests_monthly']['user']['used'] / response['api_requests_monthly']['user']['allowed'])
+                u_m_used = response['api_requests_monthly']['user']['used']
+                u_m_allowed = response['api_requests_monthly']['user']['allowed']
+                item_summary['user_monthly_api_ratio'] = int(u_m_used / u_m_allowed)
             if 'group' in response['api_requests_monthly']:
-                item_summary['group_monthly_api_ratio'] = int(response['api_requests_monthly']['group']['used'] / response['api_requests_monthly']['group']['allowed'])
+                g_m_used = response['api_requests_monthly']['group']['used']
+                g_m_allowed = response['api_requests_monthly']['group']['allowed']
+                item_summary['group_monthly_api_ratio'] = int(g_m_used / g_m_allowed)
 
         self.virustotalv3_action_result.update_summary(item_summary)
 
