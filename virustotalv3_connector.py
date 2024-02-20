@@ -1038,32 +1038,32 @@ class VirustotalV3Connector(BaseConnector):
         if 'api_requests_hourly' in response:
             if 'user' in response['api_requests_hourly']:
                 item_summary['user_hourly_api_ratio'] = int(
-                    response['api_requests_hourly']['user']['used'] /
-                    response['api_requests_hourly']['user']['allowed'])
+                    response['api_requests_hourly']['user']['used']
+                    / response['api_requests_hourly']['user']['allowed'])
             if 'group' in response['api_requests_hourly']:
                 item_summary['group_hourly_api_ratio'] = int(
-                    response['api_requests_hourly']['group']['used'] /
-                    response['api_requests_hourly']['group']['allowed'])
+                    response['api_requests_hourly']['group']['used']
+                    / response['api_requests_hourly']['group']['allowed'])
 
         if 'api_requests_daily' in response:
             if 'user' in response['api_requests_daily']:
                 item_summary['user_daily_api_ratio'] = int(
-                    response['api_requests_daily']['user']['used'] /
-                    response['api_requests_daily']['user']['allowed'])
+                    response['api_requests_daily']['user']['used']
+                    / response['api_requests_daily']['user']['allowed'])
             if 'group' in response['api_requests_daily']:
                 item_summary['group_daily_api_ratio'] = int(
-                    response['api_requests_daily']['group']['used'] /
-                    response['api_requests_daily']['group']['allowed'])
+                    response['api_requests_daily']['group']['used']
+                    / response['api_requests_daily']['group']['allowed'])
 
         if 'api_requests_monthly' in response:
             if 'user' in response['api_requests_monthly']:
                 item_summary['user_monthly_api_ratio'] = int(
-                    response['api_requests_monthly']['user']['used'] /
-                    response['api_requests_monthly']['user']['allowed'])
+                    response['api_requests_monthly']['user']['used']
+                    / response['api_requests_monthly']['user']['allowed'])
             if 'group' in response['api_requests_monthly']:
                 item_summary['group_monthly_api_ratio'] = int(
-                    response['api_requests_monthly']['group']['used'] /
-                    response['api_requests_monthly']['group']['allowed'])
+                    response['api_requests_monthly']['group']['used']
+                    / response['api_requests_monthly']['group']['allowed'])
 
         self.virustotalv3_action_result.update_summary(item_summary)
 
