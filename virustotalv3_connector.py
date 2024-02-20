@@ -1014,6 +1014,7 @@ class VirustotalV3Connector(BaseConnector):
 
         action_result.update_summary({'scan_id': scan_id})
         return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MAX_POLLS_REACHED)
+
     def _handle_get_quotas(self, param):
 
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
@@ -1067,7 +1068,7 @@ class VirustotalV3Connector(BaseConnector):
         self.virustotalv3_action_result.update_summary(item_summary)
 
         return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS)
-    
+
     def handle_action(self, param):
 
         result = None
