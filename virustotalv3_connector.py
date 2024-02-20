@@ -1014,7 +1014,60 @@ class VirustotalV3Connector(BaseConnector):
 
         action_result.update_summary({'scan_id': scan_id})
         return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MAX_POLLS_REACHED)
+    def _handle_get_quotas(self, param):
 
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        userid = param['userid']
+
+        item_summary = self.virustotalv3_action_result.set_summary({})
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                            QUOTA_ENDPOINT.format(id=userid), headers=self._headers, method="get")
+
+        if phantom.is_fail(ret_val):
+            return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message())
+
+        if 'data' not in json_resp:
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+
+        self.virustotalv3_action_result.add_data(json_resp['data'])
+        response = json_resp['data']
+
+        if 'api_requests_hourly' in response:
+            if 'user' in response['api_requests_hourly']:
+                item_summary['user_hourly_api_ratio'] = int(
+                    response['api_requests_hourly']['user']['used'] /
+                    response['api_requests_hourly']['user']['allowed'])
+            if 'group' in response['api_requests_hourly']:
+                item_summary['group_hourly_api_ratio'] = int(
+                    response['api_requests_hourly']['group']['used'] /
+                    response['api_requests_hourly']['group']['allowed'])
+
+        if 'api_requests_daily' in response:
+            if 'user' in response['api_requests_daily']:
+                item_summary['user_daily_api_ratio'] = int(
+                    response['api_requests_daily']['user']['used'] /
+                    response['api_requests_daily']['user']['allowed'])
+            if 'group' in response['api_requests_daily']:
+                item_summary['group_daily_api_ratio'] = int(
+                    response['api_requests_daily']['group']['used'] /
+                    response['api_requests_daily']['group']['allowed'])
+
+        if 'api_requests_monthly' in response:
+            if 'user' in response['api_requests_monthly']:
+                item_summary['user_monthly_api_ratio'] = int(
+                    response['api_requests_monthly']['user']['used'] /
+                    response['api_requests_monthly']['user']['allowed'])
+            if 'group' in response['api_requests_monthly']:
+                item_summary['group_monthly_api_ratio'] = int(
+                    response['api_requests_monthly']['group']['used'] /
+                    response['api_requests_monthly']['group']['allowed'])
+
+        self.virustotalv3_action_result.update_summary(item_summary)
+
+        return self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS)
+    
     def handle_action(self, param):
 
         result = None
@@ -1058,6 +1111,9 @@ class VirustotalV3Connector(BaseConnector):
 
         elif action_id == 'get_cached_entries':
             result = self._handle_get_cached_entries()
+
+        elif action_id == 'get_quotas':
+            result = self._handle_get_quotas(param)
 
         self.virustotalv3_action_result._ActionResult__data = json.loads(json.dumps(
             self.virustotalv3_action_result._ActionResult__data).replace('\\u0000', '\\\\u0000'))

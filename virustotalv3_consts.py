@@ -51,6 +51,7 @@ URL_API_ENDPOINT = 'urls'
 ANALYSES_ENDPOINT = 'analyses/{id}'
 DOMAIN_API_ENDPOINT = 'domains/{id}'
 IP_API_ENDPOINT = 'ip_addresses/{id}'
+QUOTA_ENDPOINT = 'users/{id}/overall_quotas'
 DEFAULT_TIMEOUT = 30
 DEFAULT_CACHE_INTERVAL = 3600
 DEFAULT_CACHE_SIZE = 1000
