@@ -1014,10 +1014,10 @@ class VirustotalV3Connector(BaseConnector):
 
         action_result.update_summary({'scan_id': scan_id})
         return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MAX_POLLS_REACHED)
-    
+
     @staticmethod
     def get_percentage(used,total):
-        return  round((used / total)*100,2) 
+        return round((used / total)*100, 2)
 
     def _handle_get_quotas(self, param):
 
