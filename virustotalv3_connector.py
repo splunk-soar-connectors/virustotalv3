@@ -1017,7 +1017,7 @@ class VirustotalV3Connector(BaseConnector):
 
     @staticmethod
     def get_percentage(used, total):
-        return round((used / total)*100, 2)
+        return round((used / total) * 100, 2)
 
     def _handle_get_quotas(self, param):
 
