@@ -17,6 +17,8 @@
 # Status/Progress Messages
 VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL"
 VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
+VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR = "VirusTotal query for {object_name} '{object_value}' was \
+    successfully executed but returned an '{error_code}' error code."
 VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Test connectivity passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Test connectivity failed"
@@ -54,3 +56,9 @@ IP_API_ENDPOINT = 'ip_addresses/{id}'
 DEFAULT_TIMEOUT = 30
 DEFAULT_CACHE_INTERVAL = 3600
 DEFAULT_CACHE_SIZE = 1000
+
+PASS_ERROR_CODE = {
+    400: 'NotAvailableYet',
+    404: 'NotFoundError',
+    409: 'AlreadyExistsError'
+}
