@@ -6,7 +6,7 @@ Connector Version: 1.7.0
 Product Vendor: VirusTotal  
 Product Name: VirusTotal v3  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 6.0.2  
+Minimum Product Version: 6.2.1  
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
 
