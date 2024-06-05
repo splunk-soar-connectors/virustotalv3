@@ -1,6 +1,6 @@
 # File: virustotalv3_connector.py
 #
-# Copyright (c) 2021-2023 Splunk Inc.
+# Copyright (c) 2021-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -480,7 +480,7 @@ class VirustotalV3Connector(BaseConnector):
             return self.virustotalv3_action_result.get_status()
 
         if 'data' in json_resp:
-            self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
+            self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_CONNECTIVITY_TEST)
         else:
             self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_CONNECTIVITY_TEST)
 

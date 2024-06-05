@@ -1,6 +1,6 @@
 # File: virustotalv3_consts.py
 #
-# Copyright (c) 2021-2023 Splunk Inc.
+# Copyright (c) 2021-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{obje
 VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR = "VirusTotal query for {object_name} '{object_value}' was \
     successfully executed but returned an '{error_code}' error code."
 VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
-VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Test connectivity passed"
+VIRUSTOTAL_SUCCESS_CONNECTIVITY_TEST = "Test connectivity passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Test connectivity failed"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
