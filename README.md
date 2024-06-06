@@ -2,7 +2,7 @@
 # VirusTotal v3
 
 Publisher: Splunk  
-Connector Version: 1.7.0  
+Connector Version: 1.8.0  
 Product Vendor: VirusTotal  
 Product Name: VirusTotal v3  
 Product Version Supported (regex): ".\*"  
