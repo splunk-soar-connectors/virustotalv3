@@ -168,7 +168,7 @@ class VirustotalV3Connector(BaseConnector):
             self.save_progress('Cannot parse JSON')
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse response as JSON", e), None)
 
-        if (200 <= r.status_code < 205):
+        if (200 <= r.status_code < 205) or PASS_ERROR_CODE[r.status_code] == resp_json.get('error', {}).get('code'):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         error_info = resp_json.get('error', {})
@@ -480,7 +480,7 @@ class VirustotalV3Connector(BaseConnector):
             return self.virustotalv3_action_result.get_status()
 
         if 'data' in json_resp:
-            self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
+            self.virustotalv3_action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_CONNECTIVITY_TEST)
         else:
             self.virustotalv3_action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_CONNECTIVITY_TEST)
 
@@ -503,6 +503,13 @@ class VirustotalV3Connector(BaseConnector):
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, query_url, headers=self._headers)
         if phantom.is_fail(ret_val):
             return ret_val
+
+        if json_resp.get('error', {}).get('code'):
+            return self.virustotalv3_action_result.set_status(
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                object_name=object_name,
+                object_value=object_value,
+                error_code=json_resp['error']['code'])
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
@@ -567,6 +574,13 @@ class VirustotalV3Connector(BaseConnector):
         # if the Virustotal server returns any invalid characters, decode them to utf-8 characters
         if isinstance(json_resp, dict):
             json_resp = self._decode_object(json_resp)
+
+        if json_resp.get('error', {}).get('code'):
+            return self.virustotalv3_action_result.set_status(
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                object_name="hash",
+                object_value=param['hash'],
+                error_code=json_resp['error']['code'])
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
@@ -651,6 +665,13 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
+        if json_resp.get('error', {}).get('code'):
+            return self.virustotalv3_action_result.set_status(
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                object_name=object_name,
+                object_value=object_value,
+                error_code=json_resp['error']['code'])
+
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
                                             VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
@@ -696,6 +717,13 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message().replace(url_id, url))
 
+        if json_resp.get('error', {}).get('code'):
+            return self.virustotalv3_action_result.set_status(
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                object_name='URL',
+                object_value=param['url'],
+                error_code=json_resp['error']['code'])
+
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
                     VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
@@ -740,20 +768,19 @@ class VirustotalV3Connector(BaseConnector):
         ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
                             URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
         if phantom.is_fail(ret_val):
-            if json_resp:
-                if json_resp['error']['code'] == 'NotFoundError' and 'Status Code: 404' in self.virustotalv3_action_result.get_message():
-                    ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
-                                        URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
-                    if phantom.is_fail(ret_val):
-                        return ret_val
-
-                    try:
-                        scan_id = json_resp['data']['id']
-                    except KeyError:
-                        return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
-                    return self._poll_for_result(self.virustotalv3_action_result, scan_id, self._poll_interval, wait_time)
-
             return self.virustotalv3_action_result.get_status()
+
+        if json_resp.get('error', {}).get('code') == 'NotFoundError':
+            ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
+            if phantom.is_fail(ret_val):
+                return ret_val
+
+            try:
+                scan_id = json_resp['data']['id']
+            except KeyError:
+                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+            return self._poll_for_result(self.virustotalv3_action_result, scan_id, self._poll_interval, wait_time)
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
@@ -822,46 +849,45 @@ class VirustotalV3Connector(BaseConnector):
                             FILE_REPUTATION_ENDPOINT.format(id=file_hash), headers=self._headers)
 
         if phantom.is_fail(ret_val):
-            if json_resp:
-                # Not found on server, detonate now
-                if json_resp['error']['code'] == 'NotFoundError' and 'Status Code: 404' in self.virustotalv3_action_result.get_message():
-                    try:
-                        files = [('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))]
-                    except Exception as e:
-                        error_message = self._get_error_message_from_exception(e)
-                        return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                                                        'Error occurred while reading file. {}'.format(error_message))
-
-                    # Convert file_size in bytes to MB
-                    if (file_size / 1000000) > 32:
-                        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
-                                            FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
-                        if phantom.is_fail(ret_val):
-                            return ret_val
-
-                        try:
-                            upload_url = json_resp['data']
-                        except KeyError:
-                            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, "Couldn't fetch URL for uploading file")
-
-                        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, upload_url, headers=self._headers,
-                            files=files, method='post', large_file=True)
-
-                    else:
-                        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_REPORT_ENDPOINT,
-                            headers=self._headers, files=files, method='post')
-
-                    if phantom.is_fail(ret_val):
-                        return ret_val
-
-                    try:
-                        scan_id = json_resp['data']['id']
-                    except KeyError:
-                        return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
-
-                    return self._poll_for_result(self.virustotalv3_action_result, scan_id, self._poll_interval, wait_time)
-
             return self.virustotalv3_action_result.get_status()
+
+        if json_resp.get('error', {}).get('code') == 'NotFoundError':
+            try:
+                files = [('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))]
+            except Exception as e:
+                error_message = self._get_error_message_from_exception(e)
+                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                                                'Error occurred while reading file. {}'.format(error_message))
+
+            # Convert file_size in bytes to MB
+            if (file_size / 1000000) > 32:
+                ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                    FILE_UPLOAD_URL_ENDPOINT, headers=self._headers)
+                if phantom.is_fail(ret_val):
+                    return ret_val
+
+                try:
+                    upload_url = json_resp['data']
+                except KeyError:
+                    return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, "Couldn't fetch URL for uploading file")
+
+                ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, upload_url, headers=self._headers,
+                    files=files, method='post', large_file=True)
+
+            else:
+                ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, FILE_REPORT_ENDPOINT,
+                    headers=self._headers, files=files, method='post')
+
+            if phantom.is_fail(ret_val):
+                return ret_val
+
+            try:
+                scan_id = json_resp['data']['id']
+            except KeyError:
+                return self.virustotalv3_action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+
+            return self._poll_for_result(self.virustotalv3_action_result, scan_id, self._poll_interval, wait_time)
+
         else:
             # if the Virustotal server returns any invalid characters, decode them to utf-8 characters
             if isinstance(json_resp, dict):
@@ -1031,6 +1057,13 @@ class VirustotalV3Connector(BaseConnector):
 
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message())
+
+        if json_resp.get('error', {}).get('code'):
+            return self.virustotalv3_action_result.set_status(
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                object_name='User ID',
+                object_value=param['user_id'],
+                error_code=json_resp['error']['code'])
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
