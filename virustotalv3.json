@@ -13533,7 +13533,7 @@
         {
             "action": "get quotas",
             "identifier": "get_quotas",
-            "description": "Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details.",
+            "description": "Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details",
             "type": "investigate",
             "read_only": true,
             "parameters": {
