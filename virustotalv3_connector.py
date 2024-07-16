@@ -168,7 +168,7 @@ class VirustotalV3Connector(BaseConnector):
             self.save_progress('Cannot parse JSON')
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse response as JSON", e), None)
 
-        if (200 <= r.status_code < 205) or PASS_ERROR_CODE[r.status_code] == resp_json.get('error', {}).get('code'):
+        if (200 <= r.status_code < 205) or PASS_ERROR_CODE.get(r.status_code) == resp_json.get('error', {}).get('code'):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         error_info = resp_json.get('error', {})
@@ -1014,6 +1014,13 @@ class VirustotalV3Connector(BaseConnector):
             ret_val, json_resp = self._make_rest_call(action_result, endpoint, headers=self._headers, method="get")
             if phantom.is_fail(ret_val):
                 return ret_val
+
+            if json_resp.get('error', {}).get('code'):
+                return self.virustotalv3_action_result.set_status(
+                    phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
+                    object_name='Scan ID',
+                    object_value=scan_id,
+                    error_code=json_resp['error']['code'])
 
             if isinstance(json_resp, dict):
                 json_resp = self._decode_object(json_resp)
