@@ -13526,7 +13526,7 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "json"
             },
             "versions": "EQ(*)"
         },
