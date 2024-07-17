@@ -506,14 +506,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if json_resp.get('error', {}).get('code'):
             return self.virustotalv3_action_result.set_status(
-                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                object_name=object_name,
-                object_value=object_value,
-                error_code=json_resp['error']['code'])
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                    object_name=object_name,
+                    object_value=object_value,
+                    error_code=json_resp['error']['code']))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name=object_name, object_value=object_value))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -577,14 +577,14 @@ class VirustotalV3Connector(BaseConnector):
 
         if json_resp.get('error', {}).get('code'):
             return self.virustotalv3_action_result.set_status(
-                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                object_name="hash",
-                object_value=param['hash'],
-                error_code=json_resp['error']['code'])
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                    object_name="hash",
+                    object_value=param['hash'],
+                    error_code=json_resp['error']['code']))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=hash)
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name='Hash', object_value=hash))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -661,20 +661,21 @@ class VirustotalV3Connector(BaseConnector):
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTIVITY)
 
-        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result, query_url, headers=self._headers)
+        ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
+                                                   query_url, headers=self._headers)
         if phantom.is_fail(ret_val):
             return ret_val
 
         if json_resp.get('error', {}).get('code'):
             return self.virustotalv3_action_result.set_status(
-                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                object_name=object_name,
-                object_value=object_value,
-                error_code=json_resp['error']['code'])
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                    object_name=object_name,
+                    object_value=object_value,
+                    error_code=json_resp['error']['code']))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+                                            VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name=object_name, object_value=object_value))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -715,18 +716,19 @@ class VirustotalV3Connector(BaseConnector):
                             URL_REPUTATION_ENDPOINT.format(id=url_id), headers=self._headers, method="get")
 
         if phantom.is_fail(ret_val):
-            return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message().replace(url_id, url))
+            return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
+                                                               self.virustotalv3_action_result.get_message().replace(url_id, url))
 
         if json_resp.get('error', {}).get('code'):
             return self.virustotalv3_action_result.set_status(
-                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                object_name='URL',
-                object_value=param['url'],
-                error_code=json_resp['error']['code'])
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                    object_name='URL',
+                    object_value=param['url'],
+                    error_code=json_resp['error']['code']))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name='URL', object_value=param['url']))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -784,7 +786,7 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name='URL', object_value=param['url']))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -895,7 +897,7 @@ class VirustotalV3Connector(BaseConnector):
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='Hash', object_value=file_hash)
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name='Hash', object_value=file_hash))
 
         # if last_analysis_results exists, reorganize to support standard data path format of
         # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
@@ -1017,10 +1019,10 @@ class VirustotalV3Connector(BaseConnector):
 
             if json_resp.get('error', {}).get('code'):
                 return self.virustotalv3_action_result.set_status(
-                    phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                    object_name='Scan ID',
-                    object_value=scan_id,
-                    error_code=json_resp['error']['code'])
+                    phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                        object_name='Scan ID',
+                        object_value=scan_id,
+                        error_code=json_resp['error']['code']))
 
             if isinstance(json_resp, dict):
                 json_resp = self._decode_object(json_resp)
@@ -1063,51 +1065,51 @@ class VirustotalV3Connector(BaseConnector):
                             QUOTA_ENDPOINT.format(id=user_id), headers=self._headers, method="get")
 
         if phantom.is_fail(ret_val):
-            return self.virustotalv3_action_result.set_status(ret_val, self.virustotalv3_action_result.get_message())
+            return self.virustotalv3_action_result.get_status()
 
         if json_resp.get('error', {}).get('code'):
             return self.virustotalv3_action_result.set_status(
-                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR,
-                object_name='User ID',
-                object_value=param['user_id'],
-                error_code=json_resp['error']['code'])
+                phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
+                    object_name='User ID',
+                    object_value=param['user_id'],
+                    error_code=json_resp['error']['code']))
 
         if 'data' not in json_resp:
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
-                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED, object_name='URL', object_value=param['url'])
+                    VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED.format(object_name='URL', object_value=param['url']))
 
         response = json_resp['data']
         self.virustotalv3_action_result.add_data(response)
 
-        if 'api_requests_hourly' in response:
-            if 'user' in response['api_requests_hourly']:
-                u_h_used = response['api_requests_hourly']['user']['used']
-                u_h_allowed = response['api_requests_hourly']['user']['allowed']
-                item_summary['user_hourly_api_ratio'] = self.get_percentage(u_h_used, u_h_allowed)
-            if 'group' in response['api_requests_hourly']:
-                g_h_used = response['api_requests_hourly']['group']['used']
-                g_h_allowed = response['api_requests_hourly']['group']['allowed']
-                item_summary['group_hourly_api_ratio'] = self.get_percentage(g_h_used, g_h_allowed)
+        if response.get('api_requests_hourly', {}).get('user', {}):
+            u_h_used = response['api_requests_hourly']['user'].get('used')
+            u_h_allowed = response['api_requests_hourly']['user'].get('allowed')
+            item_summary['user_hourly_api_ratio'] = self.get_percentage(u_h_used, u_h_allowed)
 
-        if 'api_requests_daily' in response:
-            if 'user' in response['api_requests_daily']:
-                u_d_used = response['api_requests_daily']['user']['used']
-                u_d_allowed = response['api_requests_daily']['user']['allowed']
-                item_summary['user_daily_api_ratio'] = self.get_percentage(u_d_used, u_d_allowed)
-            if 'group' in response['api_requests_daily']:
-                g_d_used = response['api_requests_daily']['group']['used']
-                g_d_allowed = response['api_requests_daily']['group']['allowed']
-                item_summary['group_daily_api_ratio'] = self.get_percentage(g_d_used, g_d_allowed)
+        if response.get('api_requests_hourly', {}).get('group', {}):
+            g_h_used = response['api_requests_hourly']['group'].get('used')
+            g_h_allowed = response['api_requests_hourly']['group'].get('allowed')
+            item_summary['group_hourly_api_ratio'] = self.get_percentage(g_h_used, g_h_allowed)
 
-        if 'api_requests_monthly' in response:
-            if 'user' in response['api_requests_monthly']:
-                u_m_used = response['api_requests_monthly']['user']['used']
-                u_m_allowed = response['api_requests_monthly']['user']['allowed']
-                item_summary['user_monthly_api_ratio'] = self.get_percentage(u_m_used, u_m_allowed)
-            if 'group' in response['api_requests_monthly']:
-                g_m_used = response['api_requests_monthly']['group']['used']
-                g_m_allowed = response['api_requests_monthly']['group']['allowed']
-                item_summary['group_monthly_api_ratio'] = self.get_percentage(g_m_used, g_m_allowed)
+        if response.get('api_requests_daily', {}).get('user', {}):
+            u_d_used = response['api_requests_daily']['user'].get('used')
+            u_d_allowed = response['api_requests_daily']['user'].get('allowed')
+            item_summary['user_daily_api_ratio'] = self.get_percentage(u_d_used, u_d_allowed)
+
+        if response.get('api_requests_daily', {}).get('group', {}):
+            g_d_used = response['api_requests_daily']['group'].get('used')
+            g_d_allowed = response['api_requests_daily']['group'].get('allowed')
+            item_summary['group_daily_api_ratio'] = self.get_percentage(g_d_used, g_d_allowed)
+
+        if response.get('api_requests_monthly', {}).get('user', {}):
+            u_m_used = response['api_requests_monthly']['user'].get('used')
+            u_m_allowed = response['api_requests_monthly']['user'].get('allowed')
+            item_summary['user_monthly_api_ratio'] = self.get_percentage(u_m_used, u_m_allowed)
+
+        if response.get('api_requests_monthly', {}).get('group', {}):
+            g_m_used = response['api_requests_monthly']['group'].get('used')
+            g_m_allowed = response['api_requests_monthly']['group'].get('allowed')
+            item_summary['group_monthly_api_ratio'] = self.get_percentage(g_m_used, g_m_allowed)
 
         self.virustotalv3_action_result.update_summary(item_summary)
 
