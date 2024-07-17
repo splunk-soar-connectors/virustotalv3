@@ -787,7 +787,7 @@
                     "data_path": "action_result.data.*.attributes.whois",
                     "data_type": "string",
                     "example_values": [
-                        "Creation Date: 1997-09-15T04:00:00Z\nDNSSEC: unsigned\nDomain Name: TEST.COM\nDomain Status: clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited\nDomain Status: clientTransferProhibited https://icann.org/epp#clientTransferProhibited\nDomain Status: clientUpdateProhibited https://icann.org/epp#clientUpdateProhibited\nDomain Status: serverDeleteProhibited https://icann.org/epp#serverDeleteProhibited\nDomain Status: serverTransferProhibited https://icann.org/epp#serverTransferProhibited\nDomain Status: serverUpdateProhibited https://icann.org/epp#serverUpdateProhibited\nName Server: NS1.TEST.COM\nName Server: NS2.TEST.COM\nName Server: NS3.TEST.COM\nName Server: NS4.TEST.COM\nRegistrar Abuse Contact Email: abusecomplaints@markmonitor.com\nRegistrar Abuse Contact Phone: +1.2083895740\nRegistrar IANA ID: 292\nRegistrar URL: http://www.markmonitor.com\nRegistrar WHOIS Server: whois.markmonitor.com\nRegistrar: MarkMonitor Inc.\nRegistry Domain ID: 2138514_DOMAIN_COM-VRSN\nRegistry Expiry Date: 2028-09-14T04:00:00Z\nUpdated Date: 2019-09-09T15:39:04Z"
+                        "test data Creation Date: 1997-09-15T04:00:00Z DNSSEC: unsigned Domain Name: TEST.COM Domain Status: clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited Domain Status: clientTransferProhibited https://icann.org/epp#clientTransferProhibited Domain Status: clientUpdateProhibited https://icann.org/epp#clientUpdateProhibited Domain Status: serverDeleteProhibited https://icann.org/epp#serverDeleteProhibited"
                     ]
                 },
                 {
@@ -2285,7 +2285,7 @@
                     "data_path": "action_result.data.*.attributes.whois",
                     "data_type": "string",
                     "example_values": [
-                        "NetRange: 2.0.0.0 - 2.255.255.255\nCIDR: 2.0.0.0/8\nNetName: 2-RIPE\nNetHandle: NET-2-0-0-0-1\nParent: ()\nNetType: Allocated to RIPE NCC\nOriginAS: \nOrganization: RIPE Network Coordination Centre (RIPE)\nRegDate: 2009-09-29\nUpdated: 2009-09-30\nComment: These addresses have been further assigned to users in\nComment: the RIPE NCC region. Contact information can be found in\nComment: the RIPE database at http://www.ripe.net/whois\nRef: https://rdap.arin.net/registry/ip/2.0.0.0\nResourceLink: https://apps.db.ripe.net/search/query.html\nResourceLink: whois.ripe.net\nOrgName: RIPE Network Coordination Centre\nOrgId: RIPE\nAddress: P.O. Box 10096\nCity: Amsterdam\nStateProv: \nPostalCode: 1001EB\nCountry: NL\nRegDate: \nUpdated: 2013-07-29\nRef: https://rdap.arin.net/registry/entity/RIPE\nReferralServer: whois://whois.ripe.net\nResourceLink: https://apps.db.ripe.net/search/query.html\nOrgAbuseHandle: ABUSE3850-ARIN\nOrgAbuseName: Abuse Contact\nOrgAbusePhone: +31205354444 \nOrgAbuseEmail: abuse@ripe.net\nOrgAbuseRef: https://rdap.arin.net/registry/entity/ABUSE3850-ARIN\nOrgTechHandle: RNO29-ARIN\nOrgTechName: RIPE NCC Operations\nOrgTechPhone: +31 20 535 4444 \nOrgTechEmail: hostmaster@ripe.net\nOrgTechRef: https://rdap.arin.net/registry/entity/RNO29-ARIN\ninetnum: 2.3.0.0 - 2.3.7.255\nnetname: IP2000-ADSL-BAS\ndescr: POP CLE\ncountry: FR\nadmin-c: WITR1-RIPE\ntech-c: WITR1-RIPE\nstatus: ASSIGNED PA\nremarks: for hacking, spamming or security problems send mail to\nremarks: abuse@orange.fr\nmnt-by: FT-BRX\ncreated: 2017-07-27T08:58:11Z\nlast-modified: 2017-07-27T08:58:11Z\nsource: RIPE\nrole: Wanadoo France Technical Role\naddress: FRANCE TELECOM/SCR\naddress: 48 rue Camille Desmoulins\naddress: 92791 ISSY LES MOULINEAUX CEDEX 9\naddress: FR\nphone: +33 1 58 88 50 00\nabuse-mailbox: abuse@orange.fr\nadmin-c: BRX1-RIPE\ntech-c: BRX1-RIPE\nnic-hdl: WITR1-RIPE\nmnt-by: FT-BRX\ncreated: 2001-12-04T17:57:08Z\nlast-modified: 2013-07-16T14:09:50Z\nsource: RIPE # Filtered\nroute: 2.3.0.0/16\ndescr: France Telecom Orange\norigin: AS3215\nmnt-by: RAIN-TRANSPAC\nmnt-by: FT-BRX\ncreated: 2012-11-22T09:32:05Z\nlast-modified: 2012-11-22T09:32:05Z\nsource: RIPE\n"
+                        "Test data NetRange: 2.0.0.0 - 2.255.255.255 CIDR: 2.0.0.0/8 NetName: 2-RIPE NetHandle: NET-2-0-0-0-1 Parent: () NetType: Allocated to RIPE NCC OriginAS:  Organization: RIPE Network Coordination Centre (RIPE) RegDate: 2009-09-29 Updated: 2009-09-30 Comment: These addresses have been further assigned to users in Comment: the RIPE NCC region. Contact information can be found in Comment: the RIPE database at http://www.ripe.net/whois Ref: https://rdap.arin.net/registry/ip/2.0.0.0 ResourceLink: https://apps.db.ripe.net/search/query.html ResourceLink: whois.ripe.net OrgName: RIPE Network Coordination Centre OrgId: RIPE Address: P.O. Box 10096 City: Amsterdam StateProv:  PostalCode: 1001EB Country: NL RegDate:  Updated: 2013-07-29 Ref: https://rdap.arin.net/registry/entity/RIPE ReferralServer: whois://whois.ripe.net ResourceLink: https://apps.db.ripe.net/search/query.html OrgAbuseHandle: ABUSE3850-ARIN OrgAbuseName: Abuse Contact OrgAbusePhone: +31205354444  OrgAbuseEmail: abuse@ripe.net OrgAbuseRef: https://rdap.arin.net/registry/entity/ABUSE3850-ARIN OrgTechHandle: RNO29-ARIN OrgTechName: RIPE NCC Operations OrgTechPhone: +31 20 535 4444  OrgTechEmail: hostmaster@ripe.net OrgTechRef: https://rdap.arin.net/registry/entity/RNO29-ARIN inetnum: 2.3.0.0 - 2.3.7.255 netname: IP2000-ADSL-BAS descr: POP CLE country: FR admin-c: WITR1-RIPE tech-c: WITR1-RIPE status: ASSIGNED PA remarks: for hacking, spamming or security problems send mail to remarks: abuse@orange.fr mnt-by: FT-BRX created: 2017-07-27T08:58:11Z last-modified: 2017-07-27T08:58:11Z source: RIPE role: Wanadoo France Technical Role address: FRANCE TELECOM/SCR address: 48 rue Camille Desmoulins address: 92791 ISSY LES MOULINEAUX CEDEX 9 address: FR phone: +33 1 58 88 50 00 abuse-mailbox: abuse@orange.fr admin-c: BRX1-RIPE tech-c: BRX1-RIPE nic-hdl: WITR1-RIPE mnt-by: FT-BRX created: 2001-12-04T17:57:08Z last-modified: 2013-07-16T14:09:50Z source: RIPE # Filtered route: 2.3.0.0/16 descr: France Telecom Orange origin: AS3215 mnt-by: RAIN-TRANSPAC mnt-by: FT-BRX created: 2012-11-22T09:32:05Z"
                     ]
                 },
                 {
@@ -13546,6 +13546,14 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
                     "data_path": "action_result.parameter.user_id",
                     "data_type": "string",
                     "example_values": [
@@ -13879,14 +13887,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         0
-                    ]
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
                     ]
                 },
                 {
