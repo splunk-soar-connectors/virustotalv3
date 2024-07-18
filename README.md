@@ -1073,7 +1073,6 @@ action_result.data.\*.type | string |  |   url
 action_result.summary.harmless | numeric |  |   80 
 action_result.summary.malicious | numeric |  |   0 
 action_result.summary.scan_id | string |  `virustotal scan id`  |   u-99999999999c9999ca75016e4c010bc94836366881b021a658ea7f8548b6543c1e 
-action_result.summary.scan_id | string |  |   u-9999999999997204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861 
 action_result.summary.suspicious | numeric |  |   0 
 action_result.summary.undetected | numeric |  |   7 
 action_result.message | string |  |   Scan id: u-9999999999f67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7 
@@ -1714,7 +1713,6 @@ action_result.data.\*.type | string |  |   file
 action_result.summary.harmless | numeric |  |   0 
 action_result.summary.malicious | numeric |  |   0 
 action_result.summary.scan_id | string |  `virustotal scan id`  |   u-9999999999c9999ca75016e4c010bc94836366881b021a658ea7f8548b6543c1e 
-action_result.summary.scan_id | string |  |   9999999999YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw== 
 action_result.summary.suspicious | numeric |  |   0 
 action_result.summary.undetected | numeric |  |   59 
 action_result.message | string |  |   Scan id: 99999999995YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw==, Harmless: 0, Malicious: 0, Suspicious: 0, Undetected: 59 

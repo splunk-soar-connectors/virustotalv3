@@ -23,7 +23,7 @@
     "min_phantom_version": "6.2.1",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cloud, API v3 virustotal.com/api/v3/, April 05 2024"
+        "Cloud, API v3 virustotal.com/api/v3/, July 17 2024"
     ],
     "configuration": {
         "apikey": {
@@ -6610,13 +6610,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.scan_id",
-                    "data_type": "string",
-                    "example_values": [
-                        "u-9999999999997204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861"
-                    ]
-                },
-                {
                     "data_path": "action_result.summary.suspicious",
                     "data_type": "numeric",
                     "example_values": [
@@ -10769,13 +10762,6 @@
                     ],
                     "contains": [
                         "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.scan_id",
-                    "data_type": "string",
-                    "example_values": [
-                        "9999999999YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw=="
                     ]
                 },
                 {

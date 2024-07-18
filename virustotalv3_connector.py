@@ -504,7 +504,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
-        if json_resp.get('error', {}).get('code'):
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             return self.virustotalv3_action_result.set_status(
                 phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                     object_name=object_name,
@@ -575,7 +575,7 @@ class VirustotalV3Connector(BaseConnector):
         if isinstance(json_resp, dict):
             json_resp = self._decode_object(json_resp)
 
-        if json_resp.get('error', {}).get('code'):
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             return self.virustotalv3_action_result.set_status(
                 phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                     object_name="hash",
@@ -666,7 +666,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return ret_val
 
-        if json_resp.get('error', {}).get('code'):
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             return self.virustotalv3_action_result.set_status(
                 phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                     object_name=object_name,
@@ -719,7 +719,7 @@ class VirustotalV3Connector(BaseConnector):
             return self.virustotalv3_action_result.set_status(phantom.APP_ERROR,
                                                                self.virustotalv3_action_result.get_message().replace(url_id, url))
 
-        if json_resp.get('error', {}).get('code'):
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             return self.virustotalv3_action_result.set_status(
                 phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                     object_name='URL',
@@ -772,7 +772,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()
 
-        if json_resp.get('error', {}).get('code') == 'NotFoundError':
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             ret_val, json_resp = self._make_rest_call(self.virustotalv3_action_result,
                                 URL_API_ENDPOINT, body=data, headers=self._headers, method='post')
             if phantom.is_fail(ret_val):
@@ -853,7 +853,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()
 
-        if json_resp.get('error', {}).get('code') == 'NotFoundError':
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             try:
                 files = [('file', (file_name, open(file_path, 'rb'), 'application/octet-stream'))]
             except Exception as e:
@@ -1017,7 +1017,7 @@ class VirustotalV3Connector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return ret_val
 
-            if json_resp.get('error', {}).get('code'):
+            if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
                 return self.virustotalv3_action_result.set_status(
                     phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                         object_name='Scan ID',
@@ -1067,7 +1067,7 @@ class VirustotalV3Connector(BaseConnector):
         if phantom.is_fail(ret_val):
             return self.virustotalv3_action_result.get_status()
 
-        if json_resp.get('error', {}).get('code'):
+        if json_resp.get('error', {}).get('code') in PASS_ERROR_CODE.values():
             return self.virustotalv3_action_result.set_status(
                 phantom.APP_SUCCESS, VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR.format(
                     object_name='User ID',
