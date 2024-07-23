@@ -1,6 +1,6 @@
 # File: virustotalv3_consts.py
 #
-# Copyright (c) 2021-2023 Splunk Inc.
+# Copyright (c) 2021-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@
 # Status/Progress Messages
 VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL"
 VIRUSTOTAL_ERROR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
+VIRUSTOTAL_SUCCESS_MSG_WITH_ERROR = "VirusTotal query for {object_name} '{object_value}' was \
+    successfully executed but returned an '{error_code}' error code."
 VIRUSTOTAL_MSG_CONNECTIVITY = "Querying VirusTotal"
-VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Test connectivity passed"
+VIRUSTOTAL_SUCCESS_CONNECTIVITY_TEST = "Test connectivity passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Test connectivity failed"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. " \
@@ -51,6 +53,13 @@ URL_API_ENDPOINT = 'urls'
 ANALYSES_ENDPOINT = 'analyses/{id}'
 DOMAIN_API_ENDPOINT = 'domains/{id}'
 IP_API_ENDPOINT = 'ip_addresses/{id}'
+QUOTA_ENDPOINT = 'users/{id}/overall_quotas'
 DEFAULT_TIMEOUT = 30
 DEFAULT_CACHE_INTERVAL = 3600
 DEFAULT_CACHE_SIZE = 1000
+
+PASS_ERROR_CODE = {
+    400: 'NotAvailableYet',
+    404: 'NotFoundError',
+    409: 'AlreadyExistsError'
+}

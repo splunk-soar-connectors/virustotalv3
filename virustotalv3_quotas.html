@@ -9,7 +9,7 @@
 
 {% block widget_content %} <!-- Main Start Block -->
 
-<!-- # File: virustotalv3_domain_reputation.html
+<!-- # File: virustotalv3_quotas.html
 # Copyright (c) 2021-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,82 +98,79 @@
         <h4 class="wf-h4-style">No data found</h4>
 
     {% else %}
-        <h4 class="wf-h3-style">Info</h4>
-        <table class="wf-table-vertical">
-            <tr>
-                <td>Domain</td>
-                <td>
-                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['domain'], 'value':'{{ result.param.domain }}' }], 0, {{ container.id }}, null, false);">
-                        {{ result.param.domain }}
-                        &nbsp;
-                        <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                    </a>
-                </td>
-            </tr>
+        <h4 class="wf-h3-style">Quotas</h4>
+
+        {% for quota in result.data %}
+        <!--Default View-->
+        <table class="wf-table-horizontal datatable">
+            <thead>
+                <tr>
+                    <th>Quota Type</th>
+                    <th>Used</th>
+                    <th>Allowed</th>
+                    <th>% Used</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- User quotas -->
+                {% if quota|by_key:'api_requests_hourly'|by_key:'user' %}
+                <tr>
+                    <td>User API Requests Hourly</td>
+                    <td>{{ quota.api_requests_hourly.user.used }}</td>
+                    <td>{{ quota.api_requests_hourly.user.allowed }}</td>
+                    <td>{{ result.summary.user_hourly_api_ratio }}</td>
+                </tr>
+                {% endif %}
+                {% if quota|by_key:'api_requests_daily'|by_key:'user' %}
+                <tr>
+                    <td>User API Requests Daily</td>
+                    <td>{{ quota.api_requests_daily.user.used }}</td>
+                    <td>{{ quota.api_requests_daily.user.allowed }}</td>
+                    <td>{{ result.summary.user_daily_api_ratio }}</td>
+                </tr>
+                {% endif %}
+                {% if quota|by_key:'api_requests_monthly'|by_key:'user' %}
+                <tr>
+                    <td>User API Requests Monthly</td>
+                    <td>{{ quota.api_requests_monthly.user.used }}</td>
+                    <td>{{ quota.api_requests_monthly.user.allowed }}</td>
+                    <td>{{ result.summary.user_monthly_api_ratio }}</td>
+                </tr>
+                {% endif %}
+                <!-- Group quotas -->
+                {% if quota|by_key:'api_requests_hourly'|by_key:'group' %}
+                <tr>
+                    <td>Group API Requests Hourly</td>
+                    <td>{{ quota.api_requests_hourly.group.used }}</td>
+                    <td>{{ quota.api_requests_hourly.group.allowed }}</td>
+                    <td>{{ result.summary.group_hourly_api_ratio }}</td>
+                </tr>
+                {% endif %}
+                {% if quota|by_key:'api_requests_daily'|by_key:'group' %}
+                <tr>
+                    <td>Group API Requests Daily</td>
+                    <td>{{ quota.api_requests_daily.group.used }}</td>
+                    <td>{{ quota.api_requests_daily.group.allowed }}</td>
+                    <td>{{ result.summary.group_daily_api_ratio }}</td>
+                </tr>
+                {% endif %}
+                {% if quota|by_key:'api_requests_monthly'|by_key:'group' %}
+                <tr>
+                    <td>Group API Requests Monthly</td>
+                    <td>{{ quota.api_requests_monthly.group.used }}</td>
+                    <td>{{ quota.api_requests_monthly.group.allowed }}</td>
+                    <td>{{ result.summary.group_monthly_api_ratio }}</td>
+                </tr>
+                {% endif %}
+            </tbody>
         </table>
-        {% for data in result.data %}
-            <div class="results">
-                <h4 class="wf-h4-style">Domain Info</h4>
 
-                <!--Default View-->
-                <table class="wf-table-horizontal datatable">
-                    <thead>
-                        <tr>
-                            <th>Bitdefender Category</th>
-                            <th>Dr. Web Category</th>
-                            <th>Forcepoint Threatseeker Category</th>
-                            <th>Sophos Category</th>
-                            <th>Comodo Valkyrie Verdict Category</th>
-                            <th>Registrar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'BitDefender' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'BitDefender' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Dr.Web' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Dr.Web' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Forcepoint ThreatSeeker' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Forcepoint ThreatSeeker' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'sophos' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'sophos' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'categories'|by_key:'Comodo Valkyrie Verdict' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'categories'|by_key:'Comodo Valkyrie Verdict' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                            {% if data|by_key:'attributes'|by_key:'registrar' %}
-                                <td>{{ data|by_key:'attributes'|by_key:'registrar' }}</td>
-                            {% else %}
-                                <td>None</td>
-                            {% endif %}
-
-                        </tr>
-                    </tbody>
-                </table>
-
-            </div>
         {% endfor %}
+
     {% endif %}
     {% endfor %} <!-- loop for each result end -->
+
+
 </div> <!-- Main Div -->
 
 
