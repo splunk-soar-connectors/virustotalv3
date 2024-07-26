@@ -1,6 +1,6 @@
 # File: virustotalv3_view.py
 #
-# Copyright (c) 2021-2023 Splunk Inc.
+# Copyright (c) 2021-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,3 +55,5 @@ def display_view(provides, all_app_runs, context):
         return 'virustotalv3_detonate_url.html'
     elif provides == 'detonate file':
         return 'virustotalv3_detonate_file.html'
+    elif provides == 'get quotas':
+        return 'virustotalv3_quotas.html'
