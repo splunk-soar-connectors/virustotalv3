@@ -10,7 +10,7 @@
     "python_version": "3",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2021-2024 Splunk Inc.",
+    "license": "Copyright (c) 2021-2025 Splunk Inc.",
     "contributors": [
         {
             "name": "jang@splunk.com"

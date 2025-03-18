@@ -1,6 +1,6 @@
 # File: virustotalv3_DataCache.py
 #
-# Copyright (c) 2021-2024 Splunk Inc.
+# Copyright (c) 2021-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +16,7 @@
 import time
 
 
-class DataCache(object):
-
+class DataCache:
     def __init__(self, interval=None, length=None, cache=None):
         self.set_expiration_interval(interval)
         self.set_cache_length(length)
@@ -60,18 +59,18 @@ class DataCache(object):
     ################################################################################
 
     def add(self, key, value):
-        self._datastore[key] = { 'value': value, 'timestamp': time.time() }
+        self._datastore[key] = {"value": value, "timestamp": time.time()}
         return self
 
     def search(self, key):
-        return self._datastore.get(key, {}).get('value')
+        return self._datastore.get(key, {}).get("value")
 
     def delete(self, key):
         self._datastore.pop(key, None)
         return self
 
     def items(self):
-        return [ (key, data['value'], data['timestamp']) for key, data in self._datastore.items() ]
+        return [(key, data["value"], data["timestamp"]) for key, data in self._datastore.items()]
 
     # implemented here for speed, well, for a given value of speed
     def trim(self, length=None):
@@ -88,7 +87,7 @@ class DataCache(object):
             return self
 
         # sort cache by timestamp to get the oldest entries and trim
-        cache = sorted(cache, key=lambda x: x[1]['timestamp'])
+        cache = sorted(cache, key=lambda x: x[1]["timestamp"])
         cache = cache[-length:]
         self._datastore = dict(cache)
         return self
