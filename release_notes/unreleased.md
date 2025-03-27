@@ -1,3 +1,3 @@
 **Unreleased**
 
-* chore: batch changes
+* fix: App dependency updates and NOTICE file generation

@@ -1,9 +1,9 @@
 Splunk SOAR VirusTotal v3
-Copyright (c) 2021-2024 Splunk Inc.
+Copyright (c) 2021-2025 Splunk Inc.
 
-Third-party Software Attributions:
+Third Party Software Attributions:
 
-Library: python-magic
+Name: python-magic
 Version: 0.4.18
+Author: Adam Hupp
 License: MIT
-Copyright 2001-2014 Adam Hupp
