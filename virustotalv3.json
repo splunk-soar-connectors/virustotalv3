@@ -16,8 +16,8 @@
             "name": "jang@splunk.com"
         }
     ],
-    "app_version": "1.8.0",
-    "utctime_updated": "2022-11-30T21:04:52.000000Z",
+    "app_version": "1.8.1",
+    "utctime_updated": "2025-05-01T16:46:03.240990Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
     "min_phantom_version": "6.2.1",
