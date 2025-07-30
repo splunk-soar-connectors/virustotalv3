@@ -7,7 +7,10 @@
     "logo": "logo_virustotalv3.svg",
     "logo_dark": "logo_virustotalv3_dark.svg",
     "product_name": "VirusTotal v3",
-    "python_version": ["3.9", "3.13"],
+    "python_version": [
+        "3.9",
+        "3.13"
+    ],
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021-2025 Splunk Inc.",
@@ -16,8 +19,8 @@
             "name": "jang@splunk.com"
         }
     ],
-    "app_version": "1.8.1",
-    "utctime_updated": "2025-05-01T16:46:03.240990Z",
+    "app_version": "1.8.2",
+    "utctime_updated": "2025-07-30T17:56:33.799979Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
     "min_phantom_version": "6.2.1",
