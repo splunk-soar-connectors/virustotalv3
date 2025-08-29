@@ -1,9 +1,9 @@
 # VirusTotal v3
 
-Publisher: Splunk \
-Connector Version: 1.8.4 \
-Product Vendor: VirusTotal \
-Product Name: VirusTotal v3 \
+Publisher: Splunk <br>
+Connector Version: 1.8.4 <br>
+Product Vendor: VirusTotal <br>
+Product Name: VirusTotal v3 <br>
 Minimum Product Version: 6.2.1
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
@@ -42,24 +42,24 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info \
-[file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info \
-[get file](#action-get-file) - Downloads a file from VirusTotal and adds it to the vault \
-[ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info \
-[url reputation](#action-url-reputation) - Queries VirusTotal for URL info (run this action after running detonate url) \
-[detonate url](#action-detonate-url) - Load a URL to Virus Total and retrieve analysis results \
-[detonate file](#action-detonate-file) - Upload a file to Virus Total and retrieve the analysis results \
-[get report](#action-get-report) - Get the results using the scan id from a detonate file or detonate url action \
-[get cached entries](#action-get-cached-entries) - Get listing of cached entries \
-[clear cache](#action-clear-cache) - Clear all cached entries \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info <br>
+[file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info <br>
+[get file](#action-get-file) - Downloads a file from VirusTotal and adds it to the vault <br>
+[ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info <br>
+[url reputation](#action-url-reputation) - Queries VirusTotal for URL info (run this action after running detonate url) <br>
+[detonate url](#action-detonate-url) - Load a URL to Virus Total and retrieve analysis results <br>
+[detonate file](#action-detonate-file) - Upload a file to Virus Total and retrieve the analysis results <br>
+[get report](#action-get-report) - Get the results using the scan id from a detonate file or detonate url action <br>
+[get cached entries](#action-get-cached-entries) - Get listing of cached entries <br>
+[clear cache](#action-clear-cache) - Clear all cached entries <br>
 [get quotas](#action-get-quotas) - Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -74,7 +74,7 @@ No Output
 
 Queries VirusTotal for domain info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -197,7 +197,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Queries VirusTotal for file reputation info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -342,7 +342,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Downloads a file from VirusTotal and adds it to the vault
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -367,7 +367,7 @@ summary.total_objects_successful | numeric | | |
 
 Queries VirusTotal for IP info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -453,7 +453,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Queries VirusTotal for URL info (run this action after running detonate url)
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -570,7 +570,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Load a URL to Virus Total and retrieve analysis results
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 <b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.
@@ -1089,7 +1089,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Upload a file to Virus Total and retrieve the analysis results
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 <b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.
@@ -1732,7 +1732,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the results using the scan id from a detonate file or detonate url action
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.
@@ -2116,7 +2116,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get listing of cached entries
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -2143,7 +2143,7 @@ summary.total_objects_successful | numeric | | |
 
 Clear all cached entries
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -2166,7 +2166,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
