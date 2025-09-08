@@ -1,7 +1,7 @@
 # VirusTotal v3
 
 Publisher: Splunk <br>
-Connector Version: 1.8.4 <br>
+Connector Version: 1.8.5 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
 Minimum Product Version: 6.2.1
