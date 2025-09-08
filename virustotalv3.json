@@ -7,7 +7,7 @@
     "logo": "logo_virustotalv3.svg",
     "logo_dark": "logo_virustotalv3_dark.svg",
     "product_name": "VirusTotal v3",
-    "python_version": "3.9",
+    "python_version": "3.9, 3.13",
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2021-2025 Splunk Inc.",
@@ -13908,11 +13908,9 @@
         }
     ],
     "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "python_magic",
-                "input_file": "wheels/shared/python_magic-0.4.18-py2.py3-none-any.whl"
-            }
-        ]
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
     }
 }
