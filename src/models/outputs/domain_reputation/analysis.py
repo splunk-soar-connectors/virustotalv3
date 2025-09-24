@@ -113,3 +113,6 @@ class DomainAnalysisStats(ActionOutput):
     suspicious: int
     timeout: int
     undetected: int
+
+class AnalysisResults(ActionOutput):
+    results: list[DomainAnalysisResult]

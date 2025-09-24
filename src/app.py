@@ -6,7 +6,8 @@ from soar_sdk.app import App
 from soar_sdk.asset import AssetField, BaseAsset
 from soar_sdk.exceptions import ActionFailure, AssetMisconfiguration
 from soar_sdk.logging import getLogger
-from soar_sdk.params import Param, Params
+from soar_sdk.params import Param, Params, MakeRequestParams
+from soar_sdk.action_results import MakeRequestOutput
 
 from models.outputs.shared import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
@@ -18,7 +19,7 @@ logger = getLogger()
 
 
 class Asset(BaseAsset):
-    apikey: str = AssetField(required=True, description="VirusTotal API key")
+    apikey: str = AssetField(required=True, description="VirusTotal API key", sensitive=True)
     poll_interval: float = AssetField(
         required=False,
         description="Number of minutes to poll for a detonation result (Default: 5)",
@@ -128,6 +129,37 @@ def domain_reputation(params: DomainReputationParams, soar: SOARClient, asset: A
 
     return DomainReputationOutput(**sanitized_data)
 
+@app.make_request()
+def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
+    client = asset.get_client()
+    
+    if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
+        raise ActionFailure(f"Invalid endpoint: {params.endpoint}. Please do not include the base url in the endpoint. The base url is already included in the asset.")
+
+    request_kwargs = {
+        "method": params.http_method,
+        "url": params.endpoint
+    }
+    
+    if params.query_params:
+        request_kwargs["params"] = params.query_params
+    if params.body:
+        request_kwargs["json"] = params.body
+    if params.headers:
+        merged_headers = client.headers.copy()
+        merged_headers.update(params.headers)
+        request_kwargs["headers"] = merged_headers
+    if params.verify_ssl:
+        request_kwargs["verify"] = params.verify_ssl
+    if params.timeout:
+        request_kwargs["timeout"] = params.timeout
+    
+    response = client.request(**request_kwargs)
+    response.raise_for_status()
+    return MakeRequestOutput(
+        status_code=response.status_code,
+        response_body=response.text,
+    )
 
 class FileReputationParams(Params):
     hash: str = Param(
@@ -136,6 +168,124 @@ class FileReputationParams(Params):
         cef_types=["hash", "sha256", "sha1", "md5"],
     )
 
+class LastAnalysisResultsOutput(ActionOutput):
+    category: str = OutputField(example_values=["undetected"])
+    engine_name: str = OutputField(example_values=["CMC"])
+    engine_update: str = OutputField(example_values=["20210218"])
+    engine_version: str = OutputField(example_values=["2.10.2019.1"])
+    method: str = OutputField(example_values=["blacklist"])
+    result: str
+    vendor: str = OutputField(example_values=["Symantec"])
+
+class LastAnalysisStatsOutput(ActionOutput):
+    confirmed_timeout: float = OutputField(example_values=[0], alias="confirmed-timeout")
+    failure: float = OutputField(example_values=[0])
+    harmless: float = OutputField(example_values=[0])
+    malicious: float = OutputField(example_values=[0])
+    suspicious: float = OutputField(example_values=[0])
+    timeout: float = OutputField(example_values=[0])
+    type_unsupported: float = OutputField(example_values=[16], alias="type-unsupported")
+    undetected: float = OutputField(example_values=[59])
+
+class PdfInfoOutput(ActionOutput):
+    acroform: float
+    autoaction: float
+    embedded_file: float
+    encrypted: float
+    flash: float
+    header: str = OutputField(example_values=["%PDF-1.5"])
+    javascript: float
+    jbig2_compression: float
+    js: float
+    num_endobj: float = OutputField(example_values=[29])
+    num_endstream: float = OutputField(example_values=[28])
+    num_launch_actions: float
+    num_obj: float = OutputField(example_values=[29])
+    num_object_streams: float = OutputField(example_values=[1])
+    num_pages: float
+    num_stream: float = OutputField(example_values=[28])
+    openaction: float
+    startxref: float = OutputField(example_values=[1])
+    suspicious_colors: float
+    trailer: float
+    xfa: float
+    xref: float
+
+
+class ImportListOutput(ActionOutput):
+    library_name: str = OutputField(example_values=["MSVCP60.dll"])
+    
+class ResourceDetailsOutput(ActionOutput):
+    chi2: float = OutputField(example_values=[33203.078125])
+    entropy: float = OutputField(example_values=[1.802635908126831])
+    filetype: str = OutputField(example_values=["Data"])
+    lang: str = OutputField(example_values=["CHINESE SIMPLIFIED"])
+    sha256: str = OutputField(example_values=["9999999999f0f912228ae647d10e15a014b8ce40dd164fa30290913227d"])
+    type: str = OutputField(example_values=["RT_CURSOR"])
+
+
+class ResourceLangsOutput(ActionOutput):
+    CHINESE_SIMPLIFIED: float = OutputField(example_values=[8], alias="CHINESE SIMPLIFIED")
+
+
+class ResourceTypesOutput(ActionOutput):
+    RT_BITMAP: float = OutputField(example_values=[4])
+    RT_CURSOR: float = OutputField(example_values=[1])
+    RT_GROUP_CURSOR: float = OutputField(example_values=[1])
+    RT_MENU: float = OutputField(example_values=[1])
+    RT_VERSION: float = OutputField(example_values=[1])
+
+class SectionsOutput(ActionOutput):
+    chi2: float = OutputField(example_values=[672207.13])
+    entropy: float = OutputField(example_values=[6.46])
+    flags: str = OutputField(example_values=["rx"])
+    md5: str = OutputField(example_values=["999999999982ea3987560f91ce29f946f4"])
+    name: str = OutputField(example_values=[".text"])
+    raw_size: float = OutputField(example_values=[90112])
+    virtual_address: float = OutputField(example_values=[4096])
+    virtual_size: float = OutputField(example_values=[90112])
+
+class PeInfoOutput(ActionOutput):
+    entry_point: float = OutputField(example_values=[176128])
+    imphash: str = OutputField(example_values=["6bff2c73afd9249c4261ecfba6ff33c3"])
+    import_list: list[ImportListOutput]
+    machine_type: float = OutputField(example_values=[332])
+    overlay: list[str] = OutputField(example_values=["xyz"])
+    resource_details: list[ResourceDetailsOutput]
+    resource_langs: ResourceLangsOutput
+    resource_types: ResourceTypesOutput
+    rich_pe_header_hash: str = OutputField(example_values=["9999999999167a185aba138b2846e0b906"])
+    sections: list[SectionsOutput]
+    timestamp: float = OutputField(example_values=[1259933759])
+
+
+
+class PopularThreatCategoryOutput(ActionOutput):
+    count: float = OutputField(example_values=[16])
+    value: str = OutputField(example_values=["virus"])
+
+
+class PopularThreatNameOutput(ActionOutput):
+    count: float = OutputField(example_values=[32])
+    value: str = OutputField(example_values=["parite"])
+
+
+class SandboxVerdictsOutput(ActionOutput):
+    Lastline: list[str] = OutputField(example_values=["xyz"])
+    Tencent_HABO: list[str] = OutputField(example_values=["xyz"], alias="Tencent HABO")
+
+class PopularThreatClassificationOutput(ActionOutput):
+    popular_threat_category: list[PopularThreatCategoryOutput]
+    popular_threat_name: list[PopularThreatNameOutput]
+    suggested_threat_label: str = OutputField(example_values=["virus.parite/pate"])
+
+class TotalVotesOutput(ActionOutput):
+    harmless: float = OutputField(example_values=[0])
+    malicious: float = OutputField(example_values=[0])
+
+class TridOutput(ActionOutput):
+    file_type: str = OutputField(example_values=["Unix-like shebang (var.1) (gen)"])
+    probability: float = OutputField(example_values=[100])
 
 class FileReputationOutput(ActionOutput):
     id: str = OutputField(cef_types=["sha256"])
@@ -187,22 +337,6 @@ class CrowdsourcedContextOutput(ActionOutput):
     source: str = OutputField(example_values=["benkow.cc"])
     timestamp: float = OutputField(example_values=[1622592000])
     title: str = OutputField(example_values=["CnC Panel"])
-
-
-class LastAnalysisResultsOutput(ActionOutput):
-    category: str = OutputField(example_values=["harmless"])
-    engine_name: str = OutputField(example_values=["CRDF"])
-    method: str = OutputField(example_values=["blacklist"])
-    result: str = OutputField(example_values=["clean"])
-    vendor: str = OutputField(example_values=["Symantec"])
-
-
-class LastAnalysisStatsOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[86])
-    malicious: float = OutputField(example_values=[0])
-    suspicious: float = OutputField(example_values=[0])
-    timeout: float = OutputField(example_values=[0])
-    undetected: float = OutputField(example_values=[11])
 
 
 class CertSignatureOutput(ActionOutput):
@@ -300,11 +434,6 @@ class LastHttpsCertificateOutput(ActionOutput):
     version: str = OutputField(example_values=["V3"])
 
 
-class TotalVotesOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[0])
-    malicious: float = OutputField(example_values=[0])
-
-
 class AttributesOutput(ActionOutput):
     as_owner: str = OutputField(example_values=["Orange"])
     asn: float = OutputField(example_values=[3215])
@@ -370,21 +499,6 @@ class CategoriesOutput(ActionOutput):
     Xcitium_Verdict_Cloud: str = OutputField(example_values=["media sharing"], alias="Xcitium Verdict Cloud")
     alphaMountain: AlphamountainOutput
 
-
-class LastAnalysisResultsOutput(ActionOutput):
-    category: str = OutputField(example_values=["harmless"])
-    engine_name: str = OutputField(example_values=["CRDF"])
-    method: str = OutputField(example_values=["blacklist"])
-    result: str = OutputField(example_values=["clean"])
-    vendor: str = OutputField(example_values=["Symantec"])
-
-
-class LastAnalysisStatsOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[78])
-    malicious: float = OutputField(example_values=[0])
-    suspicious: float = OutputField(example_values=[1])
-    timeout: float = OutputField(example_values=[0])
-    undetected: float = OutputField(example_values=[8])
 
 
 class LastHttpResponseCookiesOutput(ActionOutput):
@@ -476,11 +590,6 @@ class LastHttpResponseHeadersOutput(ActionOutput):
     x_frame_options: str = OutputField(example_values=["DENY"], alias="x-frame-options")
 
 
-class TotalVotesOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[0])
-    malicious: float = OutputField(example_values=[0])
-
-
 class ScorecardResearchBeaconOutput(ActionOutput):
     id: str = OutputField(example_values=["7241469"])
     timestamp: float = OutputField(example_values=[1627544121])
@@ -567,20 +676,6 @@ class CategoriesOutput(ActionOutput):
     alphaMountain: AlphamountainOutput
 
 
-class LastAnalysisResultsOutput(ActionOutput):
-    category: str = OutputField(example_values=["harmless"])
-    engine_name: str = OutputField(example_values=["CRDF"])
-    method: str = OutputField(example_values=["blacklist"])
-    result: str = OutputField(example_values=["clean"])
-    vendor: str = OutputField(example_values=["Symantec"])
-
-
-class LastAnalysisStatsOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[78])
-    malicious: float = OutputField(example_values=[0])
-    suspicious: float = OutputField(example_values=[1])
-    timeout: float = OutputField(example_values=[0])
-    undetected: float = OutputField(example_values=[8])
 
 
 class LastHttpResponseCookiesOutput(ActionOutput):
@@ -700,11 +795,6 @@ class LastHttpResponseHeadersOutput(ActionOutput):
     x_xss_protection: str = OutputField(example_values=["1; mode=block"], alias="x-xss-protection")
 
 
-class TotalVotesOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[0])
-    malicious: float = OutputField(example_values=[0])
-
-
 class DoubleclickOutput(ActionOutput):
     timestamp: float = OutputField(example_values=[1664533059])
     url: str
@@ -744,8 +834,8 @@ class TrackersOutput(ActionOutput):
 
 class AttributesOutput(ActionOutput):
     date: float = OutputField(example_values=[1613648861])
-    # results: ResultsOutput
-    # stats: StatsOutput
+    results: ResultsOutput
+    stats: StatsOutput
     status: str = OutputField(example_values=["completed"])
 
 
@@ -1663,135 +1753,8 @@ class HtmlInfoOutput(ActionOutput):
     scripts: list[ScriptsOutput]
 
 
-class LastAnalysisResultsOutput(ActionOutput):
-    category: str = OutputField(example_values=["undetected"])
-    engine_name: str = OutputField(example_values=["CMC"])
-    engine_update: str = OutputField(example_values=["20210218"])
-    engine_version: str = OutputField(example_values=["2.10.2019.1"])
-    method: str = OutputField(example_values=["blacklist"])
-    result: str
-    vendor: str = OutputField(example_values=["Symantec"])
-
-
-class LastAnalysisStatsOutput(ActionOutput):
-    confirmed_timeout: float = OutputField(example_values=[0], alias="confirmed-timeout")
-    failure: float = OutputField(example_values=[0])
-    harmless: float = OutputField(example_values=[0])
-    malicious: float = OutputField(example_values=[0])
-    suspicious: float = OutputField(example_values=[0])
-    timeout: float = OutputField(example_values=[0])
-    type_unsupported: float = OutputField(example_values=[16], alias="type-unsupported")
-    undetected: float = OutputField(example_values=[59])
-
-
 class PackersOutput(ActionOutput):
     F_PROT: str = OutputField(example_values=["appended, docwrite"], alias="F-PROT")
-
-
-class PdfInfoOutput(ActionOutput):
-    acroform: float
-    autoaction: float
-    embedded_file: float
-    encrypted: float
-    flash: float
-    header: str = OutputField(example_values=["%PDF-1.5"])
-    javascript: float
-    jbig2_compression: float
-    js: float
-    num_endobj: float = OutputField(example_values=[29])
-    num_endstream: float = OutputField(example_values=[28])
-    num_launch_actions: float
-    num_obj: float = OutputField(example_values=[29])
-    num_object_streams: float = OutputField(example_values=[1])
-    num_pages: float
-    num_stream: float = OutputField(example_values=[28])
-    openaction: float
-    startxref: float = OutputField(example_values=[1])
-    suspicious_colors: float
-    trailer: float
-    xfa: float
-    xref: float
-
-
-class ImportListOutput(ActionOutput):
-    library_name: str = OutputField(example_values=["MSVCP60.dll"])
-
-
-class ResourceDetailsOutput(ActionOutput):
-    chi2: float = OutputField(example_values=[33203.078125])
-    entropy: float = OutputField(example_values=[1.802635908126831])
-    filetype: str = OutputField(example_values=["Data"])
-    lang: str = OutputField(example_values=["CHINESE SIMPLIFIED"])
-    sha256: str = OutputField(example_values=["9999999999f0f912228ae647d10e15a014b8ce40dd164fa30290913227d"])
-    type: str = OutputField(example_values=["RT_CURSOR"])
-
-
-class ResourceLangsOutput(ActionOutput):
-    CHINESE_SIMPLIFIED: float = OutputField(example_values=[8], alias="CHINESE SIMPLIFIED")
-
-
-class ResourceTypesOutput(ActionOutput):
-    RT_BITMAP: float = OutputField(example_values=[4])
-    RT_CURSOR: float = OutputField(example_values=[1])
-    RT_GROUP_CURSOR: float = OutputField(example_values=[1])
-    RT_MENU: float = OutputField(example_values=[1])
-    RT_VERSION: float = OutputField(example_values=[1])
-
-
-class SectionsOutput(ActionOutput):
-    chi2: float = OutputField(example_values=[672207.13])
-    entropy: float = OutputField(example_values=[6.46])
-    flags: str = OutputField(example_values=["rx"])
-    md5: str = OutputField(example_values=["999999999982ea3987560f91ce29f946f4"])
-    name: str = OutputField(example_values=[".text"])
-    raw_size: float = OutputField(example_values=[90112])
-    virtual_address: float = OutputField(example_values=[4096])
-    virtual_size: float = OutputField(example_values=[90112])
-
-
-class PeInfoOutput(ActionOutput):
-    entry_point: float = OutputField(example_values=[176128])
-    imphash: str = OutputField(example_values=["6bff2c73afd9249c4261ecfba6ff33c3"])
-    import_list: list[ImportListOutput]
-    machine_type: float = OutputField(example_values=[332])
-    overlay: list[str] = OutputField(example_values=["xyz"])
-    resource_details: list[ResourceDetailsOutput]
-    resource_langs: ResourceLangsOutput
-    resource_types: ResourceTypesOutput
-    rich_pe_header_hash: str = OutputField(example_values=["9999999999167a185aba138b2846e0b906"])
-    sections: list[SectionsOutput]
-    timestamp: float = OutputField(example_values=[1259933759])
-
-
-class PopularThreatCategoryOutput(ActionOutput):
-    count: float = OutputField(example_values=[16])
-    value: str = OutputField(example_values=["virus"])
-
-
-class PopularThreatNameOutput(ActionOutput):
-    count: float = OutputField(example_values=[32])
-    value: str = OutputField(example_values=["parite"])
-
-
-class PopularThreatClassificationOutput(ActionOutput):
-    popular_threat_category: list[PopularThreatCategoryOutput]
-    popular_threat_name: list[PopularThreatNameOutput]
-    suggested_threat_label: str = OutputField(example_values=["virus.parite/pate"])
-
-
-class SandboxVerdictsOutput(ActionOutput):
-    Lastline: list[str] = OutputField(example_values=["xyz"])
-    Tencent_HABO: list[str] = OutputField(example_values=["xyz"], alias="Tencent HABO")
-
-
-class TotalVotesOutput(ActionOutput):
-    harmless: float = OutputField(example_values=[0])
-    malicious: float = OutputField(example_values=[0])
-
-
-class TridOutput(ActionOutput):
-    file_type: str = OutputField(example_values=["Unix-like shebang (var.1) (gen)"])
-    probability: float = OutputField(example_values=[100])
 
 
 class AlyacOutput(ActionOutput):
