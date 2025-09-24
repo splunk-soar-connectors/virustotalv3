@@ -4,7 +4,7 @@ from soar_sdk.action_results import ActionOutput, OutputField
 from models.outputs.domain_reputation.rdap import RDAP
 from models.outputs.domain_reputation.popularity import PopularityRanks
 from models.outputs.domain_reputation.tls import HTTPSCertificate
-from models.outputs.domain_reputation.analysis import AnalysisResults, AnalysisStats
+from models.outputs.domain_reputation.analysis import AnalysisStats, AnalysisResults
 from models.outputs.shared import TotalVotes
 
 
