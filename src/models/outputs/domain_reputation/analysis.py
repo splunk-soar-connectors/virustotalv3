@@ -107,7 +107,7 @@ class DomainAnalysisResults(ActionOutput):
     ZeroFox: Optional[DomainAnalysisResult]
 
 
-class AnalysisStats(ActionOutput):
+class DomainAnalysisStats(ActionOutput):
     harmless: int
     malicious: int
     suspicious: int

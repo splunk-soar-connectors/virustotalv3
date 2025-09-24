@@ -4,7 +4,10 @@ from soar_sdk.action_results import ActionOutput, OutputField
 from models.outputs.domain_reputation.rdap import RDAP
 from models.outputs.domain_reputation.popularity import PopularityRanks
 from models.outputs.domain_reputation.tls import HTTPSCertificate
-from models.outputs.domain_reputation.analysis import AnalysisStats, AnalysisResults
+from models.outputs.domain_reputation.analysis import (
+    DomainAnalysisResults,
+    DomainAnalysisStats,
+)
 from models.outputs.shared import TotalVotes
 
 
@@ -43,7 +46,7 @@ class DomainAttributes(ActionOutput):
     creation_date: int = OutputField(
         cef_types=["timestamp"], example_values=[1613635130]
     )
-    last_analysis_results: AnalysisResults
+    last_analysis_results: DomainAnalysisResults
     total_votes: TotalVotes
     whois_date: int = OutputField(cef_types=["timestamp"], example_values=[1613635130])
     expiration_date: int = OutputField(
@@ -64,7 +67,7 @@ class DomainAttributes(ActionOutput):
     last_https_certificate_date: int = OutputField(
         cef_types=["timestamp"], example_values=[1613635210]
     )
-    last_analysis_stats: AnalysisStats
+    last_analysis_stats: DomainAnalysisStats
     registrar: str
     categories: DomainCategories
     popularity_ranks: PopularityRanks

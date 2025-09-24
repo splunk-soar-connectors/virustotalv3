@@ -10,8 +10,8 @@ from soar_sdk.params import Param, Params, MakeRequestParams
 from soar_sdk.action_results import MakeRequestOutput
 
 from models.outputs.shared import APILinks
-
 from models.outputs.domain_reputation.domain import DomainAttributes
+from models.outputs.file_reputation.file import FileAttributes
 
 from utils import sanitize_key_names
 
@@ -287,78 +287,28 @@ class TridOutput(ActionOutput):
     file_type: str = OutputField(example_values=["Unix-like shebang (var.1) (gen)"])
     probability: float = OutputField(example_values=[100])
 
-class FileAttributes(ActionOutput):
-    authentihash: str = OutputField(
-        example_values=[
-            "999999990b465f7bd1e7568640397f01fc4f8819ce6f0c1415690ecee646464cec"
-        ]
-    )
-    creation_date: float = OutputField(example_values=[1410950077])
-    detectiteasy: DetectiteasyOutput
-    first_submission_date: float = OutputField(example_values=[1612961082])
-    last_analysis_date: float = OutputField(example_values=[1613635130])
-    last_analysis_results: list[LastAnalysisResultsOutput]
-    last_analysis_stats: LastAnalysisStatsOutput
-    last_modification_date: float = OutputField(example_values=[1613635210])
-    last_submission_date: float = OutputField(example_values=[1613635130])
-    magic: str = OutputField(example_values=["a python2.7\\015script text executable"])
-    md5: str = OutputField(
-        cef_types=["md5"], example_values=["2e65153f2c49c91a0206ee7a8c00e659"]
-    )
-    meaningful_name: str = OutputField(example_values=["update_cr.py"])
-    names: str = OutputField(example_values=["update_cr.py"])
-    pdf_info: PdfInfoOutput
-    pe_info: PeInfoOutput
-    popular_threat_classification: PopularThreatClassificationOutput
-    reputation: float = OutputField(example_values=[0])
-    sandbox_verdicts: SandboxVerdictsOutput
-    sha1: str = OutputField(
-        cef_types=["sha1"], example_values=["9999969a19142292710254cde97df84e46dfe33a"]
-    )
-    sha256: str = OutputField(
-        cef_types=["sha256"],
-        example_values=[
-            "9999999ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
-        ],
-    )
-    signature_info: SignatureInfoOutput
-    size: float = OutputField(example_values=[6285])
-    ssdeep: str = OutputField(
-        example_values=[
-            "192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygiINVALIDu7ThPBLkv:pq7Mgg0/NdMu/1BLkv"
-        ]
-    )
-    tags: str = OutputField(example_values=["python"])
-    times_submitted: float = OutputField(example_values=[13])
-    tlsh: str = OutputField(
-        example_values=[
-            "9999999905AC5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC"
-        ]
-    )
-    total_votes: TotalVotesOutput
-    trid: list[TridOutput]
-    type_description: str = OutputField(example_values=["Python"])
-    type_extension: str = OutputField(example_values=["py"])
-    type_tag: str = OutputField(example_values=["python"])
-    unique_sources: float = OutputField(example_values=[1])
-    vhash: str = OutputField(
-        example_values=["999996657d755510804011z9005b9z25z12z3afz"]
-    )
-
-
 class FileReputationOutput(ActionOutput):
-    attributes: FileAttributes
-    id: str = OutputField(
-        cef_types=["sha256"],
-        example_values=["9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"],
-    )
-    links: APILinks
+    id: str = OutputField(cef_types=["sha256"])
     type: str = OutputField(example_values=["file"])
+    links: APILinks
+    attributes: FileAttributes
 
 
 @app.action(description="Queries VirusTotal for file reputation info", action_type="investigate")
 def file_reputation(params: FileReputationParams, soar: SOARClient, asset: Asset) -> FileReputationOutput:
-    raise NotImplementedError()
+    client = asset.get_client()
+
+    response = client.get(f"files/{params.hash}")
+    response.raise_for_status()
+
+    logger.debug(f"VirusTotal response: {response.json()}")
+    if not (data := response.json().get("data")):
+        raise ActionFailure(f"No data found for file {params.hash}")
+
+    sanitized_data = sanitize_key_names(data)
+    logger.debug(f"Sanitized data: {sanitized_data}")
+
+    return FileReputationOutput(**sanitized_data)
 
 
 class GetFileParams(Params):
