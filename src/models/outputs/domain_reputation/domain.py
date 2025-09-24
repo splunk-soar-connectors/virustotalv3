@@ -1,0 +1,75 @@
+from typing import Optional
+from soar_sdk.action_results import ActionOutput, OutputField
+
+from models.outputs.domain_reputation.rdap import RDAP
+from models.outputs.domain_reputation.popularity import PopularityRanks
+from models.outputs.domain_reputation.tls import HTTPSCertificate
+from models.outputs.domain_reputation.analysis import AnalysisResults, AnalysisStats
+from models.outputs.shared import TotalVotes
+
+
+class DNSRecord(ActionOutput):
+    type: str = OutputField(example_values=["A"])
+    value: str = OutputField(example_values=["192.0.2.1"])
+    ttl: int
+    rname: Optional[str]
+    serial: Optional[int]
+    refresh: Optional[int]
+    retry: Optional[int]
+    expire: Optional[int]
+    minimum: Optional[int]
+
+
+class DomainCategories(ActionOutput):
+    alphaMountain_ai: Optional[str]
+    BitDefender: Optional[str]
+    Xcitium_Verdict_Cloud: Optional[str]
+    Sophos: Optional[str]
+    Forcepoint_ThreatSeeker: Optional[str]
+
+
+class DomainAttributes(ActionOutput):
+    last_dns_records_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1757503155]
+    )
+    jarm: str = OutputField(
+        example_values=[
+            "29d3fd00029d29d00042d43d00041d598ac0c1012db967bb1ad0ff2491b3ae"
+        ]
+    )
+    last_analysis_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1679467461]
+    )
+    creation_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1613635130]
+    )
+    last_analysis_results: AnalysisResults
+    total_votes: TotalVotes
+    whois_date: int = OutputField(cef_types=["timestamp"], example_values=[1613635130])
+    expiration_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1613635130]
+    )
+    last_modification_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1613635210]
+    )
+    whois: str = OutputField(
+        example_values=[
+            "Test data Domain Name: TEST.COM Registry Domain ID: 9999999999_DOMAIN_COM-VRSN Registrar WHOIS Server: whois.test.com Registrar URL: http://www.test.com Updated Date: 2021-02-17T07:07:07Z Creation Date: 2021-02-17T07:07:07Z Registry Expiry Date: 2022-02-17T07:07:07Z Registrar: Test Registrar, Inc. Registrar IANA ID: 9999 Registrar Abuse Contact Email:"
+        ]
+    )
+    reputation: int
+    last_dns_records: list[DNSRecord]
+    last_https_certificate: HTTPSCertificate
+    tld: str = OutputField(example_values=["com"])
+    last_https_certificate_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1613635210]
+    )
+    last_analysis_stats: AnalysisStats
+    registrar: str
+    categories: DomainCategories
+    popularity_ranks: PopularityRanks
+    last_update_date: int = OutputField(
+        cef_types=["timestamp"], example_values=[1613635210]
+    )
+    rdap: RDAP
+    tags: list[str]
