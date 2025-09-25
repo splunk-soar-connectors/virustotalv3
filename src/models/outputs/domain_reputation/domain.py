@@ -1,14 +1,14 @@
 from typing import Optional
 from soar_sdk.action_results import ActionOutput, OutputField
 
-from models.outputs.domain_reputation.rdap import RDAP
+from models.outputs.shared.rdap import RDAP
 from models.outputs.domain_reputation.popularity import PopularityRanks
-from models.outputs.domain_reputation.tls import HTTPSCertificate
+from models.outputs.shared.tls import HTTPSCertificate
 from models.outputs.domain_reputation.analysis import (
     DomainAnalysisResults,
     DomainAnalysisStats,
 )
-from models.outputs.shared import TotalVotes
+from models.outputs.shared.main import TotalVotes
 
 
 class DNSRecord(ActionOutput):

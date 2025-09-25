@@ -9,9 +9,10 @@ from soar_sdk.logging import getLogger
 from soar_sdk.params import Param, Params, MakeRequestParams
 from soar_sdk.action_results import MakeRequestOutput
 
-from models.outputs.shared import APILinks
+from models.outputs.shared.main import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
 from models.outputs.file_reputation.file import FileAttributes
+from models.outputs.ip_reputation.ip import IPAttributes
 
 from utils import sanitize_key_names
 
@@ -227,15 +228,27 @@ class IpReputationParams(Params):
 
 
 class IpReputationOutput(ActionOutput):
-    # attributes: IPAttributes
     id: str = OutputField(cef_types=["ip"], example_values=["2.3.4.5"])
-    links: APILinks
     type: str = OutputField(example_values=["ip_address"])
+    links: APILinks
+    attributes: IPAttributes
 
 
 @app.action(description="Queries VirusTotal for IP info", action_type="investigate")
 def ip_reputation(params: IpReputationParams, soar: SOARClient, asset: Asset) -> IpReputationOutput:
-    raise NotImplementedError()
+    client = asset.get_client()
+
+    response = client.get(f"ip_addresses/{params.ip}")
+    response.raise_for_status()
+
+    logger.debug(f"VirusTotal response: {response.json()}")
+    if not (data := response.json().get("data")):
+        raise ActionFailure(f"No data found for IP {params.ip}")
+
+    sanitized_data = sanitize_key_names(data)
+    logger.debug(f"Sanitized data: {sanitized_data}")
+
+    return IpReputationOutput(**sanitized_data)
 
 
 class UrlReputationParams(Params):

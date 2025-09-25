@@ -44,7 +44,7 @@ class RSAParameters(ActionOutput):
 
 class CertificatePublicKey(ActionOutput):
     algorithm: str
-    rsa: RSAParameters
+    rsa: Optional[RSAParameters]
 
 
 class CertificateSubjectName(ActionOutput):

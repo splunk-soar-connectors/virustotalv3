@@ -1,7 +1,7 @@
 from typing import Optional
 from soar_sdk.action_results import ActionOutput, OutputField
 
-from models.outputs.shared import TotalVotes
+from models.outputs.shared.main import TotalVotes
 from models.outputs.file_reputation.sandbox import FileSandboxVerdicts
 from models.outputs.file_reputation.analysis import (
     FileAnalysisStats,
