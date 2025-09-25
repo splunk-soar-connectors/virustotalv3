@@ -30,16 +30,16 @@ class CAInformationAccess(ActionOutput):
 
 
 class CertificateExtensions(ActionOutput):
-    authority_key_identifier: CAKeyIdentifier
-    subject_key_identifier: str
-    subject_alternative_name: list[str]
-    certificate_policies: list[str]
-    key_usage: list[str]
-    extended_key_usage: list[str]
-    crl_distribution_points: list[str] = OutputField(cef_types=["url"])
-    ca_information_access: CAInformationAccess
-    CA: bool
-    certificate_transparency_signature: str = OutputField(
+    authority_key_identifier: Optional[CAKeyIdentifier]
+    subject_key_identifier: Optional[str]
+    subject_alternative_name: Optional[list[str]]
+    certificate_policies: Optional[list[str]]
+    key_usage: Optional[list[str]]
+    extended_key_usage: Optional[list[str]]
+    crl_distribution_points: Optional[list[str]] = OutputField(cef_types=["url"])
+    ca_information_access: Optional[CAInformationAccess]
+    CA: Optional[bool]
+    certificate_transparency_signature: Optional[str] = OutputField(
         alias="1_3_6_1_4_1_11129_2_4_2"
     )
 
