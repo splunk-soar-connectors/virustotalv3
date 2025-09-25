@@ -209,7 +209,17 @@ class GetFileParams(Params):
     action_type="investigate",
 )
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
-    raise NotImplementedError()
+    client = asset.get_client()
+
+    response = client.get(f"files/{params.hash}/download")
+    response.raise_for_status()
+
+    soar.vault.create_attachment(
+        soar.get_executing_container_id(), response.content, params.hash
+    )
+
+    soar.set_message("File downloaded and added to the vault.")
+    return ActionOutput()
 
 
 class IpReputationParams(Params):
