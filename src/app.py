@@ -1,3 +1,16 @@
+# Copyright (c) 2025 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 import httpx
 
 from soar_sdk.abstract import SOARClient
@@ -20,7 +33,9 @@ logger = getLogger()
 
 
 class Asset(BaseAsset):
-    apikey: str = AssetField(required=True, description="VirusTotal API key", sensitive=True)
+    apikey: str = AssetField(
+        required=True, description="VirusTotal API key", sensitive=True
+    )
     poll_interval: float = AssetField(
         required=False,
         description="Number of minutes to poll for a detonation result (Default: 5)",
@@ -68,7 +83,7 @@ class Asset(BaseAsset):
 
 
 app = App(
-    name="virustotalv3",
+    name="VirusTotal v3",
     app_type="reputation",
     logo="logo_virustotalv3.svg",
     logo_dark="logo_virustotalv3_dark.svg",
@@ -115,7 +130,9 @@ class DomainReputationOutput(ActionOutput):
 
 
 @app.action(description="Queries VirusTotal for domain info", action_type="investigate")
-def domain_reputation(params: DomainReputationParams, soar: SOARClient, asset: Asset) -> DomainReputationOutput:
+def domain_reputation(
+    params: DomainReputationParams, soar: SOARClient, asset: Asset
+) -> DomainReputationOutput:
     client = asset.get_client()
 
     response = client.get(f"domains/{params.domain}")
@@ -129,6 +146,7 @@ def domain_reputation(params: DomainReputationParams, soar: SOARClient, asset: A
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     return DomainReputationOutput(**sanitized_data)
+
 
 @app.make_request()
 def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
@@ -160,6 +178,7 @@ def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
         status_code=response.status_code,
         response_body=response.text,
     )
+
 
 class FileReputationParams(Params):
     hash: str = Param(
@@ -235,7 +254,9 @@ class IpReputationOutput(ActionOutput):
 
 
 @app.action(description="Queries VirusTotal for IP info", action_type="investigate")
-def ip_reputation(params: IpReputationParams, soar: SOARClient, asset: Asset) -> IpReputationOutput:
+def ip_reputation(
+    params: IpReputationParams, soar: SOARClient, asset: Asset
+) -> IpReputationOutput:
     client = asset.get_client()
 
     response = client.get(f"ip_addresses/{params.ip}")
@@ -252,14 +273,16 @@ def ip_reputation(params: IpReputationParams, soar: SOARClient, asset: Asset) ->
 
 
 class UrlReputationParams(Params):
-    url: str = Param(description="URL to query", primary=True, cef_types=["url", "domain"])
+    url: str = Param(
+        description="URL to query", primary=True, cef_types=["url", "domain"]
+    )
 
 
 class UrlReputationOutput(ActionOutput):
     # attributes: URLAttributes
     id: str = OutputField(
         example_values=[
-            "99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"
+            "99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"  # pragma: allowlist secret
         ]
     )
     links: APILinks
@@ -286,7 +309,11 @@ class DetonateUrlParams(Params):
 class DetonateUrlOutput(ActionOutput):
     # attributes: AttributesOutput
     # data: DataOutput
-    id: str = OutputField(example_values=["e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"])
+    id: str = OutputField(
+        example_values=[
+            "e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"  # pragma: allowlist secret
+        ]
+    )
     links: APILinks
     # meta: MetaOutput
     type: str = OutputField(example_values=["url"])
@@ -297,7 +324,9 @@ class DetonateUrlOutput(ActionOutput):
     action_type="investigate",
     verbose="<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
 )
-def detonate_url(params: DetonateUrlParams, soar: SOARClient, asset: Asset) -> DetonateUrlOutput:
+def detonate_url(
+    params: DetonateUrlParams, soar: SOARClient, asset: Asset
+) -> DetonateUrlOutput:
     raise NotImplementedError()
 
 
@@ -316,7 +345,7 @@ class DetonateFileOutput(ActionOutput):
     id: str = OutputField(
         cef_types=["sha256"],
         example_values=[
-            "9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+            "9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"  # pragma: allowlist secret
         ],
     )
     links: APILinks
@@ -353,7 +382,9 @@ class GetReportOutput(ActionOutput):
     action_type="investigate",
     verbose="For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
 )
-def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> GetReportOutput:
+def get_report(
+    params: GetReportParams, soar: SOARClient, asset: Asset
+) -> GetReportOutput:
     raise NotImplementedError()
 
 
@@ -365,7 +396,9 @@ class GetCachedEntriesOutput(ActionOutput):
 
 
 @app.action(description="Get listing of cached entries", action_type="investigate")
-def get_cached_entries(params: Params, soar: SOARClient, asset: Asset) -> GetCachedEntriesOutput:
+def get_cached_entries(
+    params: Params, soar: SOARClient, asset: Asset
+) -> GetCachedEntriesOutput:
     raise NotImplementedError()
 
 
@@ -373,7 +406,9 @@ class ClearCacheOutput(ActionOutput):
     status: str = OutputField(example_values=["success"])
 
 
-@app.action(description="Clear all cached entries", action_type="generic", read_only=False)
+@app.action(
+    description="Clear all cached entries", action_type="generic", read_only=False
+)
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
     raise NotImplementedError()
 
@@ -406,7 +441,9 @@ class GetQuotasOutput(ActionOutput):
     description="Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details",
     action_type="investigate",
 )
-def get_quotas(params: GetQuotasParams, soar: SOARClient, asset: Asset) -> GetQuotasOutput:
+def get_quotas(
+    params: GetQuotasParams, soar: SOARClient, asset: Asset
+) -> GetQuotasOutput:
     raise NotImplementedError()
 
 
