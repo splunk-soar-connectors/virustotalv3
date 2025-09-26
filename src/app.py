@@ -26,6 +26,25 @@ from models.outputs.shared.main import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
 from models.outputs.file_reputation.file import FileAttributes
 from models.outputs.ip_reputation.ip import IPAttributes
+from models.outputs.quotas.quota_models import (
+    ApiRequestsDailyOutput,
+    ApiRequestsHourlyOutput,
+    ApiRequestsMonthlyOutput,
+    CollectionsCreationMonthlyOutput,
+    IntelligenceDownloadsMonthlyOutput,
+    IntelligenceGraphsPrivateOutput,
+    IntelligenceHuntingRulesOutput,
+    IntelligenceRetrohuntJobsMonthlyOutput,
+    IntelligenceSearchesMonthlyOutput,
+    IntelligenceVtdiffCreationMonthlyOutput,
+    MonitorStorageBytesOutput,
+    MonitorStorageFilesOutput,
+    MonitorUploadedBytesOutput,
+    MonitorUploadedFilesOutput,
+    PrivateScansMonthlyOutput,
+    PrivateScansPerMinuteOutput,
+)
+from typing import Optional
 from cache import DataCache
 import base64
 import datetime
@@ -99,6 +118,13 @@ app = App(
     fips_compliant=True,
     asset_cls=Asset,
 )
+
+
+def _get_percentage(used: int, allowed: int) -> float:
+    """Calculate percentage usage ratio"""
+    if allowed == 0:
+        return 0.0
+    return round((used / allowed) * 100, 2)
 
 
 def _get_cache_key(endpoint: str) -> str:
@@ -477,33 +503,123 @@ class GetQuotasParams(Params):
 
 
 class GetQuotasOutput(ActionOutput):
-    # api_requests_daily: ApiRequestsDailyOutput
-    # api_requests_hourly: ApiRequestsHourlyOutput
-    # api_requests_monthly: ApiRequestsMonthlyOutput
-    # collections_creation_monthly: CollectionsCreationMonthlyOutput
-    # intelligence_downloads_monthly: IntelligenceDownloadsMonthlyOutput
-    # intelligence_graphs_private: IntelligenceGraphsPrivateOutput
-    # intelligence_hunting_rules: IntelligenceHuntingRulesOutput
-    # intelligence_retrohunt_jobs_monthly: IntelligenceRetrohuntJobsMonthlyOutput
-    # intelligence_searches_monthly: IntelligenceSearchesMonthlyOutput
-    # intelligence_vtdiff_creation_monthly: IntelligenceVtdiffCreationMonthlyOutput
-    # monitor_storage_bytes: MonitorStorageBytesOutput
-    # monitor_storage_files: MonitorStorageFilesOutput
-    # monitor_uploaded_bytes: MonitorUploadedBytesOutput
-    # monitor_uploaded_files: MonitorUploadedFilesOutput
-    # private_scans_monthly: PrivateScansMonthlyOutput
-    # private_scans_per_minute: PrivateScansPerMinuteOutput
-    pass
+    api_requests_daily: ApiRequestsDailyOutput
+    api_requests_hourly: ApiRequestsHourlyOutput
+    api_requests_monthly: ApiRequestsMonthlyOutput
+    collections_creation_monthly: CollectionsCreationMonthlyOutput
+    intelligence_downloads_monthly: IntelligenceDownloadsMonthlyOutput
+    intelligence_graphs_private: IntelligenceGraphsPrivateOutput
+    intelligence_hunting_rules: IntelligenceHuntingRulesOutput
+    intelligence_retrohunt_jobs_monthly: IntelligenceRetrohuntJobsMonthlyOutput
+    intelligence_searches_monthly: IntelligenceSearchesMonthlyOutput
+    intelligence_vtdiff_creation_monthly: IntelligenceVtdiffCreationMonthlyOutput
+    monitor_storage_bytes: MonitorStorageBytesOutput
+    monitor_storage_files: MonitorStorageFilesOutput
+    monitor_uploaded_bytes: MonitorUploadedBytesOutput
+    monitor_uploaded_files: MonitorUploadedFilesOutput
+    private_scans_monthly: PrivateScansMonthlyOutput
+    private_scans_per_minute: PrivateScansPerMinuteOutput
+
+
+class GetQuotasSummaryOutput(ActionOutput):
+    user_hourly_api_ratio: Optional[float]
+    group_hourly_api_ratio: Optional[float]
+    user_daily_api_ratio: Optional[float]
+    group_daily_api_ratio: Optional[float]
+    user_monthly_api_ratio: Optional[float]
+    group_monthly_api_ratio: Optional[float]
+
+    @classmethod
+    def from_quotas_output(
+        cls, quotas_output: "GetQuotasOutput"
+    ) -> "GetQuotasSummaryOutput":
+        """Create a summary from a GetQuotasOutput instance"""
+        summary = cls()
+
+        # User hourly API ratio
+        if (
+            hasattr(quotas_output.api_requests_hourly, "user")
+            and quotas_output.api_requests_hourly.user
+        ):
+            summary.user_hourly_api_ratio = _get_percentage(
+                quotas_output.api_requests_hourly.user.used,
+                quotas_output.api_requests_hourly.user.allowed,
+            )
+
+        # Group hourly API ratio
+        if (
+            hasattr(quotas_output.api_requests_hourly, "group")
+            and quotas_output.api_requests_hourly.group
+        ):
+            summary.group_hourly_api_ratio = _get_percentage(
+                quotas_output.api_requests_hourly.group.used,
+                quotas_output.api_requests_hourly.group.allowed,
+            )
+
+        # User daily API ratio
+        if (
+            hasattr(quotas_output.api_requests_daily, "user")
+            and quotas_output.api_requests_daily.user
+        ):
+            summary.user_daily_api_ratio = _get_percentage(
+                quotas_output.api_requests_daily.user.used,
+                quotas_output.api_requests_daily.user.allowed,
+            )
+
+        # Group daily API ratio
+        if (
+            hasattr(quotas_output.api_requests_daily, "group")
+            and quotas_output.api_requests_daily.group
+        ):
+            summary.group_daily_api_ratio = _get_percentage(
+                quotas_output.api_requests_daily.group.used,
+                quotas_output.api_requests_daily.group.allowed,
+            )
+
+        # User monthly API ratio
+        if (
+            hasattr(quotas_output.api_requests_monthly, "user")
+            and quotas_output.api_requests_monthly.user
+        ):
+            summary.user_monthly_api_ratio = _get_percentage(
+                quotas_output.api_requests_monthly.user.used,
+                quotas_output.api_requests_monthly.user.allowed,
+            )
+
+        # Group monthly API ratio
+        if (
+            hasattr(quotas_output.api_requests_monthly, "group")
+            and quotas_output.api_requests_monthly.group
+        ):
+            summary.group_monthly_api_ratio = _get_percentage(
+                quotas_output.api_requests_monthly.group.used,
+                quotas_output.api_requests_monthly.group.allowed,
+            )
+
+        return summary
 
 
 @app.action(
     description="Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details",
     action_type="investigate",
+    summary_type=GetQuotasSummaryOutput,
 )
 def get_quotas(
     params: GetQuotasParams, soar: SOARClient, asset: Asset
 ) -> GetQuotasOutput:
-    raise NotImplementedError()
+    quotas_endpoint = f"users/{params.user_id}/overall_quotas"
+    resp_json = _make_request(asset, "GET", quotas_endpoint)
+    logger.debug(f"VirusTotal response: {resp_json}")
+    if not (data := resp_json.get("data")):
+        raise ActionFailure(f"No data found for user {params.user_id}")
+
+    sanitized_data = sanitize_key_names(data)
+    get_quotas_output = GetQuotasOutput(**sanitized_data)
+
+    get_quotas_summary = GetQuotasSummaryOutput.from_quotas_output(get_quotas_output)
+    soar.set_summary(get_quotas_summary)
+
+    return get_quotas_output
 
 
 if __name__ == "__main__":

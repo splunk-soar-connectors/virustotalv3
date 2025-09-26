@@ -2028,6 +2028,53 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failure |
 action_result.message | string | | |
 action_result.parameter.user_id | string | | |
+action_result.data.\*.api_requests_daily.group.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_daily.group.inherited_from | string | | vt_group |
+action_result.data.\*.api_requests_daily.group.used | numeric | | 2 |
+action_result.data.\*.api_requests_daily.user.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_daily.user.used | numeric | | 2 |
+action_result.data.\*.api_requests_hourly.group.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_hourly.group.inherited_from | string | | vt_group |
+action_result.data.\*.api_requests_hourly.group.used | numeric | | 2 |
+action_result.data.\*.api_requests_hourly.user.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_hourly.user.used | numeric | | 2 |
+action_result.data.\*.api_requests_monthly.group.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_monthly.group.inherited_from | string | | vt_group |
+action_result.data.\*.api_requests_monthly.group.used | numeric | | 2 |
+action_result.data.\*.api_requests_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_monthly.user.used | numeric | | 2 |
+action_result.data.\*.collections_creation_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.collections_creation_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_downloads_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_downloads_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_graphs_private.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_graphs_private.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_hunting_rules.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_hunting_rules.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_searches_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_searches_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_vtdiff_creation_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_vtdiff_creation_monthly.user.used | numeric | | 2 |
+action_result.data.\*.monitor_storage_bytes.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_storage_bytes.user.used | numeric | | 2 |
+action_result.data.\*.monitor_storage_files.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_storage_files.user.used | numeric | | 2 |
+action_result.data.\*.monitor_uploaded_bytes.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_uploaded_bytes.user.used | numeric | | 2 |
+action_result.data.\*.monitor_uploaded_files.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_uploaded_files.user.used | numeric | | 2 |
+action_result.data.\*.private_scans_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.private_scans_monthly.user.used | numeric | | 2 |
+action_result.data.\*.private_scans_per_minute.user.allowed | numeric | | 500 |
+action_result.data.\*.private_scans_per_minute.user.used | numeric | | 2 |
+action_result.summary.user_hourly_api_ratio | numeric | | |
+action_result.summary.group_hourly_api_ratio | numeric | | |
+action_result.summary.user_daily_api_ratio | numeric | | |
+action_result.summary.group_daily_api_ratio | numeric | | |
+action_result.summary.user_monthly_api_ratio | numeric | | |
+action_result.summary.group_monthly_api_ratio | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
