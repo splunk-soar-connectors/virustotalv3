@@ -26,6 +26,11 @@ from models.outputs.shared.main import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
 from models.outputs.file_reputation.file import FileAttributes
 from models.outputs.ip_reputation.ip import IPAttributes
+from cache import DataCache
+import base64
+import datetime
+import time
+
 
 from utils import sanitize_key_names
 
@@ -96,6 +101,47 @@ app = App(
 )
 
 
+def _get_cache_key(endpoint: str) -> str:
+    call = app.actions_manager.get_action_identifier()
+    if call == "url_reputation":
+        tmp_value = endpoint[5:].encode(encoding="UTF-8")
+        tmp_value = base64.urlsafe_b64decode(
+            tmp_value + b"=" * (-len(tmp_value) % 4)
+        ).decode()
+        cache_key = "{}:{}".format(call, "urls/" + tmp_value)
+    else:
+        cache_key = f"{call}:{endpoint}"
+
+    return cache_key
+
+
+def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
+    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+        saved_cache = app.actions_manager.asset_cache.get("vt_cache")
+        datacache = DataCache(
+            asset.cache_expiration_interval, asset.cache_size, saved_cache
+        )
+
+        cache_key = _get_cache_key(endpoint)
+        if entry := datacache.expire().search(cache_key):
+            cached_status = entry[0]
+            cached_response = entry[1]
+            if cached_status != "success":
+                raise ActionFailure(
+                    f"Cached response for {endpoint} is not success with error {cached_response}"
+                )
+
+            return cached_response
+        else:
+            client = asset.get_client()
+            response = client.request(method, endpoint, **kwargs)
+            response.raise_for_status()
+            # we're no longer going to store failed responses in the cache
+            datacache.add(cache_key, ("success", response.json()))
+            app.actions_manager.asset_cache["vt_cache"] = datacache.cache
+            return response.json()
+
+
 @app.test_connectivity()
 def test_connectivity(soar: SOARClient, asset: Asset) -> None:
     client = asset.get_client()
@@ -133,13 +179,10 @@ class DomainReputationOutput(ActionOutput):
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
 ) -> DomainReputationOutput:
-    client = asset.get_client()
+    resp_json = _make_request(asset, "GET", f"domains/{params.domain}")
 
-    response = client.get(f"domains/{params.domain}")
-    response.raise_for_status()
-
-    logger.debug(f"VirusTotal response: {response.json()}")
-    if not (data := response.json().get("data")):
+    logger.debug(f"VirusTotal response: {resp_json}")
+    if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for domain {params.domain}")
 
     sanitized_data = sanitize_key_names(data)
@@ -201,13 +244,10 @@ class FileReputationOutput(ActionOutput):
 def file_reputation(
     params: FileReputationParams, soar: SOARClient, asset: Asset
 ) -> FileReputationOutput:
-    client = asset.get_client()
+    resp_json = _make_request(asset, "GET", f"files/{params.hash}")
 
-    response = client.get(f"files/{params.hash}")
-    response.raise_for_status()
-
-    logger.debug(f"VirusTotal response: {response.json()}")
-    if not (data := response.json().get("data")):
+    logger.debug(f"VirusTotal response: {resp_json}")
+    if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for file {params.hash}")
 
     sanitized_data = sanitize_key_names(data)
@@ -257,13 +297,10 @@ class IpReputationOutput(ActionOutput):
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
-    client = asset.get_client()
+    resp_json = _make_request(asset, "GET", f"ips/{params.ip}")
 
-    response = client.get(f"ip_addresses/{params.ip}")
-    response.raise_for_status()
-
-    logger.debug(f"VirusTotal response: {response.json()}")
-    if not (data := response.json().get("data")):
+    logger.debug(f"VirusTotal response: {resp_json}")
+    if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for IP {params.ip}")
 
     sanitized_data = sanitize_key_names(data)
@@ -398,8 +435,28 @@ class GetCachedEntriesOutput(ActionOutput):
 @app.action(description="Get listing of cached entries", action_type="investigate")
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
-) -> GetCachedEntriesOutput:
-    raise NotImplementedError()
+) -> list[GetCachedEntriesOutput]:
+    saved_cache = app.actions_manager.asset_cache.get("vt_cache", {})
+
+    datacache = DataCache(
+        asset.cache_expiration_interval, asset.cache_size, saved_cache
+    )
+    return [
+        GetCachedEntriesOutput(
+            date_added=datetime.datetime.fromtimestamp(
+                val_dict["timestamp"], datetime.timezone.utc
+            ).isoformat(),
+            date_expires=datetime.datetime.fromtimestamp(
+                val_dict["timestamp"] + asset.cache_expiration_interval,
+                datetime.timezone.utc,
+            ).isoformat(),
+            key=key,
+            seconds_left=val_dict["timestamp"]
+            + asset.cache_expiration_interval
+            - time.time(),
+        )
+        for key, val_dict in datacache.cache.items()
+    ]
 
 
 class ClearCacheOutput(ActionOutput):
@@ -410,7 +467,9 @@ class ClearCacheOutput(ActionOutput):
     description="Clear all cached entries", action_type="generic", read_only=False
 )
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
-    raise NotImplementedError()
+    if "vt_cache" in app.actions_manager.asset_cache:
+        app.actions_manager.asset_cache["vt_cache"] = {}
+    return ClearCacheOutput(status="success")
 
 
 class GetQuotasParams(Params):
