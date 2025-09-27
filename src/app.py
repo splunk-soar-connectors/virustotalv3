@@ -21,7 +21,7 @@ from soar_sdk.exceptions import ActionFailure, AssetMisconfiguration
 from soar_sdk.logging import getLogger
 from soar_sdk.params import Param, Params, MakeRequestParams
 from soar_sdk.action_results import MakeRequestOutput
-
+from soar_sdk.models.vault_attachment import VaultAttachment
 from models.outputs.shared.main import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
 from models.outputs.file_reputation.file import FileAttributes
@@ -44,6 +44,8 @@ from models.outputs.quotas.quota_models import (
     PrivateScansMonthlyOutput,
     PrivateScansPerMinuteOutput,
 )
+from models.outputs.detonation.attributes import DetonateFileAttributes
+from models.outputs.detonation.data import PollingData, MetaOutput
 from typing import Optional
 from cache import DataCache
 import base64
@@ -54,6 +56,13 @@ import time
 from utils import sanitize_key_names
 
 logger = getLogger()
+
+# Error codes that should not cause the action to fail
+PASS_ERROR_CODE = {
+    400: "NotAvailableYet",
+    404: "NotFoundError",
+    409: "AlreadyExistsError",
+}
 
 
 class Asset(BaseAsset):
@@ -142,6 +151,17 @@ def _get_cache_key(endpoint: str) -> str:
 
 
 def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
+    if endpoint.startswith(("http://", "https://")):
+        client = httpx.Client(
+            timeout=asset.timeout,
+            headers={
+                "x-apikey": asset.apikey,
+                "Content-Type": "application/json",
+            },
+        )
+    else:
+        client = asset.get_client()
+
     if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
         saved_cache = app.actions_manager.asset_cache.get("vt_cache")
         datacache = DataCache(
@@ -151,21 +171,25 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
         cache_key = _get_cache_key(endpoint)
         if entry := datacache.expire().search(cache_key):
             cached_status = entry[0]
-            cached_response = entry[1]
+            resp_json = entry[1]
             if cached_status != "success":
                 raise ActionFailure(
-                    f"Cached response for {endpoint} is not success with error {cached_response}"
+                    f"Cached response for {endpoint} is not success with error {resp_json}"
                 )
-
-            return cached_response
         else:
-            client = asset.get_client()
             response = client.request(method, endpoint, **kwargs)
             response.raise_for_status()
+            resp_json = response.json()
             # we're no longer going to store failed responses in the cache
-            datacache.add(cache_key, ("success", response.json()))
+            datacache.add(cache_key, ("success", resp_json))
             app.actions_manager.asset_cache["vt_cache"] = datacache.cache
-            return response.json()
+
+        return resp_json
+
+    # Direct request (no caching)
+    response = client.request(method, endpoint, **kwargs)
+    response.raise_for_status()
+    return response.json()
 
 
 @app.test_connectivity()
@@ -403,8 +427,8 @@ class DetonateFileParams(Params):
 
 
 class DetonateFileOutput(ActionOutput):
-    # attributes: AttributesOutput
-    # data: DataOutput
+    attributes: DetonateFileAttributes
+    data: Optional[PollingData]
     id: str = OutputField(
         cef_types=["sha256"],
         example_values=[
@@ -412,8 +436,50 @@ class DetonateFileOutput(ActionOutput):
         ],
     )
     links: APILinks
-    # meta: MetaOutput
+    meta: Optional[MetaOutput]
     type: str = OutputField(example_values=["file"])
+
+
+class DetonateSummary(ActionOutput):
+    scan_id: str
+    harmless: int
+    malicious: int
+    suspicious: int
+    timeout: int
+    undetected: int
+
+
+def poll_for_result(
+    scan_id: str, poll_interval: float, wait_time: float, asset: Asset
+) -> tuple[dict, DetonateSummary]:
+    time.sleep(wait_time)
+    # since we sleep for 1 minute, num_attempts is the number of minutes to poll
+    num_attempts = poll_interval
+    while num_attempts > 0:
+        resp_json = _make_request(asset, "GET", f"analyses/{scan_id}")
+        if isinstance(resp_json, dict):
+            resp_json = sanitize_key_names(resp_json)
+
+        if "data" in resp_json and resp_json.get("data", {}).get("attributes", {}).get(
+            "results"
+        ):
+            attributes = resp_json["data"]["attributes"]
+
+            summary = DetonateSummary(
+                scan_id=scan_id,
+                harmless=attributes.get("stats", {}).get("harmless", 0),
+                malicious=attributes.get("stats", {}).get("malicious", 0),
+                suspicious=attributes.get("stats", {}).get("suspicious", 0),
+                timeout=attributes.get("stats", {}).get("timeout", 0),
+                undetected=attributes.get("stats", {}).get("undetected", 0),
+            )
+
+            return resp_json, summary
+
+        num_attempts -= 1
+        time.sleep(60)
+
+    raise ActionFailure(f"No result found for scan ID {scan_id}")
 
 
 @app.action(
@@ -424,7 +490,79 @@ class DetonateFileOutput(ActionOutput):
 def detonate_file(
     params: DetonateFileParams, soar: SOARClient, asset: Asset
 ) -> DetonateFileOutput:
-    raise NotImplementedError()
+    vault_id = params.vault_id
+    attachments = soar.vault.get_attachment(vault_id=vault_id)
+    if len(attachments) == 0:
+        raise ActionFailure(f"File {vault_id} not found in vault")
+    if len(attachments) > 1:
+        logger.info(
+            f"Multiple files found in vault for {vault_id}. Choosing the first one."
+        )
+    attachment: VaultAttachment = attachments[0]
+    file_name = attachment.name
+    file_path = attachment.path
+    file_hash = attachment.hash
+
+    resp_json = _make_request(asset, "GET", f"files/{file_hash}")
+
+    if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
+        files = [
+            ("file", (file_name, open(file_path, "rb"), "application/octet-stream"))
+        ]
+        if (attachment.size / 1000000) > 32:
+            resp_json = _make_request(asset, "GET", "files/upload_url")
+            if not (upload_url := resp_json.get("data", {})):
+                raise ActionFailure(f"No upload URL found for file {file_hash}")
+
+            file_upload_json = _make_request(asset, "POST", upload_url, files=files)
+        else:
+            file_upload_json = _make_request(asset, "POST", "files", files=files)
+
+        if not (scan_id := file_upload_json.get("data", {}).get("id")):
+            raise ActionFailure(f"No scan ID found for file {file_hash}")
+
+        output, summary = poll_for_result(
+            scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
+        )
+        soar.set_summary(summary)
+        return DetonateFileOutput(**output)
+
+    if not (data := resp_json.get("data")):
+        raise ActionFailure(f"No data found for file {file_hash}")
+
+    sanitized_data = sanitize_key_names(data)
+    logger.debug(f"Sanitized data: {sanitized_data}")
+
+    # if last_analysis_results exists, reorganize to support standard data path format of
+    # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+    attributes = sanitized_data.get("attributes", {})
+    if "last_analysis_results" in attributes:
+        last_analysis_results = [
+            {"vendor": vendor, **results}
+            for vendor, results in attributes["last_analysis_results"].items()
+        ]
+        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
+
+    if "last_analysis_date" in attributes:
+        new_scan_id = f"{attributes['md5']}:{attributes['last_analysis_date']}"
+    else:
+        new_scan_id = f"{attributes['md5']}:{attributes['last_submission_date']}"
+
+    new_scan_id = base64.b64encode(new_scan_id.encode()).decode()
+
+    if "last_analysis_stats" in attributes:
+        summary = DetonateSummary(
+            scan_id=new_scan_id,
+            harmless=attributes["last_analysis_stats"]["harmless"],
+            malicious=attributes["last_analysis_stats"]["malicious"],
+            suspicious=attributes["last_analysis_stats"]["suspicious"],
+            timeout=attributes["last_analysis_stats"]["timeout"],
+            undetected=attributes["last_analysis_stats"]["undetected"],
+        )
+        soar.set_summary(summary)
+
+    logger.debug(f"Sanitized data: {sanitized_data}")
+    return DetonateFileOutput(**sanitized_data)
 
 
 class GetReportParams(Params):
@@ -434,12 +572,6 @@ class GetReportParams(Params):
     wait_time: float = Param(description="Number of seconds to wait", required=False)
 
 
-class GetReportOutput(ActionOutput):
-    # data: DataOutput
-    # meta: MetaOutput
-    pass
-
-
 @app.action(
     description="Get the results using the scan id from a detonate file or detonate url action",
     action_type="investigate",
@@ -447,8 +579,15 @@ class GetReportOutput(ActionOutput):
 )
 def get_report(
     params: GetReportParams, soar: SOARClient, asset: Asset
-) -> GetReportOutput:
-    raise NotImplementedError()
+) -> PollingData:
+    scan_id = params.scan_id
+    logger.info(f"Polling VirusTotal for report related to {scan_id}")
+    resp_json, summary = poll_for_result(scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset)
+    soar.set_summary(summary)
+    if not (data := resp_json.get("data")):
+        raise ActionFailure(f"No data found for scan ID {scan_id}")
+    logger.debug(f"Polling dataaaaa: {data}")
+    return PollingData(**data)
 
 
 class GetCachedEntriesOutput(ActionOutput):
