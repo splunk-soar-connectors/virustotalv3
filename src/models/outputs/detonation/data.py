@@ -31,28 +31,37 @@ class ScanLinks(ActionOutput):
 
 class FileInfo(ActionOutput):
     md5: Optional[str] = OutputField(
-        cef_types=["md5"], example_values=["299999999992c49c91a0206ee7a8c00e659"]
+        cef_types=["md5"],
+        example_values=[
+            "299999999992c49c91a0206ee7a8c00e659"  # pragma: allowlist secret
+        ],
     )
     name: Optional[str] = OutputField(example_values=["update_cr.py"])
     sha1: Optional[str] = OutputField(
-        cef_types=["sha1"], example_values=["9999999999142292710254cde97df84e46dfe33a"]
+        cef_types=["sha1"],
+        example_values=[
+            "9999999999142292710254cde97df84e46dfe33a"  # pragma: allowlist secret
+        ],
     )
     sha256: Optional[str] = OutputField(
         cef_types=["sha256"],
         example_values=[
-            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"  # pragma: allowlist secret
         ],
     )
     size: Optional[int] = OutputField(example_values=[6285])
+
 
 class URLInfo(ActionOutput):
     id: str = OutputField(
         cef_types=["sha256"],
         example_values=[
-            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"  # pragma: allowlist secret
         ],
     )
-    url: str = OutputField(example_values=["https://www.virustotal.com/api/v3/domains/test.com"])
+    url: str = OutputField(
+        example_values=["https://www.virustotal.com/api/v3/domains/test.com"]
+    )
 
 
 class MetaOutput(ActionOutput):

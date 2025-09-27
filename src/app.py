@@ -506,17 +506,16 @@ def detonate_file(
     resp_json = _make_request(asset, "GET", f"files/{file_hash}")
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
-        files = [
-            ("file", (file_name, open(file_path, "rb"), "application/octet-stream"))
-        ]
-        if (attachment.size / 1000000) > 32:
-            resp_json = _make_request(asset, "GET", "files/upload_url")
-            if not (upload_url := resp_json.get("data", {})):
-                raise ActionFailure(f"No upload URL found for file {file_hash}")
+        with open(file_path, "rb") as file_handle:
+            files = [("file", (file_name, file_handle, "application/octet-stream"))]
+            if (attachment.size / 1000000) > 32:
+                resp_json = _make_request(asset, "GET", "files/upload_url")
+                if not (upload_url := resp_json.get("data", {})):
+                    raise ActionFailure(f"No upload URL found for file {file_hash}")
 
-            file_upload_json = _make_request(asset, "POST", upload_url, files=files)
-        else:
-            file_upload_json = _make_request(asset, "POST", "files", files=files)
+                file_upload_json = _make_request(asset, "POST", upload_url, files=files)
+            else:
+                file_upload_json = _make_request(asset, "POST", "files", files=files)
 
         if not (scan_id := file_upload_json.get("data", {}).get("id")):
             raise ActionFailure(f"No scan ID found for file {file_hash}")
@@ -577,12 +576,12 @@ class GetReportParams(Params):
     action_type="investigate",
     verbose="For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
 )
-def get_report(
-    params: GetReportParams, soar: SOARClient, asset: Asset
-) -> PollingData:
+def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
     logger.info(f"Polling VirusTotal for report related to {scan_id}")
-    resp_json, summary = poll_for_result(scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset)
+    resp_json, summary = poll_for_result(
+        scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
+    )
     soar.set_summary(summary)
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for scan ID {scan_id}")
