@@ -427,6 +427,7 @@ class DetonateFileParams(Params):
 
 
 class DetonateFileOutput(ActionOutput):
+    vault_id: str
     attributes: DetonateFileAttributes
     data: Optional[PollingData]
     id: str = OutputField(
@@ -482,10 +483,33 @@ def poll_for_result(
     raise ActionFailure(f"No result found for scan ID {scan_id}")
 
 
+@app.view_handler(template="detonate_file_view.html")
+def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
+    logger.debug(f"View handler called with {len(outputs)} outputs")
+    result = {"results": []}
+    for i, output in enumerate(outputs):
+        logger.debug(
+            f"Processing output {i}: vault_id={getattr(output, 'vault_id', 'MISSING')}"
+        )
+        result["results"].append(
+            {
+                "vault_id": output.vault_id,
+                "sha256": output.id,
+                "scan_id": output.data.id if output.data else None,
+            }
+        )
+
+    result["container"] = {"id": app.soar_client.get_executing_container_id()}
+
+    logger.debug(f"Detonate file view result: {result}")
+    return result
+
+
 @app.action(
     description="Upload a file to Virus Total and retrieve the analysis results",
     action_type="investigate",
     verbose="<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    view_handler=detonate_file_view,
 )
 def detonate_file(
     params: DetonateFileParams, soar: SOARClient, asset: Asset
@@ -524,7 +548,7 @@ def detonate_file(
             scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
         )
         soar.set_summary(summary)
-        return DetonateFileOutput(**output)
+        return DetonateFileOutput(**output, vault_id=vault_id)
 
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for file {file_hash}")
@@ -561,7 +585,7 @@ def detonate_file(
         soar.set_summary(summary)
 
     logger.debug(f"Sanitized data: {sanitized_data}")
-    return DetonateFileOutput(**sanitized_data)
+    return DetonateFileOutput(**sanitized_data, vault_id=vault_id)
 
 
 class GetReportParams(Params):

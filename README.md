@@ -2020,6 +2020,7 @@ action_result.status | string | | success failure |
 action_result.message | string | | |
 action_result.parameter.vault_id | string | `vault id` `sha1` | |
 action_result.parameter.wait_time | numeric | | |
+action_result.data.\*.vault_id | string | | |
 action_result.data.\*.attributes.androguard.AndroguardVersion | string | | 3.0-dev |
 action_result.data.\*.attributes.androguard.AndroidApplication | numeric | | 1 |
 action_result.data.\*.attributes.androguard.AndroidApplicationError | boolean | | True False |
