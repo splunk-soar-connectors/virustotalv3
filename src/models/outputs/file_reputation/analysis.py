@@ -21,18 +21,19 @@ class FileAnalysisStats(ActionOutput):
     undetected: int
     harmless: int
     timeout: int
-    confirmed_timeout: int
-    failure: int
-    type_unsupported: int
+    confirmed_timeout: Optional[int]
+    failure: Optional[int]
+    type_unsupported: Optional[int]
 
 
 class FileAnalysisResult(ActionOutput):
     category: str
     engine_name: str
     engine_version: Optional[str]
-    engine_update: str
+    engine_update: Optional[str]
     method: str
     result: Optional[str]  # Can be null
+    vendor: Optional[str]
 
 
 class FileAnalysisResults(ActionOutput):
@@ -112,3 +113,5 @@ class FileAnalysisResults(ActionOutput):
     SentinelOne: Optional[FileAnalysisResult]
     tehtris: Optional[FileAnalysisResult]
     Trustlook: Optional[FileAnalysisResult]
+    OpenPhish: Optional[FileAnalysisResult]
+    Nucleon: Optional[FileAnalysisResult]

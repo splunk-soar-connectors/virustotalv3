@@ -71,7 +71,7 @@ class FileAttributes(ActionOutput):
     sha1: str = OutputField(cef_types=["sha1"])
     reputation: int
     unique_sources: int
-    last_analysis_results: FileAnalysisResults
+    last_analysis_results: Optional[FileAnalysisResults]
     type_extension: str
     magika: str
     type_tags: list[str]
