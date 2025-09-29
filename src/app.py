@@ -492,12 +492,64 @@ class DetonateUrlOutput(ActionOutput):
     description="Load a URL to Virus Total and retrieve analysis results",
     action_type="investigate",
     verbose="<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    summary_type="DetonateSummary",
 )
 def detonate_url(
     params: DetonateUrlParams, soar: SOARClient, asset: Asset
 ) -> DetonateUrlOutput:
-    raise NotImplementedError()
+    url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
+    resp_json = _make_request(asset, "GET", f"urls/{url_id}")
 
+    if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
+        resp_json = _make_request(asset, "POST", "urls", json={"url": params.url})
+        if not (scan_id := resp_json.get("data", {}).get("id")):
+            raise ActionFailure(f"No scan ID found for URL {params.url}")
+
+        output, summary = poll_for_result(
+            scan_id,
+            asset.poll_interval,
+            params.wait_time or asset.waiting_time,
+            asset,
+        )
+        soar.set_summary(summary)
+        return DetonateUrlOutput(**output)
+
+    if not (data := resp_json.get("data")):
+        raise ActionFailure(f"No data found for URL {params.url}")
+
+    sanitized_data = sanitize_key_names(data)
+    logger.debug(f"Sanitized data: {sanitized_data}")
+
+    # if last_analysis_results exists, reorganize to support standard data path format of
+    # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
+    attributes = sanitized_data.get("attributes", {})
+    if "last_analysis_results" in attributes:
+        last_analysis_results = [
+            {"vendor": vendor, **results}
+            for vendor, results in attributes["last_analysis_results"].items()
+        ]
+        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
+
+    if "last_analysis_date" in attributes:
+        new_scan_id = f"{attributes['md5']}:{attributes['last_analysis_date']}"
+    else:
+        new_scan_id = f"{attributes['md5']}:{attributes['last_submission_date']}"
+
+    new_scan_id = base64.b64encode(new_scan_id.encode()).decode()
+
+    if "last_analysis_stats" in attributes:
+        summary = DetonateSummary(
+            scan_id=new_scan_id,
+            harmless=attributes["last_analysis_stats"]["harmless"],
+            malicious=attributes["last_analysis_stats"]["malicious"],
+            suspicious=attributes["last_analysis_stats"]["suspicious"],
+            timeout=attributes["last_analysis_stats"]["timeout"],
+            undetected=attributes["last_analysis_stats"]["undetected"],
+        )
+        soar.set_summary(summary)
+
+    logger.debug(f"Sanitized data: {sanitized_data}")
+    return DetonateUrlOutput(**sanitized_data)
 
 class DetonateFileParams(Params):
     vault_id: str = Param(
@@ -591,6 +643,7 @@ def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
     description="Upload a file to Virus Total and retrieve the analysis results",
     action_type="investigate",
     verbose="<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    summary_type=DetonateSummary,
     view_handler=detonate_file_view,
 )
 def detonate_file(
