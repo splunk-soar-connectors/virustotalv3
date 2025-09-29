@@ -20,6 +20,7 @@ class URLAnalysisResult(ActionOutput):
     engine_name: str = OutputField(example_values=["CMC"])
     method: str = OutputField(example_values=["blacklist"])
     result: str = OutputField(example_values=["Trojan.GenericKD.3275421"])
+    vendor: Optional[str] = OutputField(example_values=["AutoShun, CMC"])
 
 
 class URLAnalysisResults(ActionOutput):

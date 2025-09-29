@@ -14,7 +14,7 @@
 from soar_sdk.action_results import ActionOutput, OutputField
 from typing import Optional
 
-from models.outputs.url_reputation.analysis import URLAnalysisResults, URLAnalysisStats
+from models.outputs.url_reputation.analysis import URLAnalysisStats, URLAnalysisResult
 from models.outputs.shared.main import TotalVotes
 
 
@@ -36,7 +36,7 @@ class URLAttributes(ActionOutput):
     favicon: Optional[Favicon]
     first_submission_date: str = OutputField(cef_types=["timestamp"])
     last_analysis_date: str = OutputField(cef_types=["timestamp"])
-    last_analysis_results: URLAnalysisResults
+    last_analysis_results: list[URLAnalysisResult]
     last_analysis_stats: URLAnalysisStats
     last_final_url: Optional[str]
     last_http_response_code: Optional[int]
@@ -52,4 +52,4 @@ class URLAttributes(ActionOutput):
     title: Optional[str]
     total_votes: TotalVotes
     url: str = OutputField(cef_types=["url"])
-    has_content: bool
+    has_content: bool = False
