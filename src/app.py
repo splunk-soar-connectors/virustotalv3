@@ -150,6 +150,40 @@ def _get_cache_key(endpoint: str) -> str:
     return cache_key
 
 
+def _check_rate_limit(asset, count=1) -> None:
+    """Check to see if the rate limit is within the "4 requests per minute" limit enforced by VirusTotal free tier.
+    If the rate limit is exceeded, wait for the appropriate amount of time before making the request again.
+    """
+    if not asset.rate_limit:
+        return
+    logger.debug(f"Checking rate limit for the {count}th time")
+
+    if count == 5:
+        raise ActionFailure("Rate limit reached. Please try again later.")
+
+    current_time = time.time()
+    timestamps = app.actions_manager.asset_cache.get("rate_limit_timestamps", [])
+
+    # Remove timestamps older than 60 seconds
+    recent_timestamps = [ts for ts in timestamps if current_time - ts < 60]
+    app.actions_manager.asset_cache["rate_limit_timestamps"] = recent_timestamps
+
+    # If we have 4 or more recent requests, wait until we can make another
+    if len(recent_timestamps) >= 4:
+        # Calculate how long to wait (until the oldest timestamp is 60+ seconds old)
+        wait_time = 60 - (current_time - min(recent_timestamps))
+
+        if wait_time > 0:
+            logger.info(
+                f"Rate limit reached. Waiting {wait_time:.2f} seconds before next request"
+            )
+            time.sleep(wait_time)
+
+            return _check_rate_limit(asset, count + 1)
+
+    logger.debug("Rate limit check complete.")
+
+
 def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
     if endpoint.startswith(("http://", "https://")):
         client = httpx.Client(
@@ -176,20 +210,24 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
                 raise ActionFailure(
                     f"Cached response for {endpoint} is not success with error {resp_json}"
                 )
-        else:
-            response = client.request(method, endpoint, **kwargs)
-            response.raise_for_status()
-            resp_json = response.json()
-            # we're no longer going to store failed responses in the cache
-            datacache.add(cache_key, ("success", resp_json))
-            app.actions_manager.asset_cache["vt_cache"] = datacache.cache
+            return resp_json
 
-        return resp_json
-
-    # Direct request (no caching)
+    # Check rate limit before making request
+    _check_rate_limit(asset)
     response = client.request(method, endpoint, **kwargs)
     response.raise_for_status()
-    return response.json()
+    if asset.rate_limit:
+        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+            response.headers.get("Date", time.time())
+        )
+
+    resp_json = response.json()
+    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+        # we're no longer going to store failed responses in the cache
+        datacache.add(cache_key, ("success", resp_json))
+        app.actions_manager.asset_cache["vt_cache"] = datacache.cache
+
+    return resp_json
 
 
 @app.test_connectivity()
@@ -265,8 +303,14 @@ def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
     if params.timeout:
         request_kwargs["timeout"] = params.timeout
 
+    _check_rate_limit(asset)
     response = client.request(**request_kwargs)
     response.raise_for_status()
+    if asset.rate_limit:
+        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+            response.headers.get("Date", time.time())
+        )
+
     return MakeRequestOutput(
         status_code=response.status_code,
         response_body=response.text,
@@ -320,8 +364,13 @@ class GetFileParams(Params):
 )
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
     client = asset.get_client()
-
+    _check_rate_limit(asset)
     response = client.get(f"files/{params.hash}/download")
+    if asset.rate_limit:
+        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+            response.headers.get("Date", time.time())
+        )
+
     response.raise_for_status()
 
     soar.vault.create_attachment(

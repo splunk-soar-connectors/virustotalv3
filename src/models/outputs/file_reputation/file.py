@@ -47,7 +47,7 @@ class KnownFileDistributors(ActionOutput):
 
 class FileAttributes(ActionOutput):
     first_submission_date: int = OutputField(cef_types=["timestamp"])
-    known_distributors: KnownFileDistributors
+    known_distributors: Optional[KnownFileDistributors]
     type_tag: str
     md5: str = OutputField(cef_types=["md5"])
     sandbox_verdicts: FileSandboxVerdicts
