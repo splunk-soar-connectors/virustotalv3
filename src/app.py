@@ -279,7 +279,39 @@ class DomainReputationSummary(ActionOutput):
     undetected: int
 
 
-@app.action(description="Queries VirusTotal for domain info", action_type="investigate")
+@app.view_handler(template="domain_reputation_view.html")
+def domain_reputation_view(outputs: list[DomainReputationOutput]) -> dict:
+    logger.debug(f"View handler called with {len(outputs)} outputs")
+    result = {"results": []}
+    for _i, output in enumerate(outputs):
+        domain_rep = {"Registrar": output.attributes.registrar, "domain": output.id}
+        if output.attributes.categories.BitDefender:
+            domain_rep["BitDefender"] = output.attributes.categories.BitDefender
+        if output.attributes.categories.Xcitium_Verdict_Cloud:
+            domain_rep["Xcitium_Verdict_Cloud"] = (
+                output.attributes.categories.Xcitium_Verdict_Cloud
+            )
+        if output.attributes.categories.Sophos:
+            domain_rep["Sophos"] = output.attributes.categories.Sophos
+        if output.attributes.categories.Forcepoint_ThreatSeeker:
+            domain_rep["Forcepoint_ThreatSeeker"] = (
+                output.attributes.categories.Forcepoint_ThreatSeeker
+            )
+        if output.attributes.categories.alphaMountain_ai:
+            domain_rep["AlphaMountain_ai"] = (
+                output.attributes.categories.alphaMountain_ai
+            )
+
+        result["results"].append(domain_rep)
+    result["container"] = {"id": app.soar_client.get_executing_container_id()}
+    return result
+
+
+@app.action(
+    description="Queries VirusTotal for domain info",
+    action_type="investigate",
+    view_handler=domain_reputation_view,
+)
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
 ) -> DomainReputationOutput:
@@ -488,11 +520,20 @@ class DetonateUrlOutput(ActionOutput):
     type: str = OutputField(example_values=["url"])
 
 
+class DetonateSummary(ActionOutput):
+    scan_id: str
+    harmless: int
+    malicious: int
+    suspicious: int
+    timeout: int
+    undetected: int
+
+
 @app.action(
     description="Load a URL to Virus Total and retrieve analysis results",
     action_type="investigate",
     verbose="<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
-    summary_type="DetonateSummary",
+    summary_type=DetonateSummary,
 )
 def detonate_url(
     params: DetonateUrlParams, soar: SOARClient, asset: Asset
@@ -551,6 +592,7 @@ def detonate_url(
     logger.debug(f"Sanitized data: {sanitized_data}")
     return DetonateUrlOutput(**sanitized_data)
 
+
 class DetonateFileParams(Params):
     vault_id: str = Param(
         description="The Vault ID of the file to scan",
@@ -573,15 +615,6 @@ class DetonateFileOutput(ActionOutput):
     links: APILinks
     meta: Optional[MetaOutput]
     type: str = OutputField(example_values=["file"])
-
-
-class DetonateSummary(ActionOutput):
-    scan_id: str
-    harmless: int
-    malicious: int
-    suspicious: int
-    timeout: int
-    undetected: int
 
 
 def poll_for_result(
