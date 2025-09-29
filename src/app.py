@@ -765,6 +765,78 @@ class GetQuotasOutput(ActionOutput):
     private_scans_per_minute: PrivateScansPerMinuteOutput
 
 
+@app.view_handler(template="get_quotas_view.html")
+def get_quotas_view(outputs: list[GetQuotasOutput]) -> dict:
+    logger.debug(f"View handler called with {len(outputs)} outputs")
+    result = {"results": []}
+    for _i, output in enumerate(outputs):
+        quota = {}
+        if output.api_requests_hourly.user:
+            quota["api_requests_hourly_user"] = {
+                "name": "User API Requests Hourly",
+                "used": output.api_requests_hourly.user.used,
+                "allowed": output.api_requests_hourly.user.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_hourly.user.used,
+                    output.api_requests_hourly.user.allowed,
+                ),
+            }
+        if output.api_requests_daily:
+            quota["api_requests_daily_user"] = {
+                "name": "User API Requests Daily",
+                "used": output.api_requests_daily.user.used,
+                "allowed": output.api_requests_daily.user.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_daily.user.used,
+                    output.api_requests_daily.user.allowed,
+                ),
+            }
+        if output.api_requests_monthly:
+            quota["api_requests_monthly_user"] = {
+                "name": "User API Requests Monthly",
+                "used": output.api_requests_monthly.user.used,
+                "allowed": output.api_requests_monthly.user.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_monthly.user.used,
+                    output.api_requests_monthly.user.allowed,
+                ),
+            }
+        if output.api_requests_hourly.group:
+            quota["api_requests_hourly_group"] = {
+                "name": "Group API Requests Hourly",
+                "used": output.api_requests_hourly.group.used,
+                "allowed": output.api_requests_hourly.group.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_hourly.group.used,
+                    output.api_requests_hourly.group.allowed,
+                ),
+            }
+        if output.api_requests_daily.group:
+            quota["api_requests_daily_group"] = {
+                "name": "Group API Requests Daily",
+                "used": output.api_requests_daily.group.used,
+                "allowed": output.api_requests_daily.group.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_daily.group.used,
+                    output.api_requests_daily.group.allowed,
+                ),
+            }
+        if output.api_requests_monthly.group:
+            quota["api_requests_monthly_group"] = {
+                "name": "Group API Requests Monthly",
+                "used": output.api_requests_monthly.group.used,
+                "allowed": output.api_requests_monthly.group.allowed,
+                "ratio": _get_percentage(
+                    output.api_requests_monthly.group.used,
+                    output.api_requests_monthly.group.allowed,
+                ),
+            }
+        result["results"].append(quota)
+
+    logger.debug(f"Detonate file view result: {result}")
+    return result
+
+
 class GetQuotasSummaryOutput(ActionOutput):
     user_hourly_api_ratio: Optional[float]
     group_hourly_api_ratio: Optional[float]
@@ -847,6 +919,7 @@ class GetQuotasSummaryOutput(ActionOutput):
     description="Retrieve user's API quota summary including daily, hourly, and monthly limits and usage details",
     action_type="investigate",
     summary_type=GetQuotasSummaryOutput,
+    view_handler=get_quotas_view,
 )
 def get_quotas(
     params: GetQuotasParams, soar: SOARClient, asset: Asset
