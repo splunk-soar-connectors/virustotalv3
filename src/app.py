@@ -165,8 +165,16 @@ def _check_rate_limit(asset, count=1) -> None:
     current_time = time.time()
     timestamps = app.actions_manager.asset_cache.get("rate_limit_timestamps", [])
 
-    # Remove timestamps older than 60 seconds
-    recent_timestamps = [ts for ts in timestamps if current_time - ts < 60]
+    # Convert all timestamps to float and remove timestamps older than 60 seconds
+    recent_timestamps = []
+    for ts in timestamps:
+        try:
+            ts_float = float(ts)
+            if current_time - ts_float < 60:
+                recent_timestamps.append(ts_float)
+        except (ValueError, TypeError):
+            logger.debug(f"Skipping invalid timestamp: {ts}")
+            continue
     app.actions_manager.asset_cache["rate_limit_timestamps"] = recent_timestamps
 
     # If we have 4 or more recent requests, wait until we can make another

@@ -1960,6 +1960,416 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failure |
 action_result.message | string | | |
 action_result.parameter.url | string | `url` `domain` | |
+action_result.data.\*.attributes.categories.alphaMountain_ai | string | | |
+action_result.data.\*.attributes.categories.BitDefender | string | | |
+action_result.data.\*.attributes.categories.Xcitium_Verdict_Cloud | string | | |
+action_result.data.\*.attributes.categories.Sophos | string | | |
+action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
+action_result.data.\*.attributes.favicon.dhash | string | | |
+action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
+action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Acronis.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Acronis.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Abusix.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Abusix.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Abusix.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Abusix.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Axur.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Axur.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Axur.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Axur.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bkav.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bkav.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bkav.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Certego.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Certego.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Certego.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Certego.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CRDF.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CRDF.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CRDF.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CRDF.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyble.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyble.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyble.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyble.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.DNS8.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.DNS8.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.DNS8.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.DNS8.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Ermes.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Ermes.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Ermes.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Ermes.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESET.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESET.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESET.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESET.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.G_Data.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.G_Data.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.G_Data.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.G_Data.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.IPsum.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.IPsum.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.IPsum.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.IPsum.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lionic.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lionic.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lionic.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lumu.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lumu.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lumu.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lumu.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Malwared.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Malwared.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Malwared.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Malwared.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quttera.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quttera.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quttera.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quttera.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sophos.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sophos.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sophos.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Spam404.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Spam404.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Spam404.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Spam404.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Underworld.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Underworld.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Underworld.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Underworld.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Webroot.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Webroot.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Webroot.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.securolytics.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.securolytics.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.securolytics.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.securolytics.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.zvelo.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.zvelo.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.zvelo.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.zvelo.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_final_url | string | | |
+action_result.data.\*.attributes.last_http_response_code | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
+action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.outgoing_links.\* | string | | |
+action_result.data.\*.attributes.redirection_chain.\* | string | | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.data.\*.attributes.times_submitted | numeric | | |
+action_result.data.\*.attributes.title | string | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.url | string | `url` | |
+action_result.data.\*.attributes.has_content | boolean | | True False |
 action_result.data.\*.id | string | | 99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
 action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | url |
@@ -1990,8 +2400,992 @@ action_result.status | string | | success failure |
 action_result.message | string | | |
 action_result.parameter.url | string | `url` `domain` | |
 action_result.parameter.wait_time | numeric | | |
+action_result.data.\*.attributes.categories.alphaMountain_ai | string | | |
+action_result.data.\*.attributes.categories.BitDefender | string | | |
+action_result.data.\*.attributes.categories.Xcitium_Verdict_Cloud | string | | |
+action_result.data.\*.attributes.categories.Sophos | string | | |
+action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
+action_result.data.\*.attributes.favicon.dhash | string | | |
+action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
+action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Acronis.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Acronis.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Abusix.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Abusix.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Abusix.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Abusix.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Axur.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Axur.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Axur.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Axur.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bkav.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bkav.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bkav.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Certego.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Certego.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Certego.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Certego.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CRDF.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CRDF.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CRDF.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CRDF.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyble.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyble.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyble.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyble.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.DNS8.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.DNS8.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.DNS8.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.DNS8.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Ermes.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Ermes.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Ermes.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Ermes.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESET.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESET.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESET.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESET.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.G_Data.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.G_Data.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.G_Data.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.G_Data.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.IPsum.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.IPsum.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.IPsum.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.IPsum.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lionic.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lionic.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lionic.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lumu.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lumu.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lumu.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lumu.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Malwared.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Malwared.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Malwared.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Malwared.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quttera.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quttera.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quttera.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quttera.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sophos.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sophos.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sophos.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Spam404.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Spam404.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Spam404.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Spam404.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Underworld.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Underworld.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Underworld.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Underworld.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Webroot.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Webroot.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Webroot.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.securolytics.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.securolytics.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.securolytics.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.securolytics.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.zvelo.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.zvelo.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.zvelo.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.zvelo.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_final_url | string | | |
+action_result.data.\*.attributes.last_http_response_code | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
+action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.outgoing_links.\* | string | | |
+action_result.data.\*.attributes.redirection_chain.\* | string | | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.data.\*.attributes.times_submitted | numeric | | |
+action_result.data.\*.attributes.title | string | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.url | string | `url` | |
+action_result.data.\*.attributes.has_content | boolean | | True False |
+action_result.data.\*.data.attributes.date | numeric | `timestamp` | 1613651763 |
+action_result.data.\*.data.attributes.results.Bkav.category | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Bkav.method | string | | |
+action_result.data.\*.data.attributes.results.Bkav.result | string | | |
+action_result.data.\*.data.attributes.results.Bkav.vendor | string | | |
+action_result.data.\*.data.attributes.results.Lionic.category | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Lionic.method | string | | |
+action_result.data.\*.data.attributes.results.Lionic.result | string | | |
+action_result.data.\*.data.attributes.results.Lionic.vendor | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.category | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.method | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.result | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.vendor | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.category | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.method | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.result | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.vendor | string | | |
+action_result.data.\*.data.attributes.results.CTX.category | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CTX.method | string | | |
+action_result.data.\*.data.attributes.results.CTX.result | string | | |
+action_result.data.\*.data.attributes.results.CTX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.category | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.method | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.result | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.vendor | string | | |
+action_result.data.\*.data.attributes.results.ALYac.category | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ALYac.method | string | | |
+action_result.data.\*.data.attributes.results.ALYac.result | string | | |
+action_result.data.\*.data.attributes.results.ALYac.vendor | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.category | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.method | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.result | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zillya.category | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zillya.method | string | | |
+action_result.data.\*.data.attributes.results.Zillya.result | string | | |
+action_result.data.\*.data.attributes.results.Zillya.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.category | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.method | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.result | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7GW.category | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7GW.method | string | | |
+action_result.data.\*.data.attributes.results.K7GW.result | string | | |
+action_result.data.\*.data.attributes.results.K7GW.vendor | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.category | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.method | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.result | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.vendor | string | | |
+action_result.data.\*.data.attributes.results.Baidu.category | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Baidu.method | string | | |
+action_result.data.\*.data.attributes.results.Baidu.result | string | | |
+action_result.data.\*.data.attributes.results.Baidu.vendor | string | | |
+action_result.data.\*.data.attributes.results.Symantec.category | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Symantec.method | string | | |
+action_result.data.\*.data.attributes.results.Symantec.result | string | | |
+action_result.data.\*.data.attributes.results.Symantec.vendor | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.category | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.method | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.result | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast.category | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast.method | string | | |
+action_result.data.\*.data.attributes.results.Avast.result | string | | |
+action_result.data.\*.data.attributes.results.Avast.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cynet.category | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cynet.method | string | | |
+action_result.data.\*.data.attributes.results.Cynet.result | string | | |
+action_result.data.\*.data.attributes.results.Cynet.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.category | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.method | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.result | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.vendor | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.category | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.method | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.result | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.category | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.method | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.result | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.vendor | string | | |
+action_result.data.\*.data.attributes.results.Rising.category | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Rising.method | string | | |
+action_result.data.\*.data.attributes.results.Rising.result | string | | |
+action_result.data.\*.data.attributes.results.Rising.vendor | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.category | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.method | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.result | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.category | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.method | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.result | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.vendor | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.category | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.method | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.result | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.vendor | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.category | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.method | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.result | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.vendor | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.category | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_name | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_version | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_update | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.method | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.result | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.vendor | string | | |
+action_result.data.\*.data.attributes.results.CMC.category | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CMC.method | string | | |
+action_result.data.\*.data.attributes.results.CMC.result | string | | |
+action_result.data.\*.data.attributes.results.CMC.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sophos.category | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sophos.method | string | | |
+action_result.data.\*.data.attributes.results.Sophos.result | string | | |
+action_result.data.\*.data.attributes.results.Sophos.vendor | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.category | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.method | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.result | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.vendor | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.category | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.method | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.result | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.vendor | string | | |
+action_result.data.\*.data.attributes.results.Google.category | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Google.method | string | | |
+action_result.data.\*.data.attributes.results.Google.result | string | | |
+action_result.data.\*.data.attributes.results.Google.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avira.category | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avira.method | string | | |
+action_result.data.\*.data.attributes.results.Avira.result | string | | |
+action_result.data.\*.data.attributes.results.Avira.vendor | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.category | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.method | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.result | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.category | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.method | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.result | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.category | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.method | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.result | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.vendor | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.category | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.method | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.result | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.vendor | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.category | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.method | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.result | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.vendor | string | | |
+action_result.data.\*.data.attributes.results.GData.category | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_name | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_version | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_update | string | | |
+action_result.data.\*.data.attributes.results.GData.method | string | | |
+action_result.data.\*.data.attributes.results.GData.result | string | | |
+action_result.data.\*.data.attributes.results.GData.vendor | string | | |
+action_result.data.\*.data.attributes.results.Varist.category | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Varist.method | string | | |
+action_result.data.\*.data.attributes.results.Varist.result | string | | |
+action_result.data.\*.data.attributes.results.Varist.vendor | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.category | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.method | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.result | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acronis.category | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acronis.method | string | | |
+action_result.data.\*.data.attributes.results.Acronis.result | string | | |
+action_result.data.\*.data.attributes.results.Acronis.vendor | string | | |
+action_result.data.\*.data.attributes.results.VBA32.category | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VBA32.method | string | | |
+action_result.data.\*.data.attributes.results.VBA32.result | string | | |
+action_result.data.\*.data.attributes.results.VBA32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.category | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.method | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.result | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zoner.category | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zoner.method | string | | |
+action_result.data.\*.data.attributes.results.Zoner.result | string | | |
+action_result.data.\*.data.attributes.results.Zoner.vendor | string | | |
+action_result.data.\*.data.attributes.results.Tencent.category | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Tencent.method | string | | |
+action_result.data.\*.data.attributes.results.Tencent.result | string | | |
+action_result.data.\*.data.attributes.results.Tencent.vendor | string | | |
+action_result.data.\*.data.attributes.results.Yandex.category | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Yandex.method | string | | |
+action_result.data.\*.data.attributes.results.Yandex.result | string | | |
+action_result.data.\*.data.attributes.results.Yandex.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.category | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.method | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.result | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.vendor | string | | |
+action_result.data.\*.data.attributes.results.huorong.category | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_name | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_version | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_update | string | | |
+action_result.data.\*.data.attributes.results.huorong.method | string | | |
+action_result.data.\*.data.attributes.results.huorong.result | string | | |
+action_result.data.\*.data.attributes.results.huorong.vendor | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.category | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.method | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.result | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.vendor | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.category | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.method | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.result | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.vendor | string | | |
+action_result.data.\*.data.attributes.results.AVG.category | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AVG.method | string | | |
+action_result.data.\*.data.attributes.results.AVG.result | string | | |
+action_result.data.\*.data.attributes.results.AVG.vendor | string | | |
+action_result.data.\*.data.attributes.results.Panda.category | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Panda.method | string | | |
+action_result.data.\*.data.attributes.results.Panda.result | string | | |
+action_result.data.\*.data.attributes.results.Panda.vendor | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.category | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_name | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_version | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_update | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.method | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.result | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.vendor | string | | |
+action_result.data.\*.data.attributes.results.VirIT.category | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VirIT.method | string | | |
+action_result.data.\*.data.attributes.results.VirIT.result | string | | |
+action_result.data.\*.data.attributes.results.VirIT.vendor | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.category | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.method | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.result | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.category | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.method | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.result | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.vendor | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.category | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.method | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.result | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.vendor | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.category | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.method | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.result | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.vendor | string | | |
+action_result.data.\*.data.attributes.results.Elastic.category | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Elastic.method | string | | |
+action_result.data.\*.data.attributes.results.Elastic.result | string | | |
+action_result.data.\*.data.attributes.results.Elastic.vendor | string | | |
+action_result.data.\*.data.attributes.results.APEX.category | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.APEX.method | string | | |
+action_result.data.\*.data.attributes.results.APEX.result | string | | |
+action_result.data.\*.data.attributes.results.APEX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.category | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.method | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.result | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.category | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.method | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.result | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.vendor | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.category | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.method | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.result | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.vendor | string | | |
+action_result.data.\*.data.attributes.results.Webroot.category | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Webroot.method | string | | |
+action_result.data.\*.data.attributes.results.Webroot.result | string | | |
+action_result.data.\*.data.attributes.results.Webroot.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cylance.category | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cylance.method | string | | |
+action_result.data.\*.data.attributes.results.Cylance.result | string | | |
+action_result.data.\*.data.attributes.results.Cylance.vendor | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.category | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.method | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.result | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.vendor | string | | |
+action_result.data.\*.data.attributes.results.tehtris.category | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_name | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_version | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_update | string | | |
+action_result.data.\*.data.attributes.results.tehtris.method | string | | |
+action_result.data.\*.data.attributes.results.tehtris.result | string | | |
+action_result.data.\*.data.attributes.results.tehtris.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.category | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.method | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.result | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.vendor | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.category | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_name | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_version | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_update | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.method | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.result | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.vendor | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.category | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.method | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.result | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.vendor | string | | |
+action_result.data.\*.data.attributes.stats.malicious | numeric | | |
+action_result.data.\*.data.attributes.stats.suspicious | numeric | | |
+action_result.data.\*.data.attributes.stats.undetected | numeric | | |
+action_result.data.\*.data.attributes.stats.harmless | numeric | | |
+action_result.data.\*.data.attributes.stats.timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.confirmed_timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.failure | numeric | | |
+action_result.data.\*.data.attributes.stats.type_unsupported | numeric | | |
+action_result.data.\*.data.attributes.status | string | | completed |
+action_result.data.\*.data.id | string | `virustotal scan id` | MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw== |
+action_result.data.\*.data.links.item | string | | https://www.virustotal.com/api/v3/files/917c72a2684d1573ea363b2f91e3aedcef1996fc34668ba9d369ad9123d1380f |
+action_result.data.\*.data.links.self | string | | https://www.virustotal.com/api/v3/analyses/ZDhhNjY5NmU2NDJlYzUyMDUwMmEwNWE0YWRkOGMxNzk6MTY3ODY4OTQ5Mg== |
+action_result.data.\*.data.type | string | | |
+action_result.data.\*.data.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.data.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.data.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.data.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.data.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.id | string | | e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
 action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.data.\*.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | url |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
