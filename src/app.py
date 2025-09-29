@@ -20,7 +20,6 @@ from soar_sdk.asset import AssetField, BaseAsset
 from soar_sdk.exceptions import ActionFailure, AssetMisconfiguration
 from soar_sdk.logging import getLogger
 from soar_sdk.params import Param, Params, MakeRequestParams
-from soar_sdk.action_results import MakeRequestOutput
 from soar_sdk.models.vault_attachment import VaultAttachment
 from models.outputs.shared.main import APILinks
 from models.outputs.domain_reputation.domain import DomainAttributes
@@ -52,7 +51,6 @@ from cache import DataCache
 import base64
 import datetime
 import time
-
 
 from utils import sanitize_key_names
 
@@ -335,8 +333,43 @@ def domain_reputation(
     return output
 
 
+class CustomMakeRequestOutput(ActionOutput):
+    status_code: int = OutputField(example_values=[200])
+    response_body: str = OutputField(example_values=["Success"])
+
+    def __init__(self, **data):
+        known_fields = {
+            "status_code": data.pop("status_code", None),
+            "response_body": data.pop("response_body", None),
+        }
+
+        # Initialize Pydantic model with known fields only
+        super().__init__(**{k: v for k, v in known_fields.items() if v is not None})
+
+        # Add extra fields directly to __dict__ to bypass Pydantic
+        for key, value in data.items():
+            object.__setattr__(self, key, value)
+
+    @classmethod
+    def from_response(cls, response):
+        data = {
+            "status_code": response.status_code,
+            "response_body": response.text,
+        }
+
+        try:
+            json_response = response.json()
+            if isinstance(json_response, dict):
+                data.update(json_response)
+        except Exception as e:
+            logger.warning(f"Error parsing JSON response: {e!s}")
+            pass
+
+        return cls(**data)
+
+
 @app.make_request()
-def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
+def http_action(params: MakeRequestParams, asset: Asset) -> CustomMakeRequestOutput:
     client = asset.get_client()
 
     if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
@@ -344,7 +377,17 @@ def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
             f"Invalid endpoint: {params.endpoint}. Please do not include the base url in the endpoint. The base url is already included in the asset."
         )
 
-    request_kwargs = {"method": params.http_method, "url": params.endpoint}
+    endpoint = (
+        params.endpoint.lstrip("/")
+        .removeprefix("api/v3/")
+        .removeprefix("api/v3")
+        .removeprefix("v3/")
+        .removeprefix("v3")
+        .removeprefix("api/")
+        .removeprefix("api")
+    )
+
+    request_kwargs = {"method": params.http_method, "url": endpoint}
 
     if params.query_params:
         request_kwargs["params"] = params.query_params
@@ -367,10 +410,7 @@ def http_action(params: MakeRequestParams, asset: Asset) -> MakeRequestOutput:
             response.headers.get("Date", time.time())
         )
 
-    return MakeRequestOutput(
-        status_code=response.status_code,
-        response_body=response.text,
-    )
+    return CustomMakeRequestOutput.from_response(response)
 
 
 class FileReputationParams(Params):

@@ -754,8 +754,8 @@ action_result.parameter.query_params | string | | |
 action_result.parameter.body | string | | |
 action_result.parameter.timeout | numeric | | |
 action_result.parameter.verify_ssl | boolean | | |
-action_result.data.\*.status_code | numeric | | 200 404 500 |
-action_result.data.\*.response_body | string | | {"key": "value"} |
+action_result.data.\*.status_code | numeric | | 200 |
+action_result.data.\*.response_body | string | | Success |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
