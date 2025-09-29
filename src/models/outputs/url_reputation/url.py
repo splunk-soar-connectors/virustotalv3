@@ -13,7 +13,7 @@ class URLCategories(ActionOutput):
     Forcepoint_ThreatSeeker: Optional[str]
 
 
-class Favicon(OutputField):
+class Favicon(ActionOutput):
     dhash: str
     raw_md5: str = OutputField(cef_types=["md5"])
 
