@@ -65,7 +65,7 @@ class FileAttributes(ActionOutput):
     last_modification_date: int = OutputField(cef_types=["timestamp"])
     meaningful_name: str
     tlsh: str
-    first_seen_itw_date: int = OutputField(cef_types=["timestamp"])
+    first_seen_itw_date: Optional[int] = OutputField(cef_types=["timestamp"])
     size: int
     last_analysis_date: int = OutputField(cef_types=["timestamp"])
     sha1: str = OutputField(cef_types=["sha1"])

@@ -263,6 +263,13 @@ class DomainReputationOutput(ActionOutput):
     attributes: DomainAttributes
 
 
+class DomainReputationSummary(ActionOutput):
+    harmless: int
+    malicious: int
+    suspicious: int
+    undetected: int
+
+
 @app.action(description="Queries VirusTotal for domain info", action_type="investigate")
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
@@ -276,7 +283,15 @@ def domain_reputation(
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
 
-    return DomainReputationOutput(**sanitized_data)
+    output = DomainReputationOutput(**sanitized_data)
+    summary = DomainReputationSummary(
+        harmless=output.attributes.last_analysis_stats.harmless,
+        malicious=output.attributes.last_analysis_stats.malicious,
+        suspicious=output.attributes.last_analysis_stats.suspicious,
+        undetected=output.attributes.last_analysis_stats.undetected,
+    )
+    soar.set_summary(summary)
+    return output
 
 
 @app.make_request()
