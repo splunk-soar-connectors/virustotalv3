@@ -627,7 +627,7 @@ def detonate_url(
         ]
         sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
 
-    new_scan_id = f"u-{sanitized_data['id']}-{resp_json['last_submission_date']}"
+    new_scan_id = f"u-{sanitized_data['id']}-{attributes['last_submission_date']}"
     if "last_analysis_stats" in attributes:
         summary = DetonateSummary(
             scan_id=new_scan_id,
