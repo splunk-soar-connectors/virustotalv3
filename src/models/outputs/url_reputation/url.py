@@ -18,7 +18,7 @@ class Favicon(ActionOutput):
     raw_md5: str = OutputField(cef_types=["md5"])
 
 
-class URLReputation(ActionOutput):
+class URLAttributes(ActionOutput):
     categories: Optional[URLCategories]
     favicon: Optional[Favicon]
     first_submission_date: str = OutputField(cef_types=["timestamp"])
