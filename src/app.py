@@ -46,6 +46,7 @@ from models.outputs.quotas.quota_models import (
 )
 from models.outputs.detonation.attributes import DetonateFileAttributes
 from models.outputs.detonation.data import PollingData, MetaOutput
+from models.outputs.url_reputation.url import URLAttributes
 from typing import Optional
 from cache import DataCache
 import base64
@@ -415,7 +416,7 @@ class UrlReputationParams(Params):
 
 
 class UrlReputationOutput(ActionOutput):
-    # attributes: URLAttributes
+    attributes: URLAttributes
     id: str = OutputField(
         example_values=[
             "99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"  # pragma: allowlist secret
@@ -432,7 +433,16 @@ class UrlReputationOutput(ActionOutput):
 def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
 ) -> UrlReputationOutput:
-    raise NotImplementedError()
+    resp_json = _make_request(asset, "GET", f"urls/{params.url}")
+
+    logger.debug(f"VirusTotal response: {resp_json}")
+    if not (data := resp_json.get("data")):
+        raise ActionFailure(f"No data found for URL {params.url}")
+
+    sanitized_data = sanitize_key_names(data)
+    logger.debug(f"Sanitized data: {sanitized_data}")
+
+    return UrlReputationOutput(**sanitized_data)
 
 
 class DetonateUrlParams(Params):
@@ -443,15 +453,15 @@ class DetonateUrlParams(Params):
 
 
 class DetonateUrlOutput(ActionOutput):
-    # attributes: AttributesOutput
-    # data: DataOutput
+    attributes: URLAttributes
+    data: Optional[PollingData]
     id: str = OutputField(
         example_values=[
             "e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"  # pragma: allowlist secret
         ]
     )
     links: APILinks
-    # meta: MetaOutput
+    meta: Optional[MetaOutput]
     type: str = OutputField(example_values=["url"])
 
 
