@@ -4073,10 +4073,13 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failure |
 action_result.message | string | | |
-action_result.data.\*.date_added | string | | |
-action_result.data.\*.date_expires | string | | |
-action_result.data.\*.key | string | | |
-action_result.data.\*.seconds_left | numeric | | |
+action_result.data.\*.entries.\*.date_added | string | | |
+action_result.data.\*.entries.\*.date_expires | string | | |
+action_result.data.\*.entries.\*.key | string | | |
+action_result.data.\*.entries.\*.seconds_left | numeric | | |
+action_result.summary.count | numeric | | |
+action_result.summary.expiration_interval | numeric | | |
+action_result.summary.max_cache_length | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 

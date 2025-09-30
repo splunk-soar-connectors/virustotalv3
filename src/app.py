@@ -831,38 +831,64 @@ def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> Polli
     return PollingData(**data)
 
 
-class GetCachedEntriesOutput(ActionOutput):
+class GetCachedEntry(ActionOutput):
     date_added: str
     date_expires: str
     key: str
     seconds_left: float
 
 
-@app.action(description="Get listing of cached entries", action_type="investigate")
+class GetCachedEntriesOutput(ActionOutput):
+    entries: list[GetCachedEntry]
+
+
+class GetCachedEnteriesSummary(ActionOutput):
+    count: int
+    expiration_interval: float
+    max_cache_length: int
+
+
+@app.action(
+    description="Get listing of cached entries",
+    action_type="investigate",
+    summary_type=GetCachedEnteriesSummary,
+)
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
-) -> list[GetCachedEntriesOutput]:
+) -> GetCachedEntriesOutput:
     saved_cache = app.actions_manager.asset_cache.get("vt_cache", {})
 
     datacache = DataCache(
         asset.cache_expiration_interval, asset.cache_size, saved_cache
     )
-    return [
-        GetCachedEntriesOutput(
-            date_added=datetime.datetime.fromtimestamp(
-                val_dict["timestamp"], datetime.timezone.utc
-            ).isoformat(),
-            date_expires=datetime.datetime.fromtimestamp(
-                val_dict["timestamp"] + asset.cache_expiration_interval,
-                datetime.timezone.utc,
-            ).isoformat(),
-            key=key,
-            seconds_left=val_dict["timestamp"]
-            + asset.cache_expiration_interval
-            - time.time(),
+    summary = GetCachedEnteriesSummary(
+        count=len(datacache.cache),
+        expiration_interval=asset.cache_expiration_interval,
+        max_cache_length=asset.cache_size,
+    )
+    soar.set_summary(summary)
+    soar.set_message(f"count: {len(datacache.cache)}")
+
+    enteries = []
+
+    for key, val_dict in datacache.cache.items():
+        enteries.append(
+            GetCachedEntry(
+                date_added=datetime.datetime.fromtimestamp(
+                    val_dict["timestamp"], datetime.timezone.utc
+                ).isoformat(),
+                date_expires=datetime.datetime.fromtimestamp(
+                    val_dict["timestamp"] + asset.cache_expiration_interval,
+                    datetime.timezone.utc,
+                ).isoformat(),
+                key=key,
+                seconds_left=val_dict["timestamp"]
+                + asset.cache_expiration_interval
+                - time.time(),
+            )
         )
-        for key, val_dict in datacache.cache.items()
-    ]
+
+    return GetCachedEntriesOutput(entries=enteries)
 
 
 class ClearCacheOutput(ActionOutput):
@@ -875,6 +901,7 @@ class ClearCacheOutput(ActionOutput):
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
     if "vt_cache" in app.actions_manager.asset_cache:
         app.actions_manager.asset_cache["vt_cache"] = {}
+    soar.set_message("cache cleared")
     return ClearCacheOutput(status="success")
 
 
