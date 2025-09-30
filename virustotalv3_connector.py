@@ -269,6 +269,7 @@ class VirustotalV3Connector(BaseConnector):
                 if "data" in cached_data:
                     cached_data["data"]["results-source"] = "retrieved from cache on soar"
                 # we deepcopy the data because if caller methods changes the data, it will affect the cached entry
+                # to test
                 return RetVal(action_result.set_status(cached_status, "Entry retrieved from cache"), deepcopy(cached_data))
 
         # ---------- caching code ends -----------------------------------------------------------------------
