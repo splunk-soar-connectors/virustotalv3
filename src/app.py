@@ -50,6 +50,7 @@ from typing import Optional
 from cache import DataCache
 import base64
 import datetime
+import json
 import time
 
 from utils import sanitize_key_names
@@ -149,6 +150,37 @@ def _get_cache_key(endpoint: str) -> str:
     return cache_key
 
 
+def _is_valid_query_string(query_string: str) -> bool:
+    """
+    Validate that a query string follows the key=value&key2=value2 format.
+
+    Args:
+        query_string: The query string to validate (without leading ?)
+
+    Returns:
+        bool: True if valid format, False otherwise
+    """
+    if not query_string or not query_string.strip():
+        return False
+
+    pairs = query_string.split("&")
+
+    for raw_pair in pairs:
+        pair = raw_pair.strip()
+        if not pair:  # Empty pair
+            return False
+
+        if "=" not in pair:  # No = sign
+            return False
+
+        key, _, _ = pair.partition("=")
+        if not key.strip():  # Empty key
+            return False
+        # Note: Empty values are allowed (key=&key2=value2)
+
+    return True
+
+
 def _check_rate_limit(asset, count=1) -> None:
     """Check to see if the rate limit is within the "4 requests per minute" limit enforced by VirusTotal free tier.
     If the rate limit is exceeded, wait for the appropriate amount of time before making the request again.
@@ -217,6 +249,7 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
                 raise ActionFailure(
                     f"Cached response for {endpoint} is not success with error {resp_json}"
                 )
+            resp_json["results-source"] = "retrieved from cache"
             return resp_json
 
     # Check rate limit before making request
@@ -275,6 +308,7 @@ class DomainReputationSummary(ActionOutput):
     malicious: int
     suspicious: int
     undetected: int
+    Source: str = "New from"
 
 
 @app.view_handler(template="domain_reputation_view.html")
@@ -387,15 +421,43 @@ def http_action(params: MakeRequestParams, asset: Asset) -> CustomMakeRequestOut
         .removeprefix("api")
     )
 
-    request_kwargs = {"method": params.http_method, "url": endpoint}
-
+    query_params = None
     if params.query_params:
-        request_kwargs["params"] = params.query_params
+        try:
+            # Try to parse as JSON first (e.g., '{"key": "value", "key2": "value2"}')
+            parsed_query_params = json.loads(params.query_params)
+            query_params = parsed_query_params
+        except (json.JSONDecodeError, TypeError):
+            # If not JSON, treat as raw query string (e.g., '?key=value&key2=value2' or 'key=value&key2=value2')
+            query_string = params.query_params.lstrip("?")
+
+            # Validate query string format (key=value&key2=value2)
+            if not _is_valid_query_string(query_string):
+                raise ActionFailure(
+                    f"Invalid query_params format. Expected JSON object or key=value&key2=value2 format, got: {params.query_params}"
+                ) from None
+
+            if "?" in endpoint:
+                endpoint += f"&{query_string}"
+            else:
+                endpoint += f"?{query_string}"
+
+    request_kwargs = {"method": params.http_method, "url": endpoint}
+    if query_params:
+        request_kwargs["params"] = query_params
     if params.body:
-        request_kwargs["json"] = params.body
+        try:
+            parsed_body = json.loads(params.body)
+            request_kwargs["json"] = parsed_body
+        except (json.JSONDecodeError, TypeError) as e:
+            raise ActionFailure(f"Invalid JSON body: {params.body}") from e
     if params.headers:
+        try:
+            parsed_headers = json.loads(params.headers)
+        except (json.JSONDecodeError, TypeError) as e:
+            raise ActionFailure(f"Invalid JSON headers: {params.headers}") from e
         merged_headers = client.headers.copy()
-        merged_headers.update(params.headers)
+        merged_headers.update(parsed_headers)
         request_kwargs["headers"] = merged_headers
     if params.verify_ssl:
         request_kwargs["verify"] = params.verify_ssl
