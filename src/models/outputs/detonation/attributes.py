@@ -28,7 +28,9 @@ class AndroguardCertificate(ActionOutput):
     Subject: str = OutputField(example_values=["US"])
     serialnumber: Optional[str] = OutputField(example_values=["6f20b2e6"])
     thumbprint: Optional[str] = OutputField(
-        example_values=["7bd81368b868225bde96fc1a3fee59a8ea06296a"]
+        example_values=[
+            "7bd81368b868225bde96fc1a3fee59a8ea06296a",  # pragma: allowlist secret
+        ]
     )
     validfrom: Optional[str] = OutputField(example_values=["2016-01-27 08:46:16"])
     validto: Optional[str] = OutputField(example_values=["2046-01-19 08:46:16"])
@@ -154,7 +156,7 @@ class DetonateFileAttributes(ActionOutput):
     androguard: Optional[Androguard]
     authentihash: Optional[str] = OutputField(
         example_values=[
-            "9999999999a601c12ac88d70736e5a5064dac716fe071ce9e3bb206d67b1b9a5"
+            "9999999999a601c12ac88d70736e5a5064dac716fe071ce9e3bb206d67b1b9a5",  # pragma: allowlist secret
         ]
     )
     bundle_info: Optional[BundleInfo]
@@ -197,26 +199,29 @@ class DetonateFileAttributes(ActionOutput):
     reputation: int = OutputField(example_values=[0])
     sandbox_verdicts: Optional[FileSandboxVerdicts]
     sha1: str = OutputField(
-        cef_types=["sha1"], example_values=["99999999999142292710254cde97df84e46dfe33a"]
+        cef_types=["sha1"],
+        example_values=[
+            "99999999999142292710254cde97df84e46dfe33a",  # pragma: allowlist secret
+        ],
     )
     sha256: str = OutputField(
         cef_types=["sha256"],
         example_values=[
-            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"
+            "e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe",  # pragma: allowlist secret
         ],
     )
     signature_info: Optional[list[str]] = OutputField(example_values=["xyz"])
     size: int = OutputField(example_values=[6285])
     ssdeep: Optional[str] = OutputField(
         example_values=[
-            "192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygi6OLxgUHzYu7ThPBLkv:pq7Mgg0/NdMu/1BLkv"
+            "192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygi6OLxgUHzYu7ThPBLkv:pq7Mgg0/NdMu/1BLkv",  # pragma: allowlist secret
         ]
     )
     tags: Optional[list[str]] = OutputField(example_values=[["python"]])
     times_submitted: int = OutputField(example_values=[13])
     tlsh: Optional[str] = OutputField(
         example_values=[
-            "9999999999C5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC"
+            "9999999999C5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC",  # pragma: allowlist secret
         ]
     )
     total_votes: Optional[TotalVotes]
