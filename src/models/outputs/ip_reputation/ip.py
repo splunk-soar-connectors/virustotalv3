@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from token import OP
 from typing import Optional
 from soar_sdk.action_results import ActionOutput, OutputField
 
@@ -20,8 +21,8 @@ from models.outputs.shared.tls import HTTPSCertificate
 
 
 class IPAttributes(ActionOutput):
-    as_owner: str
-    asn: int
+    as_owner: Optional[str]
+    asn: Optional[int]
     continent: Optional[str]
     country: Optional[str]
     jarm: Optional[str]

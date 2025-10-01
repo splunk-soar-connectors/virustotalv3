@@ -600,7 +600,7 @@ def ip_reputation(
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     output = IpReputationOutput(**sanitized_data)
-    summary = IpReputationSummary(**output.attributes.last_analysis_stats)
+    summary = IpReputationSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, undetected=output.attributes.last_analysis_stats.undetected)
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
     return output
