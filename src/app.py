@@ -597,7 +597,8 @@ class UrlReputationOutput(ActionOutput):
 def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
 ) -> UrlReputationOutput:
-    resp_json = _make_request(asset, "GET", f"urls/{params.url}")
+    url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
+    resp_json = _make_request(asset, "GET", f"urls/{url_id}")
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):

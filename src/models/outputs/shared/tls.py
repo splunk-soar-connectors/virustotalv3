@@ -79,4 +79,4 @@ class HTTPSCertificate(ActionOutput):
     thumbprint: str
     serial_number: str
     issuer: CertificateSubjectName
-    subject: CertificateSubjectName
+    subject: Optional[CertificateSubjectName]
