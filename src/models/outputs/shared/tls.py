@@ -61,9 +61,9 @@ class CertificatePublicKey(ActionOutput):
 
 
 class CertificateSubjectName(ActionOutput):
-    CN: str
-    O: str  # noqa: E741
-    C: str
+    CN: Optional[str]
+    O: Optional[str]  # noqa: E741
+    C: Optional[str]
     L: Optional[str]
     ST: Optional[str]
 

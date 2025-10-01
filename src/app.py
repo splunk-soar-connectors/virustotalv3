@@ -605,6 +605,13 @@ def url_reputation(
         raise ActionFailure(f"No data found for URL {params.url}")
 
     sanitized_data = sanitize_key_names(data)
+    attributes = sanitized_data.get("attributes", {})
+    if "last_analysis_results" in attributes:
+        last_analysis_results = [
+            {"vendor": vendor, **results}
+            for vendor, results in attributes["last_analysis_results"].items()
+        ]
+        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     return UrlReputationOutput(**sanitized_data)
@@ -740,6 +747,7 @@ class DetonateFileOutput(ActionOutput):
     links: APILinks
     meta: Optional[MetaOutput]
     type: str = OutputField(example_values=["file"])
+    scan_id: Optional[str]
 
 
 def poll_for_result(
@@ -787,7 +795,7 @@ def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
             {
                 "vault_id": output.vault_id,
                 "sha256": output.id,
-                "scan_id": output.data.id if output.data else None,
+                "scan_id": output.data.id if output.data else output.scan_id,
             }
         )
 
@@ -842,7 +850,9 @@ def detonate_file(
         )
         soar.set_summary(summary)
         soar.set_message(summary.get_message())
-        return DetonateFileOutput(**output, vault_id=vault_id)
+        output = DetonateFileOutput(**output, vault_id=vault_id)
+        output.scan_id = scan_id
+        return output
 
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for file {file_hash}")
