@@ -561,7 +561,7 @@ class IpReputationOutput(ActionOutput):
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
-    resp_json = _make_request(asset, "GET", f"ips/{params.ip}")
+    resp_json = _make_request(asset, "GET", f"ip_addresses/{params.ip}")
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):

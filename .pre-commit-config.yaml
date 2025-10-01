@@ -60,7 +60,7 @@ repos:
         exclude: "README.md"
   # Central hooks
   - repo: https://github.com/phantomcyber/dev-cicd-tools
-    rev: tapishj/fix-sdkify-pre-commit
+    rev: v2.1.0
     hooks:
       - id: build-docs
         language: python
