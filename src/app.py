@@ -496,12 +496,21 @@ class FileReputationOutput(ActionOutput):
     links: APILinks
     attributes: FileAttributes
 
+class FileReputationSummary(ActionOutput):
+    harmless: int
+    malicious: int
+    suspicious: int
+    undetected: int
+
+    def get_message(self) -> str:
+        return f"Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Undetected: {self.undetected}"
+
 
 @app.action(
     description="Queries VirusTotal for file reputation info", action_type="investigate"
 )
 def file_reputation(
-    params: FileReputationParams, soar: SOARClient, asset: Asset
+    params: FileReputationParams, soar: SOARClient, asset: Asset, summary_type=FileReputationSummary,
 ) -> FileReputationOutput:
     resp_json = _make_request(asset, "GET", f"files/{params.hash}")
 
@@ -512,7 +521,11 @@ def file_reputation(
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
 
-    return FileReputationOutput(**sanitized_data)
+    output = FileReputationOutput(**sanitized_data)
+    summary = FileReputationSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, undetected=output.attributes.last_analysis_stats.undetected)
+    soar.set_summary(summary)
+    soar.set_message(summary.get_message())
+    return output
 
 
 class GetFileParams(Params):
@@ -577,13 +590,13 @@ def ip_reputation(
         raise ActionFailure(f"No data found for IP {params.ip}")
 
     sanitized_data = sanitize_key_names(data)
-    attributes = sanitized_data.get("attributes", {})
-    if "last_analysis_results" in attributes:
-        last_analysis_results = [
-            {"vendor": vendor, **results}
-            for vendor, results in attributes["last_analysis_results"].items()
-        ]
-        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
+    #attributes = sanitized_data.get("attributes", {})
+    #if "last_analysis_results" in attributes:
+    #    last_analysis_results = [
+    #        {"vendor": vendor, **results}
+    #        for vendor, results in attributes["last_analysis_results"].items()
+   #     ]
+   #     sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     output = IpReputationOutput(**sanitized_data)
@@ -591,6 +604,17 @@ def ip_reputation(
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
     return output
+
+class DetonateSummary(ActionOutput):
+    scan_id: str
+    harmless: int
+    malicious: int
+    suspicious: int
+    timeout: int
+    undetected: int
+
+    def get_message(self) -> str:
+        return f"Scan ID: {self.scan_id}, Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Timeout: {self.timeout}, Undetected: {self.undetected}"
 
 
 class UrlReputationParams(Params):
@@ -613,6 +637,7 @@ class UrlReputationOutput(ActionOutput):
 @app.action(
     description="Queries VirusTotal for URL info (run this action after running detonate url)",
     action_type="investigate",
+    summary_type=DetonateSummary,
 )
 def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
@@ -636,7 +661,7 @@ def url_reputation(
     
     output = UrlReputationOutput(**sanitized_data)
     new_scan_id = f"u-{output.id}-{output.attributes.last_submission_date}"
-    summary = DetonateSummary(**output.attributes.last_analysis_stats, scan_id=new_scan_id)
+    summary = DetonateSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, timeout=output.attributes.last_analysis_stats.timeout, undetected=output.attributes.last_analysis_stats.undetected, scan_id=new_scan_id)
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
 
@@ -664,26 +689,12 @@ class DetonateUrlOutput(ActionOutput):
     scan_id: Optional[str]
 
 
-class DetonateSummary(ActionOutput):
-    scan_id: str
-    harmless: int
-    malicious: int
-    suspicious: int
-    timeout: int
-    undetected: int
-
-    def get_message(self) -> str:
-        return f"Scan ID: {self.scan_id}, Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Timeout: {self.timeout}, Undetected: {self.undetected}"
-
-
 @app.view_handler(template="detonate_url_view.html")
 def detonate_url_view(outputs: list[DetonateUrlOutput]) -> dict:
     logger.debug(f"View handler called with {len(outputs)} outputs")
     result = {"results": []}
     for _i, output in enumerate(outputs):
-        scan_id = (output.data.id if output.data else None) or getattr(
-            output, "scan_id", None
-        )
+        scan_id = output.data.id if output.data else output.scan_id
         result["results"].append({"url": output.attributes.url, "scan_id": scan_id})
 
     result["container"] = {"id": app.soar_client.get_executing_container_id()}
@@ -821,7 +832,7 @@ def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
             {
                 "vault_id": output.vault_id,
                 "sha256": output.id,
-                "scan_id": output.data.id if output.data else output.scan_id,
+                "scan_id": output.scan_id,
             }
         )
 
@@ -914,7 +925,7 @@ def detonate_file(
         soar.set_message(summary.get_message())
 
     logger.debug(f"Sanitized data: {sanitized_data}")
-    return DetonateFileOutput(**sanitized_data, vault_id=vault_id)
+    return DetonateFileOutput(**sanitized_data, vault_id=vault_id, scan_id=new_scan_id)
 
 
 class GetReportParams(Params):
