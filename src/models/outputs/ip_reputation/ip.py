@@ -24,14 +24,14 @@ class IPAttributes(ActionOutput):
     asn: int
     continent: Optional[str]
     country: Optional[str]
-    jarm: str
+    jarm: Optional[str]
     last_analysis_date: int = OutputField(cef_types=["timestamp"])
     last_analysis_results: IPAnalysisResults
     last_analysis_stats: IPAnalysisStats
     last_https_certificate: Optional[HTTPSCertificate]
-    last_https_certificate_date: int = OutputField(cef_types=["timestamp"])
+    last_https_certificate_date: Optional[int] = OutputField(cef_types=["timestamp"])
     last_modification_date: int = OutputField(cef_types=["timestamp"])
-    network: str = OutputField(cef_types=["ip"])
+    network: Optional[str] = OutputField(cef_types=["ip"])
     reputation: int
     total_votes: TotalVotes
     whois: Optional[str]

@@ -34,8 +34,8 @@ class TrID(ActionOutput):
 
 
 class FileConditions(ActionOutput):
-    raw_md5: str = OutputField(cef_types=["md5"])
-    dhash: str = OutputField(cef_types=["hash"])
+    raw_md5: Optional[str] = OutputField(cef_types=["md5"])
+    dhash: Optional[str] = OutputField(cef_types=["hash"])
 
 
 class KnownFileDistributors(ActionOutput):
@@ -54,7 +54,7 @@ class FileAttributes(ActionOutput):
     sha256: str = OutputField(cef_types=["sha256"])
     last_submission_date: int = OutputField(cef_types=["timestamp"])
     trid: list[TrID]
-    filecondis: FileConditions
+    filecondis: Optional[FileConditions]
     last_analysis_stats: FileAnalysisStats
     ssdeep: str
     type_description: str
@@ -73,7 +73,7 @@ class FileAttributes(ActionOutput):
     unique_sources: int
     last_analysis_results: Optional[FileAnalysisResults]
     type_extension: str
-    magika: str
+    magika: Optional[str]
     type_tags: list[str]
     names: list[str]
     pdf_info: Optional[PDFInfo]

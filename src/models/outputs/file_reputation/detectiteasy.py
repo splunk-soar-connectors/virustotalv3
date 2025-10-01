@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from soar_sdk.action_results import ActionOutput
-
+from typing import Optional
 
 class DetectItEasyValue(ActionOutput):
-    info: str
+    info: Optional[str]
     name: str
-    type: str
-    version: str
+    type: Optional[str]
+    version: Optional[str]
 
 
 class DetectItEasyResult(ActionOutput):

@@ -48,7 +48,7 @@ class DomainAttributes(ActionOutput):
     last_dns_records_date: int = OutputField(
         cef_types=["timestamp"], example_values=[1757503155]
     )
-    jarm: str = OutputField(
+    jarm: Optional[str] = OutputField(
         example_values=[
             "29d3fd00029d29d00042d43d00041d598ac0c1012db967bb1ad0ff2491b3ae"  # pragma: allowlist secret
         ]
@@ -77,7 +77,7 @@ class DomainAttributes(ActionOutput):
     last_dns_records: list[DNSRecord]
     last_https_certificate: HTTPSCertificate
     tld: str = OutputField(example_values=["com"])
-    last_https_certificate_date: int = OutputField(
+    last_https_certificate_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635210]
     )
     last_analysis_stats: DomainAnalysisStats

@@ -557,6 +557,15 @@ class IpReputationOutput(ActionOutput):
     attributes: IPAttributes
 
 
+class IpReputationSummary(ActionOutput):
+    harmless: int
+    malicious: int
+    suspicious: int
+    undetected: int
+
+    def get_message(self) -> str:
+        return f"Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Undetected: {self.undetected}"
+
 @app.action(description="Queries VirusTotal for IP info", action_type="investigate")
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
@@ -568,9 +577,20 @@ def ip_reputation(
         raise ActionFailure(f"No data found for IP {params.ip}")
 
     sanitized_data = sanitize_key_names(data)
+    attributes = sanitized_data.get("attributes", {})
+    if "last_analysis_results" in attributes:
+        last_analysis_results = [
+            {"vendor": vendor, **results}
+            for vendor, results in attributes["last_analysis_results"].items()
+        ]
+        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
 
-    return IpReputationOutput(**sanitized_data)
+    output = IpReputationOutput(**sanitized_data)
+    summary = IpReputationSummary(**output.attributes.last_analysis_stats)
+    soar.set_summary(summary)
+    soar.set_message(summary.get_message())
+    return output
 
 
 class UrlReputationParams(Params):
@@ -613,6 +633,12 @@ def url_reputation(
         ]
         sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
+    
+    output = UrlReputationOutput(**sanitized_data)
+    new_scan_id = f"u-{output.id}-{output.attributes.last_submission_date}"
+    summary = DetonateSummary(**output.attributes.last_analysis_stats, scan_id=new_scan_id)
+    soar.set_summary(summary)
+    soar.set_message(summary.get_message())
 
     return UrlReputationOutput(**sanitized_data)
 
@@ -850,9 +876,7 @@ def detonate_file(
         )
         soar.set_summary(summary)
         soar.set_message(summary.get_message())
-        output = DetonateFileOutput(**output, vault_id=vault_id)
-        output.scan_id = scan_id
-        return output
+        return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
 
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for file {file_hash}")
