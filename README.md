@@ -717,6 +717,11 @@ action_result.data.\*.attributes.rdap.remarks.\* | string | | |
 action_result.data.\*.attributes.rdap.nask0_state | string | | |
 action_result.data.\*.attributes.rdap.variants.\* | string | | |
 action_result.data.\*.attributes.tags.\* | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.undetected | numeric | | |
+action_result.summary.source | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -4053,6 +4058,12 @@ action_result.data.\*.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3
 action_result.data.\*.meta.file_info.size | numeric | | 6285 |
 action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
 action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 

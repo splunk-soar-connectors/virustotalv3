@@ -249,7 +249,7 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
                 raise ActionFailure(
                     f"Cached response for {endpoint} is not success with error {resp_json}"
                 )
-            resp_json["results-source"] = "retrieved from cache"
+            resp_json["results-source"] = "retrieved from cache on soar"
             return resp_json
 
     # Check rate limit before making request
@@ -308,7 +308,10 @@ class DomainReputationSummary(ActionOutput):
     malicious: int
     suspicious: int
     undetected: int
-    Source: str = "New from"
+    source: str = "new from virustotal"
+
+    def get_message(self) -> str:
+        return f"Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Undetected: {self.undetected}, Source: {self.source}"
 
 
 @app.view_handler(template="domain_reputation_view.html")
@@ -343,6 +346,7 @@ def domain_reputation_view(outputs: list[DomainReputationOutput]) -> dict:
     description="Queries VirusTotal for domain info",
     action_type="investigate",
     view_handler=domain_reputation_view,
+    summary_type=DomainReputationSummary,
 )
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
@@ -353,6 +357,7 @@ def domain_reputation(
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for domain {params.domain}")
 
+    source = resp_json.get("results-source", "new from virustotal")
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
 
@@ -362,8 +367,10 @@ def domain_reputation(
         malicious=output.attributes.last_analysis_stats.malicious,
         suspicious=output.attributes.last_analysis_stats.suspicious,
         undetected=output.attributes.last_analysis_stats.undetected,
+        source=source,
     )
     soar.set_summary(summary)
+    soar.set_message(summary.get_message())
     return output
 
 
@@ -631,6 +638,9 @@ class DetonateSummary(ActionOutput):
     timeout: int
     undetected: int
 
+    def get_message(self) -> str:
+        return f"Scan ID: {self.scan_id}, Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Timeout: {self.timeout}, Undetected: {self.undetected}"
+
 
 @app.view_handler(template="detonate_url_view.html")
 def detonate_url_view(outputs: list[DetonateUrlOutput]) -> dict:
@@ -671,6 +681,7 @@ def detonate_url(
             asset,
         )
         soar.set_summary(summary)
+        soar.set_message(summary.get_message())
         return DetonateUrlOutput(**output)
 
     if not (data := resp_json.get("data")):
@@ -700,6 +711,7 @@ def detonate_url(
             undetected=attributes["last_analysis_stats"]["undetected"],
         )
         soar.set_summary(summary)
+        soar.set_message(summary.get_message())
 
     logger.debug(f"Sanitized data: {sanitized_data}")
     return DetonateUrlOutput(**sanitized_data, scan_id=new_scan_id)
@@ -828,6 +840,7 @@ def detonate_file(
             scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
         )
         soar.set_summary(summary)
+        soar.set_message(summary.get_message())
         return DetonateFileOutput(**output, vault_id=vault_id)
 
     if not (data := resp_json.get("data")):
@@ -863,6 +876,7 @@ def detonate_file(
             undetected=attributes["last_analysis_stats"]["undetected"],
         )
         soar.set_summary(summary)
+        soar.set_message(summary.get_message())
 
     logger.debug(f"Sanitized data: {sanitized_data}")
     return DetonateFileOutput(**sanitized_data, vault_id=vault_id)
@@ -879,6 +893,7 @@ class GetReportParams(Params):
     description="Get the results using the scan id from a detonate file or detonate url action",
     action_type="investigate",
     verbose="For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    summary_type=DetonateSummary,
 )
 def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
@@ -887,9 +902,9 @@ def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> Polli
         scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
     )
     soar.set_summary(summary)
+    soar.set_message(summary.get_message())
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for scan ID {scan_id}")
-    logger.debug(f"Polling dataaaaa: {data}")
     return PollingData(**data)
 
 
@@ -1138,6 +1153,9 @@ class GetQuotasSummaryOutput(ActionOutput):
             )
 
         return summary
+
+    def get_message(self) -> str:
+        return f"User Hourly API Ratio: {self.user_hourly_api_ratio}, Group Hourly API Ratio: {self.group_hourly_api_ratio}, User Daily API Ratio: {self.user_daily_api_ratio}, Group Daily API Ratio: {self.group_daily_api_ratio}, User Monthly API Ratio: {self.user_monthly_api_ratio}, Group Monthly API Ratio: {self.group_monthly_api_ratio}"
 
 
 @app.action(
