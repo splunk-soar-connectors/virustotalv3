@@ -69,14 +69,14 @@ class CertificateSubjectName(ActionOutput):
 
 
 class HTTPSCertificate(ActionOutput):
-    cert_signature: CertificateSignature
-    extensions: CertificateExtensions
-    validity: CertificateValidity
-    size: int
-    version: str
-    public_key: CertificatePublicKey
-    thumbprint_sha256: str
-    thumbprint: str
-    serial_number: str
-    issuer: CertificateSubjectName
+    cert_signature: Optional[CertificateSignature]
+    extensions: Optional[CertificateExtensions]
+    validity: Optional[CertificateValidity]
+    size: Optional[int]
+    version: Optional[str]
+    public_key: Optional[CertificatePublicKey]
+    thumbprint_sha256: Optional[str]
+    thumbprint: Optional[str]
+    serial_number: Optional[str]
+    issuer: Optional[CertificateSubjectName]
     subject: Optional[CertificateSubjectName]

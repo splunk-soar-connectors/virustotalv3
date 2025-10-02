@@ -356,6 +356,9 @@ def domain_reputation_view(outputs: list[DomainReputationOutput]) -> dict:
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
 ) -> DomainReputationOutput:
+    if params.domain.startswith("http") or params.domain.startswith("https"):
+        logger.info(f"Domain {params.domain} is a URL, converting to domain")
+        params.domain = params.domain.split("//")[1].split("/")[0]
     resp_json = _make_request(asset, "GET", f"domains/{params.domain}")
 
     logger.debug(f"VirusTotal response: {resp_json}")
@@ -830,6 +833,8 @@ class DetonateFileOutput(ActionOutput):
 def poll_for_result(
     scan_id: str, poll_interval: float, wait_time: float, asset: Asset
 ) -> tuple[dict, DetonateSummary]:
+    if wait_time < 0:
+        raise ActionFailure(f"Wait time must be greater than 0, got {wait_time}")
     time.sleep(wait_time)
     # since we sleep for 1 minute, num_attempts is the number of minutes to poll
     num_attempts = poll_interval
@@ -927,17 +932,6 @@ def detonate_file(
         )
         soar.set_summary(summary)
         soar.set_message(summary.get_message())
-        if bundle_info := output.get("attributes", {}).get("bundle_info"):
-            if "extensions" in bundle_info:
-                output["attributes"]["bundle_info"]["extensions"] = [
-                    {"key": key, "count": count}
-                    for key, count in bundle_info["extensions"].items()
-                ]
-            if "file_types" in bundle_info:
-                output["attributes"]["bundle_info"]["file_types"] = [
-                    {"key": key, "count": count}
-                    for key, count in bundle_info["file_types"].items()
-                ]
 
         return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
 

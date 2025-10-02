@@ -81,6 +81,7 @@ class AndroguardRiskIndicator(ActionOutput):
 
 
 class Androguard(ActionOutput):
+    Activities: Optional[list[str]]
     AndroguardVersion: Optional[str] = OutputField(example_values=["3.0-dev"])
     AndroidApplication: Optional[int] = OutputField(example_values=[1])
     AndroidApplicationError: Optional[bool] = OutputField(example_values=[False])
@@ -98,6 +99,8 @@ class Androguard(ActionOutput):
     main_activity: Optional[str] = OutputField(
         example_values=["com.ibm.android.analyzer.test.xas.CAS"]
     )
+    Services: Optional[list[str]]
+    StringsInformation: Optional[list[str]]
     permission_details: Optional[PermissionDetails]
 
 
@@ -116,6 +119,14 @@ class BundleInfo(ActionOutput):
     num_children: Optional[int] = OutputField(example_values=[1])
     type: Optional[str] = OutputField(example_values=["ZIP"])
     uncompressed_size: Optional[int] = OutputField(example_values=[481])
+
+    @validator("extensions", "file_types", pre=True)
+    @classmethod
+    def flatten_dict_to_list(cls, v):
+        """Convert dict to list of key-value objects"""
+        if isinstance(v, dict):
+            return [Extension(key=k, value=val) for k, val in v.items()]
+        return v
 
 
 class CrowdsourcedIdsResult(ActionOutput):
@@ -147,11 +158,11 @@ class HTMLInfoAttributes(ActionOutput):
 
 
 class HtmlInfoIframe(ActionOutput):
-    attributes: list[HTMLInfoAttributes]
+    attributes: HTMLInfoAttributes
 
 
 class HtmlInfoScript(ActionOutput):
-    attributes: list[HTMLInfoAttributes]
+    attributes: HTMLInfoAttributes
 
 
 class HtmlInfo(ActionOutput):

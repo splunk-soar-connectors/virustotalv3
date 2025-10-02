@@ -2683,6 +2683,7 @@ action_result.message | string | | |
 action_result.parameter.vault_id | string | `vault id` `sha1` | |
 action_result.parameter.wait_time | numeric | | |
 action_result.data.\*.vault_id | string | | |
+action_result.data.\*.attributes.androguard.Activities.\* | string | | |
 action_result.data.\*.attributes.androguard.AndroguardVersion | string | | 3.0-dev |
 action_result.data.\*.attributes.androguard.AndroidApplication | numeric | | 1 |
 action_result.data.\*.attributes.androguard.AndroidApplicationError | boolean | | True False |
@@ -2732,6 +2733,8 @@ action_result.data.\*.attributes.androguard.certificate.subject.C | string | | |
 action_result.data.\*.attributes.androguard.certificate.subject.L | string | | |
 action_result.data.\*.attributes.androguard.certificate.subject.ST | string | | |
 action_result.data.\*.attributes.androguard.main_activity | string | | com.ibm.android.analyzer.test.xas.CAS |
+action_result.data.\*.attributes.androguard.Services.\* | string | | |
+action_result.data.\*.attributes.androguard.StringsInformation.\* | string | | |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.full_description | string | | Allows an application to create network sockets. |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.permission_type | string | | dangerous |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.short_description | string | | full Internet access |
@@ -2796,12 +2799,12 @@ action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_url | string |
 action_result.data.\*.attributes.crowdsourced_ids_stats.\* | numeric | | 0 |
 action_result.data.\*.attributes.first_seen_itw_date | numeric | `timestamp` | 1502111702 |
 action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | 1612961082 |
-action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.src | string | | ./test_html_files/list.html |
-action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.width | string | | 100% |
-action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.height | string | | 400px |
-action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.src | string | | ./test_html_files/list.html |
-action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.width | string | | 100% |
-action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.height | string | | 400px |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.width | string | | 100% |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.height | string | | 400px |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.width | string | | 100% |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.height | string | | 400px |
 action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | 1613635130 |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | |
