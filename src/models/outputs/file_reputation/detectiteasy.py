@@ -14,6 +14,7 @@
 from soar_sdk.action_results import ActionOutput
 from typing import Optional
 
+
 class DetectItEasyValue(ActionOutput):
     info: Optional[str]
     name: str

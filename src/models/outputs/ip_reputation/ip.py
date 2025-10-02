@@ -22,8 +22,9 @@ from models.outputs.shared.tls import HTTPSCertificate
 class IPAttributes(ActionOutput):
     as_owner: Optional[str]
     asn: Optional[int]
-    continent: Optional[str] = OutputField(column_name="Continent")
+    network: Optional[str] = OutputField(cef_types=["ip"], column_name="Network")
     country: Optional[str] = OutputField(column_name="Country")
+    continent: Optional[str] = OutputField(column_name="Continent")
     jarm: Optional[str]
     last_analysis_date: int = OutputField(cef_types=["timestamp"])
     last_analysis_results: IPAnalysisResults
@@ -31,7 +32,6 @@ class IPAttributes(ActionOutput):
     last_https_certificate: Optional[HTTPSCertificate]
     last_https_certificate_date: Optional[int] = OutputField(cef_types=["timestamp"])
     last_modification_date: int = OutputField(cef_types=["timestamp"])
-    network: Optional[str] = OutputField(cef_types=["ip"], column_name="Network")
     reputation: int
     total_votes: TotalVotes
     whois: Optional[str]

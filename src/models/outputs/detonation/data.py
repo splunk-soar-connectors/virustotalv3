@@ -81,7 +81,6 @@ class PollingData(ActionOutput):
     id: str = OutputField(
         cef_types=["virustotal scan id"],
         example_values=["MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw=="],
-        column_name="Scan ID",
     )
     links: ScanLinks
     type: str

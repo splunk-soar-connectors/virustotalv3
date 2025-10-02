@@ -820,6 +820,7 @@ action_result.data.\*.attributes.last_analysis_stats.failure | numeric | | |
 action_result.data.\*.attributes.last_analysis_stats.type_unsupported | numeric | | |
 action_result.data.\*.attributes.ssdeep | string | | |
 action_result.data.\*.attributes.type_description | string | | |
+action_result.data.\*.attributes.size | numeric | | |
 action_result.data.\*.attributes.magic | string | | |
 action_result.data.\*.attributes.total_votes.harmless | numeric | | |
 action_result.data.\*.attributes.total_votes.malicious | numeric | | |
@@ -829,7 +830,6 @@ action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` 
 action_result.data.\*.attributes.meaningful_name | string | | |
 action_result.data.\*.attributes.tlsh | string | | |
 action_result.data.\*.attributes.first_seen_itw_date | numeric | `timestamp` | |
-action_result.data.\*.attributes.size | numeric | | |
 action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.sha1 | string | `sha1` | |
 action_result.data.\*.attributes.reputation | numeric | | |
@@ -1510,8 +1510,9 @@ action_result.data.\*.type | string | | ip_address |
 action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.attributes.as_owner | string | | |
 action_result.data.\*.attributes.asn | numeric | | |
-action_result.data.\*.attributes.continent | string | | |
+action_result.data.\*.attributes.network | string | `ip` | |
 action_result.data.\*.attributes.country | string | | |
+action_result.data.\*.attributes.continent | string | | |
 action_result.data.\*.attributes.jarm | string | | |
 action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | |
@@ -1935,7 +1936,6 @@ action_result.data.\*.attributes.last_https_certificate.subject.L | string | | |
 action_result.data.\*.attributes.last_https_certificate.subject.ST | string | | |
 action_result.data.\*.attributes.last_https_certificate_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
-action_result.data.\*.attributes.network | string | `ip` | |
 action_result.data.\*.attributes.reputation | numeric | | |
 action_result.data.\*.attributes.total_votes.harmless | numeric | | |
 action_result.data.\*.attributes.total_votes.malicious | numeric | | |
@@ -4091,9 +4091,9 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string | | success failure |
 action_result.message | string | | |
+action_result.data.\*.entries.\*.key | string | | |
 action_result.data.\*.entries.\*.date_added | string | | |
 action_result.data.\*.entries.\*.date_expires | string | | |
-action_result.data.\*.entries.\*.key | string | | |
 action_result.data.\*.entries.\*.seconds_left | numeric | | |
 action_result.summary.count | numeric | | |
 action_result.summary.expiration_interval | numeric | | |

@@ -272,6 +272,11 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
 
 @app.test_connectivity()
 def test_connectivity(soar: SOARClient, asset: Asset) -> None:
+    if asset.poll_interval < 0 or asset.waiting_time < 0:
+        raise AssetMisconfiguration(
+            "Poll interval and waiting time must be greater than 0."
+        )
+
     client = asset.get_client()
     response = client.get("files/upload_url")
 
@@ -578,7 +583,6 @@ class IpReputationParams(Params):
         description="IP to query",
         primary=True,
         cef_types=["ip", "ipv6"],
-        column_name="IP",
     )
 
 
@@ -992,9 +996,9 @@ def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> Polli
 
 
 class GetCachedEntry(ActionOutput):
-    date_added: str = OutputField(column_name="Date Added")
-    date_expires: str = OutputField(column_name="Date Expires")
     key: str = OutputField(column_name="Key")
+    date_added: str = OutputField(column_name="Date Add")
+    date_expires: str = OutputField(column_name="Date Expires")
     seconds_left: float = OutputField(column_name="Seconds Till Expiration")
 
 
