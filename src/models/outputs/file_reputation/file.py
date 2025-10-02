@@ -58,7 +58,7 @@ class FileAttributes(ActionOutput):
     last_analysis_stats: FileAnalysisStats
     ssdeep: str
     type_description: str
-    magic: str
+    magic: str = OutputField(column_name="File Description")
     total_votes: TotalVotes
     times_submitted: int
     tags: list[str]
@@ -66,13 +66,15 @@ class FileAttributes(ActionOutput):
     meaningful_name: str
     tlsh: str
     first_seen_itw_date: Optional[int] = OutputField(cef_types=["timestamp"])
-    size: int
+    size: int = OutputField(column_name="Size")
     last_analysis_date: int = OutputField(cef_types=["timestamp"])
     sha1: str = OutputField(cef_types=["sha1"])
     reputation: int
     unique_sources: int
     last_analysis_results: Optional[FileAnalysisResults]
-    type_extension: str
+    type_extension: str = OutputField(
+        column_name="File Extension", example_values=["py"]
+    )
     magika: Optional[str]
     type_tags: list[str]
     names: list[str]

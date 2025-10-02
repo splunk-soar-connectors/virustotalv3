@@ -791,7 +791,7 @@ wheels = [
 
 [[package]]
 name = "splunk-soar-sdk"
-version = "2.1.1"
+version = "2.3.0"
 source = { registry = "https://pypi.python.org/simple" }
 dependencies = [
     { name = "beautifulsoup4", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
@@ -811,9 +811,9 @@ dependencies = [
     { name = "tqdm", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "typer", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/47/22/6a5c5c89b8580e24f55f2be8caf91b48107744416b2a8de1d949491d0d19/splunk_soar_sdk-2.1.1.tar.gz", hash = "sha256:42877eb3e07f0269444b4fc3e057990f749509a8940f924ad9027e3787ad520a", size = 519958, upload-time = "2025-09-30T15:01:22.252Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/97/50/7b7d8037bde2e8986dfb839b9580d9e32c6f40d2d3d0ab12dc73cb078502/splunk_soar_sdk-2.3.0.tar.gz", hash = "sha256:70ed6b94c122c0919c24dd80aa5f294fc7e641154a5cee62427325aed0772110", size = 521589, upload-time = "2025-10-02T17:30:46.849Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/31/59/bcd10e60534d5290f03b8fdaf4c4a8ce9beb325ab9f8fdb575a045988585/splunk_soar_sdk-2.1.1-py3-none-any.whl", hash = "sha256:37af4a2b4801d9feb5d473da00128ddf2c8a2f01d552826814149b06df4ac3b3", size = 158019, upload-time = "2025-09-30T15:01:21.022Z" },
+    { url = "https://files.pythonhosted.org/packages/86/58/2e1ad431287cb3fdfd59aa26b2ea003260a562c2890d87424453f8a2ea50/splunk_soar_sdk-2.3.0-py3-none-any.whl", hash = "sha256:87c16cf7faf91ecbe858cf263a27900e8bf72d71aae0935b8370e9f132616a29", size = 158580, upload-time = "2025-10-02T17:30:45.754Z" },
 ]
 
 [[package]]
@@ -939,7 +939,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=2.1.0" }]
+requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=2.3.0" }]
 
 [package.metadata.requires-dev]
 dev = [

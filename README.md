@@ -1380,7 +1380,7 @@ action_result.data.\*.attributes.last_analysis_results.Nucleon.engine_update | s
 action_result.data.\*.attributes.last_analysis_results.Nucleon.method | string | | |
 action_result.data.\*.attributes.last_analysis_results.Nucleon.result | string | | |
 action_result.data.\*.attributes.last_analysis_results.Nucleon.vendor | string | | |
-action_result.data.\*.attributes.type_extension | string | | |
+action_result.data.\*.attributes.type_extension | string | | py |
 action_result.data.\*.attributes.magika | string | | |
 action_result.data.\*.attributes.type_tags.\* | string | | |
 action_result.data.\*.attributes.names.\* | string | | |
@@ -2003,6 +2003,12 @@ action_result.data.\*.attributes.has_content | boolean | | True False |
 action_result.data.\*.id | string | | 99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
 action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | url |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -3458,6 +3464,7 @@ action_result.data.\*.meta.file_info.size | numeric | | 6285 |
 action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
 action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | file |
+action_result.data.\*.scan_id | string | | |
 action_result.summary.scan_id | string | | |
 action_result.summary.harmless | numeric | | |
 action_result.summary.malicious | numeric | | |

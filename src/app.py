@@ -487,6 +487,7 @@ class FileReputationParams(Params):
         description="File hash to query",
         primary=True,
         cef_types=["hash", "sha256", "sha1", "md5"],
+        column_name="Hash",
     )
 
 
@@ -495,6 +496,7 @@ class FileReputationOutput(ActionOutput):
     type: str = OutputField(example_values=["file"])
     links: APILinks
     attributes: FileAttributes
+
 
 class FileReputationSummary(ActionOutput):
     harmless: int
@@ -507,10 +509,15 @@ class FileReputationSummary(ActionOutput):
 
 
 @app.action(
-    description="Queries VirusTotal for file reputation info", action_type="investigate"
+    description="Queries VirusTotal for file reputation info",
+    action_type="investigate",
+    render_as="table",
 )
 def file_reputation(
-    params: FileReputationParams, soar: SOARClient, asset: Asset, summary_type=FileReputationSummary,
+    params: FileReputationParams,
+    soar: SOARClient,
+    asset: Asset,
+    summary_type=FileReputationSummary,
 ) -> FileReputationOutput:
     resp_json = _make_request(asset, "GET", f"files/{params.hash}")
 
@@ -522,7 +529,12 @@ def file_reputation(
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     output = FileReputationOutput(**sanitized_data)
-    summary = FileReputationSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, undetected=output.attributes.last_analysis_stats.undetected)
+    summary = FileReputationSummary(
+        harmless=output.attributes.last_analysis_stats.harmless,
+        malicious=output.attributes.last_analysis_stats.malicious,
+        suspicious=output.attributes.last_analysis_stats.suspicious,
+        undetected=output.attributes.last_analysis_stats.undetected,
+    )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
     return output
@@ -533,12 +545,14 @@ class GetFileParams(Params):
         description="Hash of file to get",
         primary=True,
         cef_types=["hash", "sha256", "sha1", "md5"],
+        column_name="Hash",
     )
 
 
 @app.action(
     description="Downloads a file from VirusTotal and adds it to the vault",
     action_type="investigate",
+    render_as="table",
 )
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
     client = asset.get_client()
@@ -560,11 +574,18 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
 
 
 class IpReputationParams(Params):
-    ip: str = Param(description="IP to query", primary=True, cef_types=["ip", "ipv6"])
+    ip: str = Param(
+        description="IP to query",
+        primary=True,
+        cef_types=["ip", "ipv6"],
+        column_name="IP",
+    )
 
 
 class IpReputationOutput(ActionOutput):
-    id: str = OutputField(cef_types=["ip"], example_values=["2.3.4.5"])
+    id: str = OutputField(
+        cef_types=["ip"], example_values=["2.3.4.5"], column_name="IP"
+    )
     type: str = OutputField(example_values=["ip_address"])
     links: APILinks
     attributes: IPAttributes
@@ -579,7 +600,12 @@ class IpReputationSummary(ActionOutput):
     def get_message(self) -> str:
         return f"Harmless: {self.harmless}, Malicious: {self.malicious}, Suspicious: {self.suspicious}, Undetected: {self.undetected}"
 
-@app.action(description="Queries VirusTotal for IP info", action_type="investigate")
+
+@app.action(
+    description="Queries VirusTotal for IP info",
+    action_type="investigate",
+    render_as="table",
+)
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
@@ -590,23 +616,22 @@ def ip_reputation(
         raise ActionFailure(f"No data found for IP {params.ip}")
 
     sanitized_data = sanitize_key_names(data)
-    #attributes = sanitized_data.get("attributes", {})
-    #if "last_analysis_results" in attributes:
-    #    last_analysis_results = [
-    #        {"vendor": vendor, **results}
-    #        for vendor, results in attributes["last_analysis_results"].items()
-   #     ]
-   #     sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     output = IpReputationOutput(**sanitized_data)
-    summary = IpReputationSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, undetected=output.attributes.last_analysis_stats.undetected)
+    summary = IpReputationSummary(
+        harmless=output.attributes.last_analysis_stats.harmless,
+        malicious=output.attributes.last_analysis_stats.malicious,
+        suspicious=output.attributes.last_analysis_stats.suspicious,
+        undetected=output.attributes.last_analysis_stats.undetected,
+    )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
     return output
 
+
 class DetonateSummary(ActionOutput):
-    scan_id: str
+    scan_id: str = OutputField(column_name="Scan ID")
     harmless: int
     malicious: int
     suspicious: int
@@ -619,7 +644,10 @@ class DetonateSummary(ActionOutput):
 
 class UrlReputationParams(Params):
     url: str = Param(
-        description="URL to query", primary=True, cef_types=["url", "domain"]
+        description="URL to query",
+        primary=True,
+        cef_types=["url", "domain"],
+        column_name="URL",
     )
 
 
@@ -638,6 +666,7 @@ class UrlReputationOutput(ActionOutput):
     description="Queries VirusTotal for URL info (run this action after running detonate url)",
     action_type="investigate",
     summary_type=DetonateSummary,
+    render_as="table",
 )
 def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
@@ -658,10 +687,17 @@ def url_reputation(
         ]
         sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
     logger.debug(f"Sanitized data: {sanitized_data}")
-    
+
     output = UrlReputationOutput(**sanitized_data)
     new_scan_id = f"u-{output.id}-{output.attributes.last_submission_date}"
-    summary = DetonateSummary(harmless=output.attributes.last_analysis_stats.harmless, malicious=output.attributes.last_analysis_stats.malicious, suspicious=output.attributes.last_analysis_stats.suspicious, timeout=output.attributes.last_analysis_stats.timeout, undetected=output.attributes.last_analysis_stats.undetected, scan_id=new_scan_id)
+    summary = DetonateSummary(
+        harmless=output.attributes.last_analysis_stats.harmless,
+        malicious=output.attributes.last_analysis_stats.malicious,
+        suspicious=output.attributes.last_analysis_stats.suspicious,
+        timeout=output.attributes.last_analysis_stats.timeout,
+        undetected=output.attributes.last_analysis_stats.undetected,
+        scan_id=new_scan_id,
+    )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
 
@@ -940,6 +976,7 @@ class GetReportParams(Params):
     action_type="investigate",
     verbose="For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
     summary_type=DetonateSummary,
+    render_as="table",
 )
 def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
@@ -955,10 +992,10 @@ def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> Polli
 
 
 class GetCachedEntry(ActionOutput):
-    date_added: str
-    date_expires: str
-    key: str
-    seconds_left: float
+    date_added: str = OutputField(column_name="Date Added")
+    date_expires: str = OutputField(column_name="Date Expires")
+    key: str = OutputField(column_name="Key")
+    seconds_left: float = OutputField(column_name="Seconds Till Expiration")
 
 
 class GetCachedEntriesOutput(ActionOutput):
@@ -975,6 +1012,7 @@ class GetCachedEnteriesSummary(ActionOutput):
     description="Get listing of cached entries",
     action_type="investigate",
     summary_type=GetCachedEnteriesSummary,
+    render_as="table",
 )
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
@@ -1019,7 +1057,10 @@ class ClearCacheOutput(ActionOutput):
 
 
 @app.action(
-    description="Clear all cached entries", action_type="generic", read_only=False
+    description="Clear all cached entries",
+    action_type="generic",
+    read_only=False,
+    render_as="json",
 )
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
     if "vt_cache" in app.actions_manager.asset_cache:
