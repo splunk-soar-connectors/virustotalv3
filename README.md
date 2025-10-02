@@ -2691,16 +2691,46 @@ action_result.data.\*.attributes.androguard.AndroidVersionCode | string | | 1 |
 action_result.data.\*.attributes.androguard.AndroidVersionName | string | | 1.0 |
 action_result.data.\*.attributes.androguard.MinSdkVersion | string | | 11 |
 action_result.data.\*.attributes.androguard.Package | string | | com.ibm.android.analyzer.test |
-action_result.data.\*.attributes.androguard.RiskIndicator.APK | numeric | | 1 |
-action_result.data.\*.attributes.androguard.RiskIndicator.PERM | numeric | | 1 |
+action_result.data.\*.attributes.androguard.RiskIndicator.APK.\*.key | string | | ACTIVITY |
+action_result.data.\*.attributes.androguard.RiskIndicator.APK.\*.value | numeric | | 5 |
+action_result.data.\*.attributes.androguard.RiskIndicator.PERM.\*.key | string | | ACTIVITY |
+action_result.data.\*.attributes.androguard.RiskIndicator.PERM.\*.value | numeric | | 5 |
 action_result.data.\*.attributes.androguard.TargetSdkVersion | string | | 11 |
 action_result.data.\*.attributes.androguard.VTAndroidInfo | numeric | | 1.41 |
-action_result.data.\*.attributes.androguard.certificate.Issuer | string | | C:US CN:Android Debug O:Android |
-action_result.data.\*.attributes.androguard.certificate.Subject | string | | US |
-action_result.data.\*.attributes.androguard.certificate.serialnumber | string | | 6f20b2e6 |
-action_result.data.\*.attributes.androguard.certificate.thumbprint | string | | 7bd81368b868225bde96fc1a3fee59a8ea06296a |
-action_result.data.\*.attributes.androguard.certificate.validfrom | string | | 2016-01-27 08:46:16 |
-action_result.data.\*.attributes.androguard.certificate.validto | string | | 2046-01-19 08:46:16 |
+action_result.data.\*.attributes.androguard.certificate.cert_signature.signature | string | | |
+action_result.data.\*.attributes.androguard.certificate.cert_signature.signature_algorithm | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.authority_key_identifier.keyid | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.subject_key_identifier | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.subject_alternative_name.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.certificate_policies.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.key_usage.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.extended_key_usage.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.crl_distribution_points.\* | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.ca_information_access.CA_Issuers | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.ca_information_access.OCSP | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.CA | boolean | | True False |
+action_result.data.\*.attributes.androguard.certificate.extensions.1_3_6_1_4_1_11129_2_4_2 | string | | |
+action_result.data.\*.attributes.androguard.certificate.validity.not_before | string | `date` | |
+action_result.data.\*.attributes.androguard.certificate.validity.not_after | string | `date` | |
+action_result.data.\*.attributes.androguard.certificate.size | numeric | | |
+action_result.data.\*.attributes.androguard.certificate.version | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.algorithm | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.exponent | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.key_size | numeric | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.modulus | string | | |
+action_result.data.\*.attributes.androguard.certificate.thumbprint_sha256 | string | | |
+action_result.data.\*.attributes.androguard.certificate.thumbprint | string | | |
+action_result.data.\*.attributes.androguard.certificate.serial_number | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.CN | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.O | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.C | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.L | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.ST | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.CN | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.O | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.C | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.L | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.ST | string | | |
 action_result.data.\*.attributes.androguard.main_activity | string | | com.ibm.android.analyzer.test.xas.CAS |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.full_description | string | | Allows an application to create network sockets. |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.permission_type | string | | dangerous |
@@ -2745,8 +2775,10 @@ action_result.data.\*.attributes.androguard.permission_details.android.permissio
 action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_PHONE_STATE.permission_type | string | | dangerous |
 action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_PHONE_STATE.short_description | string | | full Internet access |
 action_result.data.\*.attributes.authentihash | string | | 9999999999a601c12ac88d70736e5a5064dac716fe071ce9e3bb206d67b1b9a5 |
-action_result.data.\*.attributes.bundle_info.extensions | numeric | | 1 |
-action_result.data.\*.attributes.bundle_info.file_types | numeric | | 1 |
+action_result.data.\*.attributes.bundle_info.extensions.\*.key | string | | .exe |
+action_result.data.\*.attributes.bundle_info.extensions.\*.count | string | | 1 |
+action_result.data.\*.attributes.bundle_info.file_types.\*.key | string | | .exe |
+action_result.data.\*.attributes.bundle_info.file_types.\*.count | string | | 1 |
 action_result.data.\*.attributes.bundle_info.highest_datetime | string | | 2019-01-03 12:33:40 |
 action_result.data.\*.attributes.bundle_info.lowest_datetime | string | | 2019-01-03 12:33:40 |
 action_result.data.\*.attributes.bundle_info.num_children | numeric | | 1 |
@@ -2764,8 +2796,12 @@ action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_url | string |
 action_result.data.\*.attributes.crowdsourced_ids_stats.\* | numeric | | 0 |
 action_result.data.\*.attributes.first_seen_itw_date | numeric | `timestamp` | 1502111702 |
 action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | 1612961082 |
-action_result.data.\*.attributes.html_info.iframes.\*.attributes.\* | string | | ./test_html_files/list.html |
-action_result.data.\*.attributes.html_info.scripts.\*.attributes.\* | string | | ./test_html_files/exerc.js.download |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.width | string | | 100% |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.\*.height | string | | 400px |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.width | string | | 100% |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.\*.height | string | | 400px |
 action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | 1613635130 |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | |

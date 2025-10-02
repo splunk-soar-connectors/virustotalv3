@@ -29,8 +29,8 @@ from models.outputs.file_reputation.popular_threat_classification import (
 
 
 class TrID(ActionOutput):
-    file_type: str
-    probability: int
+    file_type: Optional[str]
+    probability: Optional[int]
 
 
 class FileConditions(ActionOutput):
@@ -53,7 +53,7 @@ class FileAttributes(ActionOutput):
     sandbox_verdicts: FileSandboxVerdicts
     sha256: str = OutputField(cef_types=["sha256"])
     last_submission_date: int = OutputField(cef_types=["timestamp"])
-    trid: list[TrID]
+    trid: Optional[list[TrID]]
     filecondis: Optional[FileConditions]
     last_analysis_stats: FileAnalysisStats
     ssdeep: str

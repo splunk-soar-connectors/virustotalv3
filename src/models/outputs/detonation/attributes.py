@@ -13,6 +13,7 @@
 # limitations under the License.
 from soar_sdk.action_results import ActionOutput, OutputField
 from typing import Optional
+from pydantic import validator
 from ..file_reputation.analysis import FileAnalysisResult
 from ..file_reputation.sandbox import FileSandboxVerdicts
 from ..file_reputation.file import TrID
@@ -21,19 +22,7 @@ from ..file_reputation.pdf_info import PDFInfo
 from ..file_reputation.pe_info import PEInfo
 from ..file_reputation.popular_threat_classification import PopularThreatClassification
 from ..shared.main import TotalVotes
-
-
-class AndroguardCertificate(ActionOutput):
-    Issuer: str = OutputField(example_values=["C:US", "CN:Android Debug", "O:Android"])
-    Subject: str = OutputField(example_values=["US"])
-    serialnumber: Optional[str] = OutputField(example_values=["6f20b2e6"])
-    thumbprint: Optional[str] = OutputField(
-        example_values=[
-            "7bd81368b868225bde96fc1a3fee59a8ea06296a",  # pragma: allowlist secret
-        ]
-    )
-    validfrom: Optional[str] = OutputField(example_values=["2016-01-27 08:46:16"])
-    validto: Optional[str] = OutputField(example_values=["2046-01-19 08:46:16"])
+from ..shared.tls import HTTPSCertificate
 
 
 class AndroguardPermissionDetail(ActionOutput):
@@ -73,9 +62,22 @@ class PermissionDetails(ActionOutput):
     android: Optional[AndroidPermissions]
 
 
+class RiskEntry(ActionOutput):
+    key: str = OutputField(example_values=["ACTIVITY"])
+    value: int = OutputField(example_values=[5])
+
+
 class AndroguardRiskIndicator(ActionOutput):
-    APK: int = OutputField(example_values=[1])
-    PERM: int = OutputField(example_values=[1])
+    APK: Optional[list[RiskEntry]]
+    PERM: Optional[list[RiskEntry]]
+
+    @validator("APK", "PERM", pre=True)
+    @classmethod
+    def flatten_dict_to_list(cls, v):
+        """Convert dict to list of key-value objects"""
+        if isinstance(v, dict):
+            return [RiskEntry(key=k, value=val) for k, val in v.items()]
+        return v
 
 
 class Androguard(ActionOutput):
@@ -92,16 +94,21 @@ class Androguard(ActionOutput):
     RiskIndicator: Optional[AndroguardRiskIndicator]
     TargetSdkVersion: Optional[str] = OutputField(example_values=["11"])
     VTAndroidInfo: Optional[float] = OutputField(example_values=[1.41])
-    certificate: Optional[AndroguardCertificate]
+    certificate: Optional[HTTPSCertificate]
     main_activity: Optional[str] = OutputField(
         example_values=["com.ibm.android.analyzer.test.xas.CAS"]
     )
     permission_details: Optional[PermissionDetails]
 
 
+class Extension(ActionOutput):
+    key: Optional[str] = OutputField(example_values=[".exe"])
+    count: Optional[str] = OutputField(example_values=["1"])
+
+
 class BundleInfo(ActionOutput):
-    extensions: int = OutputField(example_values=[1])
-    file_types: int = OutputField(example_values=[1])
+    extensions: Optional[list[Extension]]
+    file_types: Optional[list[Extension]]
     highest_datetime: Optional[str] = OutputField(
         example_values=["2019-01-03 12:33:40"]
     )
@@ -133,14 +140,18 @@ class CrowdsourcedIdsResult(ActionOutput):
     )
 
 
+class HTMLInfoAttributes(ActionOutput):
+    src: Optional[str] = OutputField(example_values=["./test_html_files/list.html"])
+    width: Optional[str] = OutputField(example_values=["100%"])
+    height: Optional[str] = OutputField(example_values=["400px"])
+
+
 class HtmlInfoIframe(ActionOutput):
-    attributes: list[str] = OutputField(example_values=["./test_html_files/list.html"])
+    attributes: list[HTMLInfoAttributes]
 
 
 class HtmlInfoScript(ActionOutput):
-    attributes: list[str] = OutputField(
-        example_values=["./test_html_files/exerc.js.download"]
-    )
+    attributes: list[HTMLInfoAttributes]
 
 
 class HtmlInfo(ActionOutput):
@@ -225,7 +236,7 @@ class DetonateFileAttributes(ActionOutput):
         ]
     )
     total_votes: Optional[TotalVotes]
-    trid: list[TrID]
+    trid: Optional[list[TrID]]
     type_description: Optional[str] = OutputField(example_values=["Python"])
     type_extension: Optional[str] = OutputField(example_values=["py"])
     type_tag: Optional[str] = OutputField(example_values=["python"])

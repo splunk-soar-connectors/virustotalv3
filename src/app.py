@@ -927,6 +927,18 @@ def detonate_file(
         )
         soar.set_summary(summary)
         soar.set_message(summary.get_message())
+        if bundle_info := output.get("attributes", {}).get("bundle_info"):
+            if "extensions" in bundle_info:
+                output["attributes"]["bundle_info"]["extensions"] = [
+                    {"key": key, "count": count}
+                    for key, count in bundle_info["extensions"].items()
+                ]
+            if "file_types" in bundle_info:
+                output["attributes"]["bundle_info"]["file_types"] = [
+                    {"key": key, "count": count}
+                    for key, count in bundle_info["file_types"].items()
+                ]
+
         return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
 
     if not (data := resp_json.get("data")):
