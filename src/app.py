@@ -417,8 +417,17 @@ class CustomMakeRequestOutput(ActionOutput):
         return cls(**data)
 
 
+class VirusTotalMakeRequestParams(MakeRequestParams):
+    endpoint: str = Param(
+        description="Valid VirusTotal endpoint to make a request to. An example of a valid endpoint is 'domains/example.com'.",
+        required=True,
+    )
+
+
 @app.make_request()
-def http_action(params: MakeRequestParams, asset: Asset) -> CustomMakeRequestOutput:
+def http_action(
+    params: VirusTotalMakeRequestParams, asset: Asset
+) -> CustomMakeRequestOutput:
     client = asset.get_client()
 
     if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
@@ -437,19 +446,19 @@ def http_action(params: MakeRequestParams, asset: Asset) -> CustomMakeRequestOut
     )
 
     query_params = None
-    if params.query_params:
+    if params.query_parameters:
         try:
             # Try to parse as JSON first (e.g., '{"key": "value", "key2": "value2"}')
-            parsed_query_params = json.loads(params.query_params)
+            parsed_query_params = json.loads(params.query_parameters)
             query_params = parsed_query_params
         except (json.JSONDecodeError, TypeError):
             # If not JSON, treat as raw query string (e.g., '?key=value&key2=value2' or 'key=value&key2=value2')
-            query_string = params.query_params.lstrip("?")
+            query_string = params.query_parameters.lstrip("?")
 
             # Validate query string format (key=value&key2=value2)
             if not _is_valid_query_string(query_string):
                 raise ActionFailure(
-                    f"Invalid query_params format. Expected JSON object or key=value&key2=value2 format, got: {params.query_params}"
+                    f"Invalid query_params format. Expected JSON object or key=value&key2=value2 format, got: {params.query_parameters}"
                 ) from None
 
             if "?" in endpoint:

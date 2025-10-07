@@ -739,9 +739,9 @@ Read only: **False**
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **http_method** | required | The HTTP method to use for the request. | string | |
-**endpoint** | required | The endpoint to send the request to. | string | |
+**endpoint** | required | Valid VirusTotal endpoint to make a request to. An example of a valid endpoint is 'domains/example.com'. | string | |
 **headers** | optional | The headers to send with the request (JSON object). | string | |
-**query_params** | optional | The query string to send with the request. | string | |
+**query_parameters** | optional | The query string to send with the request. | string | |
 **body** | optional | The body to send with the request (JSON object). | string | |
 **timeout** | optional | The timeout for the request. | numeric | |
 **verify_ssl** | optional | Whether to verify the SSL certificate. | boolean | |
@@ -755,7 +755,7 @@ action_result.message | string | | |
 action_result.parameter.http_method | string | | |
 action_result.parameter.endpoint | string | | |
 action_result.parameter.headers | string | | |
-action_result.parameter.query_params | string | | |
+action_result.parameter.query_parameters | string | | |
 action_result.parameter.body | string | | |
 action_result.parameter.timeout | numeric | | |
 action_result.parameter.verify_ssl | boolean | | |
