@@ -739,12 +739,12 @@ Read only: **False**
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **http_method** | required | The HTTP method to use for the request. | string | |
-**endpoint** | required | Valid VirusTotal endpoint to make a request to. An example of a valid endpoint is 'domains/example.com'. | string | |
-**headers** | optional | The headers to send with the request (JSON object). | string | |
-**query_parameters** | optional | The query string to send with the request. | string | |
-**body** | optional | The body to send with the request (JSON object). | string | |
-**timeout** | optional | The timeout for the request. | numeric | |
-**verify_ssl** | optional | Whether to verify the SSL certificate. | boolean | |
+**endpoint** | required | Valid VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
+**timeout** | optional | The timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default is False. | boolean | |
 
 #### Action Output
 

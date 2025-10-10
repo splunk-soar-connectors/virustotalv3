@@ -791,7 +791,7 @@ wheels = [
 
 [[package]]
 name = "splunk-soar-sdk"
-version = "2.3.1"
+version = "2.3.3"
 source = { registry = "https://pypi.python.org/simple" }
 dependencies = [
     { name = "beautifulsoup4", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
@@ -811,9 +811,9 @@ dependencies = [
     { name = "tqdm", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
     { name = "typer", marker = "(python_full_version < '3.10' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'arm64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'darwin') or (python_full_version < '3.10' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'aarch64' and sys_platform == 'linux') or (python_full_version < '3.10' and platform_machine == 'x86_64' and sys_platform == 'linux') or (python_full_version >= '3.13' and platform_machine == 'x86_64' and sys_platform == 'linux')" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e9/6a/da9c754eeeb58f2787568817e26f411e0d8de5f0bb61b2905b8d62fecbe5/splunk_soar_sdk-2.3.1.tar.gz", hash = "sha256:a9df89271913879e1bfbcd86635c1fff3a86cdf25f5e268970ad9873bc22b1a6", size = 522219, upload-time = "2025-10-07T06:35:34.548Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/7a/ac/da69ddd1bd22bf876f43017a765b15c17143b986857a395679aaa82b1655/splunk_soar_sdk-2.3.3.tar.gz", hash = "sha256:dfbb79daf7aac10350a8d147ecb502123ff5bac2ef67938ab3aef4d1a8ce4cef", size = 522970, upload-time = "2025-10-10T19:19:52.899Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/52/7e/2021f7a7e5c91b33272340473c87c235cfa3ad74aae845ed6378b5d31ed2/splunk_soar_sdk-2.3.1-py3-none-any.whl", hash = "sha256:f96f440024e478c1a9e49c9a594619136f9e0071ea160b1d0d60eb93d7b70907", size = 158941, upload-time = "2025-10-07T06:35:33.34Z" },
+    { url = "https://files.pythonhosted.org/packages/ad/ba/8e96ea2bb231336b5c9de906001fbf7d727f3973254a7da4854d42ba9f84/splunk_soar_sdk-2.3.3-py3-none-any.whl", hash = "sha256:0f07ea57af5ed513e4c22c28d5e9af8140cb945677f0964958c1c584b09d6774", size = 159258, upload-time = "2025-10-10T19:19:51.585Z" },
 ]
 
 [[package]]
@@ -939,7 +939,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=2.3.1" }]
+requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=2.3.3" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -950,7 +950,7 @@ dev = [
     { name = "pytest-mock", specifier = ">=3.14.0,<4" },
     { name = "pytest-watch", specifier = ">=4.2.0,<5" },
     { name = "ruff", specifier = ">=0.11.6,<1" },
-    { name = "splunk-soar-sdk", specifier = ">=2.0.0" },
+    { name = "splunk-soar-sdk", specifier = ">=2.3.3" },
 ]
 
 [[package]]
