@@ -8,7 +8,7 @@ authors = [
     { name = "jang@splunk.com" },
 ]
 dependencies = [
-    "splunk-soar-sdk>=2.3.1",
+    "splunk-soar-sdk>=2.3.3",
 ]
 
 [tool.soar.app]
@@ -25,7 +25,7 @@ dev = [
     "pytest-mock>=3.14.0,<4",
     "pytest-watch>=4.2.0,<5",
     "ruff>=0.11.6,<1",
-    "splunk-soar-sdk>=2.0.0",
+    "splunk-soar-sdk>=2.3.3",
 ]
 
 [[tool.uv.index]]
