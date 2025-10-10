@@ -1,7 +1,7 @@
 # VirusTotal v3
 
 Publisher: Splunk <br>
-Connector Version: 2.0.1 <br>
+Connector Version: 2.0.0 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
 Minimum Product Version: 6.4.0
@@ -739,7 +739,7 @@ Read only: **False**
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **http_method** | required | The HTTP method to use for the request. | string | |
-**endpoint** | required | VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'. | string | |
+**endpoint** | required | Valid VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'. | string | |
 **headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
 **query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
 **body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
