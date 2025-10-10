@@ -419,7 +419,7 @@ class CustomMakeRequestOutput(ActionOutput):
 
 class VirusTotalMakeRequestParams(MakeRequestParams):
     endpoint: str = Param(
-        description="Valid VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'.",
+        description="VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'.",
         required=True,
     )
 
