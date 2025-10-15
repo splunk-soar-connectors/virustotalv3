@@ -50,7 +50,7 @@ class FileAttributes(ActionOutput):
     known_distributors: Optional[KnownFileDistributors]
     type_tag: str
     md5: str = OutputField(cef_types=["md5"])
-    sandbox_verdicts: FileSandboxVerdicts
+    sandbox_verdicts: Optional[FileSandboxVerdicts]
     sha256: str = OutputField(cef_types=["sha256"])
     last_submission_date: int = OutputField(cef_types=["timestamp"])
     trid: Optional[list[TrID]]
