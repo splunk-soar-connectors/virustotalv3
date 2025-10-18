@@ -1,3 +1,1 @@
 **Unreleased**
-
-* Update to SDK 2.3.5 for input spec fix
