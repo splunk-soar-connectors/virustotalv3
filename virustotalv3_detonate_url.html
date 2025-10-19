@@ -1,21 +1,29 @@
-<!--
- Copyright (c) 2025 Splunk Inc.
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
-     http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
--->
 {% extends 'widgets/widget_template.html' %}
-{% block title1 %}Domain Reputation Output{% endblock %}
+{% load custom_template %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
+{% block title1 %}{{ title1 }}{% endblock %}
+{% block title2 %}{{ title2 }}{% endblock %}
+{% block custom_tools %}{% endblock %}
 {% block widget_content %}
+  <!-- Main Start Block -->
+  <!-- # File: virustotalv3_detonate_url.html
+# Copyright (c) 2021-2025 Splunk Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+-->
   <style>
     .virustotal a:hover {
         text-decoration:underline;
@@ -78,17 +86,6 @@
         white-space:nowrap;
     }
 
-    /* Context menu styling */
-    .context-menu-trigger {
-        cursor: pointer;
-        color: #007bff;
-        text-decoration: none;
-    }
-
-    .context-menu-trigger:hover {
-        text-decoration: underline;
-    }
-
   </style>
   <div class="virustotal"
        style="overflow: auto;
@@ -101,19 +98,17 @@
       <!-- loop for each result -->
       <br>
       <!------------------- For each Result ---------------------->
-      {% if not result %}
+      {% if not result.data %}
         <h4 class="wf-h4-style">No data found</h4>
       {% else %}
         <h4 class="wf-h3-style">Info</h4>
         <table class="wf-table-vertical">
           <tr>
-            <td>Domain</td>
+            <td>URL</td>
             <td>
               <a href="javascript:;"
-                 class="context-menu-trigger"
-                 onclick="context_menu(this, [{'contains': ['domain'], 'value':'{{ result.domain }}' }], 0, {{ container.id }}, null, false);"
-                 title="Click for actions">
-                {{ result.domain }}
+                 onclick="context_menu(this, [{'contains': ['domain', 'url'], 'value':'{{ result.param.url }}' }], 0, {{ container.id }}, null, false);">
+                {{ result.param.url }}
                 &nbsp;
                 <span class="fa fa-caret-down" style="font-size: smaller;"></span>
               </a>
@@ -121,48 +116,47 @@
           </tr>
         </table>
         <div class="results">
-          <h4 class="wf-h4-style">Domain Info</h4>
+          <h4 class="wf-h4-style">URL Info</h4>
           <!--Default View-->
           <table class="wf-table-horizontal datatable">
             <thead>
               <tr>
-                <th>Bitdefender Category</th>
-                <th>Xcitium Verdict Cloud Category</th>
-                <th>Sophos Category</th>
-                <th>Forcepoint ThreatSeeker Category</th>
-                <th>AlphaMountain AI Category</th>
-                <th>Registrar</th>
+                <th>Url</th>
+                <th>Scan ID</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                {% if result.BitDefender %}
-                  <td>{{ result.BitDefender }}</td>
+                {% if result|by_key:'param'|by_key:'url' %}
+                  <td>
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['domain', 'url'], 'value':'{{ result.param.url }}' }], 0, {{ container.id }}, null, false);">
+                      {{ result.param.url }}
+                      &nbsp;
+                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
                 {% else %}
                   <td>None</td>
                 {% endif %}
-                {% if result.Xcitium_Verdict_Cloud %}
-                  <td>{{ result.Xcitium_Verdict_Cloud }}</td>
-                {% else %}
-                  <td>None</td>
-                {% endif %}
-                {% if result.Sophos %}
-                  <td>{{ result.Sophos }}</td>
-                {% else %}
-                  <td>None</td>
-                {% endif %}
-                {% if result.Forcepoint_ThreatSeeker %}
-                  <td>{{ result.Forcepoint_ThreatSeeker }}</td>
-                {% else %}
-                  <td>None</td>
-                {% endif %}
-                {% if result.AlphaMountain_ai %}
-                  <td>{{ result.AlphaMountain_ai }}</td>
-                {% else %}
-                  <td>None</td>
-                {% endif %}
-                {% if result.Registrar %}
-                  <td>{{ result.Registrar }}</td>
+                {% if result|by_key:'summary'|by_key:'scan_id' %}
+                  <td>
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['virustotal scan id'], 'value':'{{ result.summary.scan_id }}' }], 0, {{ container.id }}, null, false);">
+                      {{ result.summary.scan_id }}
+                      &nbsp;
+                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
+                {% elif result|by_key:'data'|by_key:'id' %}
+                  <td>
+                    <a href="javascript:;"
+                       onclick="context_menu(this, [{'contains': ['virustotal scan id'], 'value':'{{ result.data.id }}' }], 0, {{ container.id }}, null, false);">
+                      {{ result.data.id }}
+                      &nbsp;
+                      <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                    </a>
+                  </td>
                 {% else %}
                   <td>None</td>
                 {% endif %}
@@ -178,8 +172,8 @@
   <script>
     $.extend(true, $.fn.dataTable.defaults, {
         "searching": false,
-        "bLengthChange": false,
         "ordering": true,
+        "bLengthChange": false,
         "language": {
             "paginate": {
                 "previous": "<i class='fa fa-angle-left fa-lg'></i>",
@@ -198,3 +192,4 @@
     });
   </script>
 {% endblock %}
+<!-- Main Start Block -->
