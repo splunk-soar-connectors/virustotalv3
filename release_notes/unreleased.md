@@ -1,3 +1,1 @@
 **Unreleased**
-
-* Revert to version 1.8.5 codebase due to SDK compatibility issues

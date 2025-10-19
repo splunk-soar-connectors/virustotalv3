@@ -17,7 +17,7 @@
         }
     ],
     "app_version": "2.0.4",
-    "utctime_updated": "2025-10-19T00:00:00.000000Z",
+    "utctime_updated": "2025-10-19T05:03:15.535118Z",
     "package_name": "phantom_virustotalv3",
     "main_module": "virustotalv3_connector.py",
     "min_phantom_version": "6.2.1",
