@@ -1,29 +1,12 @@
 # VirusTotal v3
 
 Publisher: Splunk <br>
-Connector Version: 2.0.4 <br>
+Connector Version: 2.0.3 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
-Minimum Product Version: 6.2.1
+Minimum Product Version: 6.4.0
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
-
-## Port Information
-
-The app uses HTTP/ HTTPS protocol for communicating with the VirusTotal server. Below are the
-default ports used by Splunk SOAR.
-
-|         Service Name | Transport Protocol | Port |
-|----------------------|--------------------|------|
-|         http | tcp | 80 |
-|         https | tcp | 443 |
-
-## Cache Flow
-
-If caching is enabled and whenever you run any reputation action then the output of the action will
-be cached in the state file of the asset for which it is run. This cache will have an expiration
-time and maximum length, after the expiration time you have set in asset configuration if you run
-the get cached entries it will clear the cache.
 
 ### Configuration variables
 
@@ -42,8 +25,9 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[test connectivity](#action-test-connectivity) - test connectivity <br>
 [domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info <br>
+[make request](#action-make-request) - make request <br>
 [file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info <br>
 [get file](#action-get-file) - Downloads a file from VirusTotal and adds it to the vault <br>
 [ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info <br>
@@ -57,10 +41,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ## action: 'test connectivity'
 
-Validate the asset configuration for connectivity using supplied configuration
+test connectivity
 
 Type: **test** <br>
 Read only: **True**
+
+Basic test for app.
 
 #### Action Parameters
 
@@ -68,7 +54,12 @@ No parameters are required for this action
 
 #### Action Output
 
-No Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'domain reputation'
 
@@ -87,109 +78,689 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.domain | string | `domain` | test.com |
-action_result.data.\*.attributes.categories.BitDefender | string | | searchengines |
-action_result.data.\*.attributes.categories.Comodo Valkyrie Verdict | string | | mobile communications |
-action_result.data.\*.attributes.categories.Dr.Web | string | | social networks |
-action_result.data.\*.attributes.categories.Forcepoint ThreatSeeker | string | | search engines and portals |
-action_result.data.\*.attributes.categories.Sophos | string | | social networks |
-action_result.data.\*.attributes.categories.Xcitium Verdict Cloud | string | | mobile communications |
-action_result.data.\*.attributes.categories.alphaMountain.ai | string | | Social Networking |
-action_result.data.\*.attributes.categories.sophos | string | | search engines |
-action_result.data.\*.attributes.creation_date | numeric | | 874296000 |
-action_result.data.\*.attributes.jarm | string | | 27d40d40d29d40d1dc42d43d00041d4689ee210389f4f6b4b5b1b93f92252d |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1677738648 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | harmless |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CRDF |
-action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
-action_result.data.\*.attributes.last_analysis_results.\*.result | string | | clean |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 90 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 8 |
-action_result.data.\*.attributes.last_dns_records.\*.expire | numeric | | 1800 |
-action_result.data.\*.attributes.last_dns_records.\*.flag | numeric | | 0 |
-action_result.data.\*.attributes.last_dns_records.\*.minimum | numeric | | 60 |
-action_result.data.\*.attributes.last_dns_records.\*.priority | numeric | | 40 |
-action_result.data.\*.attributes.last_dns_records.\*.refresh | numeric | | 900 |
-action_result.data.\*.attributes.last_dns_records.\*.retry | numeric | | 900 |
-action_result.data.\*.attributes.last_dns_records.\*.rname | string | | dns-admin.test.com |
-action_result.data.\*.attributes.last_dns_records.\*.serial | numeric | | 357917103 |
-action_result.data.\*.attributes.last_dns_records.\*.tag | string | | issue |
-action_result.data.\*.attributes.last_dns_records.\*.ttl | numeric | | 78 |
-action_result.data.\*.attributes.last_dns_records.\*.type | string | | MX |
-action_result.data.\*.attributes.last_dns_records.\*.value | string | `ip` | alt3.aspmx.l.test.com |
-action_result.data.\*.attributes.last_dns_records_date | numeric | | 1613638555 |
-action_result.data.\*.attributes.last_https_certificate.cert_signature.signature | string | | 811fa6e0af210a512fa773cf16fd62ecae6fdacab57fb71626791b9ad5bfb19841435e7480dba67b1fd17828204f05905379bccc98a7f39a037a5b4eb43f3bb54c51df02137b13abffc343b500319819854920af065afb70a3857657909b0d006de9b7aa2197fe94c2ccde7df14760dd8c5f87d5f89c3b1b835c81f06b727d5ea21fc04c0126ef1377cceb935ccedc969b6b503e5e3c783f0fb13f7dd465d67b807f9d268082449813eb0700e7bd472b238f8c551c07b3e130b88b7fb96799e6d9c1ac8b632603840eeb429e271856a94cd62f1d1bdfeda4f02ae0df7b1d0b80aceab4b73d137f4b4bec851555213fc540dc74defb81761304e3339062d65a60 |
-action_result.data.\*.attributes.last_https_certificate.cert_signature.signature_algorithm | string | | sha256RSA |
-action_result.data.\*.attributes.last_https_certificate.extensions.1.3.6.1.4.1.11129.2.4.2 | string | `sha256` | 0481f100ef0076007d3ef2f88fff88556824c2c0ca9e5289792bc50e78097f2e |
-action_result.data.\*.attributes.last_https_certificate.extensions.CA | boolean | | True |
-action_result.data.\*.attributes.last_https_certificate.extensions.authority_key_identifier.keyid | string | `sha1` | 98d1f86e10ebcf9bec609f18901ba0eb7d09fd2b |
-action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.CA Issuers | string | `url` | http://pki.goog/gsr2/GTS1O1.crt |
-action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.OCSP | string | `url` | http://ocsp.pki.goog/gts1o1core |
-action_result.data.\*.attributes.last_https_certificate.extensions.certificate_policies | string | | 1.3.6.1.4.1.11129.2.5.3 |
-action_result.data.\*.attributes.last_https_certificate.extensions.crl_distribution_points | string | `url` | http://crl.pki.goog/GTS1O1core.crl |
-action_result.data.\*.attributes.last_https_certificate.extensions.extended_key_usage | string | | serverAuth |
-action_result.data.\*.attributes.last_https_certificate.extensions.key_usage | string | | ff |
-action_result.data.\*.attributes.last_https_certificate.extensions.subject_alternative_name | string | | yt.be |
-action_result.data.\*.attributes.last_https_certificate.extensions.subject_key_identifier | string | `sha1` | 67bf0513cc1c9c4765c43f3fedd687cf88bcd93d |
-action_result.data.\*.attributes.last_https_certificate.issuer.C | string | | US |
-action_result.data.\*.attributes.last_https_certificate.issuer.CN | string | | GTS CA 1O1 |
-action_result.data.\*.attributes.last_https_certificate.issuer.L | string | | Salford |
-action_result.data.\*.attributes.last_https_certificate.issuer.O | string | | Test Trust Services |
-action_result.data.\*.attributes.last_https_certificate.issuer.OU | string | | www.test.com |
-action_result.data.\*.attributes.last_https_certificate.issuer.ST | string | | Greater Manchester |
-action_result.data.\*.attributes.last_https_certificate.public_key.algorithm | string | | EC |
-action_result.data.\*.attributes.last_https_certificate.public_key.ec.oid | string | | secp256r1 |
-action_result.data.\*.attributes.last_https_certificate.public_key.ec.pub | string | | 0453d3053c10d8cc8d06a01c02171e8c2d91b355cc188112943a217edc2fe60e3592f329404573e124c077917dcf319f14a6a2c3e433ee695d60a7e9ba3883aa5b |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.exponent | string | | 010001 |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.key_size | numeric | | 2048 |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.modulus | string | | 9999999999a6ad2efd8570b904c9bffa81153979c1a9b1415ba44f2057004b18bc2eb767e6ac209999a6a83d51de01433d9d2606b13646a11ca968dfaa3752d2dae79ec97d5dccae86e51c0cbf5dce4584217ca9b7142c568f1a6a0f54cbd4055d0b71104d8e3ed79e958829324e6c10c90c4e11b57d430af2ba89d5e333c9538661b5a61fdf7164970dbfd9817cf5b585d4f2180a526426ac64087a81e13ae4668141abcff65e9038cde7ca5039285beb99c6fbbb75e6c72df66c0551e38123e0984f634c7b442a932bf72fec6d4e5908e773943a6fd16310df8c9ac79f934d0264bb900246c8a5832b489c475dd0d1eb4670e5b7691f25facdd687531 |
-action_result.data.\*.attributes.last_https_certificate.serial_number | string | `md5` | c4ea98ea7e5e1f430200000000870182 |
-action_result.data.\*.attributes.last_https_certificate.signature_algorithm | string | | sha256RSA |
-action_result.data.\*.attributes.last_https_certificate.size | numeric | | 2441 |
-action_result.data.\*.attributes.last_https_certificate.subject.C | string | | US |
-action_result.data.\*.attributes.last_https_certificate.subject.CN | string | | \*.test.com |
-action_result.data.\*.attributes.last_https_certificate.subject.L | string | | Mountain View |
-action_result.data.\*.attributes.last_https_certificate.subject.O | string | | Test LLC |
-action_result.data.\*.attributes.last_https_certificate.subject.ST | string | | California |
-action_result.data.\*.attributes.last_https_certificate.thumbprint | string | `sha1` | c25b1dc8be5f679087ecd28fb5eae7b3985cf604 |
-action_result.data.\*.attributes.last_https_certificate.thumbprint_sha256 | string | `sha256` | a29f9d0d85bd02b3150267ac5a820e4aadc9becc7b5884530a549e6d98dac4a3 |
-action_result.data.\*.attributes.last_https_certificate.validity.not_after | string | | 2021-04-13 07:57:08 |
-action_result.data.\*.attributes.last_https_certificate.validity.not_before | string | | 2021-01-19 07:57:09 |
-action_result.data.\*.attributes.last_https_certificate.version | string | | V3 |
-action_result.data.\*.attributes.last_https_certificate_date | numeric | | 1613638555 |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1613640948 |
-action_result.data.\*.attributes.last_update_date | numeric | | 1568043544 |
-action_result.data.\*.attributes.popularity_ranks.Alexa.rank | numeric | | 1 |
-action_result.data.\*.attributes.popularity_ranks.Alexa.timestamp | numeric | | 1613576161 |
-action_result.data.\*.attributes.popularity_ranks.Cisco Umbrella.rank | numeric | | 1 |
-action_result.data.\*.attributes.popularity_ranks.Cisco Umbrella.timestamp | numeric | | 1613489762 |
-action_result.data.\*.attributes.popularity_ranks.Majestic.rank | numeric | | 2 |
-action_result.data.\*.attributes.popularity_ranks.Majestic.timestamp | numeric | | 1613576163 |
-action_result.data.\*.attributes.popularity_ranks.Quantcast.rank | numeric | | 1 |
-action_result.data.\*.attributes.popularity_ranks.Quantcast.timestamp | numeric | | 1585755370 |
-action_result.data.\*.attributes.popularity_ranks.Statvoo.rank | numeric | | 1 |
-action_result.data.\*.attributes.popularity_ranks.Statvoo.timestamp | numeric | | 1613576162 |
-action_result.data.\*.attributes.registrar | string | | MarkMonitor Inc. |
-action_result.data.\*.attributes.reputation | numeric | | 256 |
-action_result.data.\*.attributes.tld | string | | com |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 104 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 26 |
-action_result.data.\*.attributes.whois | string | | test data Creation Date: 1997-09-15T04:00:00Z DNSSEC: unsigned Domain Name: TEST.COM Domain Status: clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited Domain Status: clientTransferProhibited https://icann.org/epp#clientTransferProhibited Domain Status: clientUpdateProhibited https://icann.org/epp#clientUpdateProhibited Domain Status: serverDeleteProhibited https://icann.org/epp#serverDeleteProhibited |
-action_result.data.\*.attributes.whois_date | numeric | | 1612787278 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.domain | string | `domain` | |
 action_result.data.\*.id | string | `domain` | test.com |
-action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | domain |
-action_result.summary.harmless | numeric | | 90 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.source | string | | new from virustotal |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 8 |
-action_result.message | string | | Harmless: 90, Malicious: 0, Suspicious: 0, Undetected: 8 |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.data.\*.attributes.last_dns_records_date | numeric | `timestamp` | 1757503155 |
+action_result.data.\*.attributes.jarm | string | | 29d3fd00029d29d00042d43d00041d598ac0c1012db967bb1ad0ff2491b3ae |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | 1679467461 |
+action_result.data.\*.attributes.creation_date | numeric | `timestamp` | 1613635130 |
+action_result.data.\*.attributes.last_analysis_results.Acronis.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Acronis.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Acronis.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Abusix.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Abusix.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Abusix.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Abusix.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Axur.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Axur.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Axur.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Axur.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Bkav.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Bkav.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Bkav.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Certego.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Certego.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Certego.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Certego.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CRDF.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CRDF.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CRDF.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CRDF.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Cyble.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Cyble.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Cyble.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Cyble.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.DNS8.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.DNS8.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.DNS8.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.DNS8.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Ermes.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Ermes.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Ermes.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Ermes.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESET.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESET.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESET.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESET.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.G_Data.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.G_Data.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.G_Data.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.G_Data.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.IPsum.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.IPsum.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.IPsum.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.IPsum.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lionic.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lionic.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lionic.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Lumu.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Lumu.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Lumu.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Lumu.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Malwared.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Malwared.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Malwared.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Malwared.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Quttera.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Quttera.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Quttera.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Quttera.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sophos.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sophos.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sophos.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Spam404.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Spam404.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Spam404.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Spam404.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Underworld.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Underworld.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Underworld.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Underworld.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Webroot.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Webroot.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Webroot.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.securolytics.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.securolytics.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.securolytics.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.securolytics.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.zvelo.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.zvelo.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.zvelo.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.zvelo.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.engine_name | string | | CMC |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.method | string | | blacklist |
+action_result.data.\*.attributes.last_analysis_results.ZeroFox.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.whois_date | numeric | `timestamp` | 1613635130 |
+action_result.data.\*.attributes.expiration_date | numeric | `timestamp` | 1613635130 |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.whois | string | | Test data Domain Name: TEST.COM Registry Domain ID: 9999999999_DOMAIN_COM-VRSN Registrar WHOIS Server: whois.test.com Registrar URL: http://www.test.com Updated Date: 2021-02-17T07:07:07Z Creation Date: 2021-02-17T07:07:07Z Registry Expiry Date: 2022-02-17T07:07:07Z Registrar: Test Registrar, Inc. Registrar IANA ID: 9999 Registrar Abuse Contact Email: |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.type | string | | A |
+action_result.data.\*.attributes.last_dns_records.\*.value | string | | 192.0.2.1 |
+action_result.data.\*.attributes.last_dns_records.\*.ttl | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.rname | string | | |
+action_result.data.\*.attributes.last_dns_records.\*.serial | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.refresh | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.retry | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.expire | numeric | | |
+action_result.data.\*.attributes.last_dns_records.\*.minimum | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.cert_signature.signature | string | | |
+action_result.data.\*.attributes.last_https_certificate.cert_signature.signature_algorithm | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.authority_key_identifier.keyid | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.subject_key_identifier | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.subject_alternative_name.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.certificate_policies.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.key_usage.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.extended_key_usage.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.crl_distribution_points.\* | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.CA_Issuers | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.OCSP | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.CA | boolean | | True False |
+action_result.data.\*.attributes.last_https_certificate.extensions.1_3_6_1_4_1_11129_2_4_2 | string | | |
+action_result.data.\*.attributes.last_https_certificate.validity.not_before | string | `date` | |
+action_result.data.\*.attributes.last_https_certificate.validity.not_after | string | `date` | |
+action_result.data.\*.attributes.last_https_certificate.size | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.version | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.algorithm | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.exponent | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.key_size | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.modulus | string | | |
+action_result.data.\*.attributes.last_https_certificate.thumbprint_sha256 | string | | |
+action_result.data.\*.attributes.last_https_certificate.thumbprint | string | | |
+action_result.data.\*.attributes.last_https_certificate.serial_number | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.CN | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.O | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.C | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.L | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.ST | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.CN | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.O | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.C | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.L | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.ST | string | | |
+action_result.data.\*.attributes.tld | string | | com |
+action_result.data.\*.attributes.last_https_certificate_date | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.registrar | string | | |
+action_result.data.\*.attributes.categories.alphaMountain_ai | string | | |
+action_result.data.\*.attributes.categories.BitDefender | string | | |
+action_result.data.\*.attributes.categories.Xcitium_Verdict_Cloud | string | | |
+action_result.data.\*.attributes.categories.Sophos | string | | |
+action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
+action_result.data.\*.attributes.popularity_ranks.Majestic.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Majestic.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.popularity_ranks.Statvoo.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Statvoo.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.popularity_ranks.Alexa.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Alexa.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.popularity_ranks.Cisco_Umbrella.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Cisco_Umbrella.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.popularity_ranks.Quantcast.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Quantcast.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.popularity_ranks.Cloudflare_Radar.rank | numeric | | |
+action_result.data.\*.attributes.popularity_ranks.Cloudflare_Radar.timestamp | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.last_update_date | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.rdap.handle | string | | |
+action_result.data.\*.attributes.rdap.ldh_name | string | | |
+action_result.data.\*.attributes.rdap.events.\*.event_action | string | | |
+action_result.data.\*.attributes.rdap.events.\*.event_date | string | `date` | |
+action_result.data.\*.attributes.rdap.events.\*.event_actor | string | | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.events.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.title | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.description.\* | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.type | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.notices.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.ldh_name | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.event_action | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.event_date | string | `date` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.event_actor | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.events.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.object_class_name | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.status.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.handle | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.unicode_name | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.description.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.notices.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.lang | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.port43 | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.vcard_array.\*.name | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.vcard_array.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.vcard_array.\*.values.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.roles.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.description.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.remarks.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.event_action | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.event_date | string | `date` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.event_actor | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.events.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.handle | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.public_ids.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.public_ids.\*.identifier | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.port43 | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.networks.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.autnums.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.url | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.lang | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.entities.\*.rdap_conformance.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.description.\* | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.nameservers.\*.remarks.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.rdap_conformance.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.vcard_array.\*.name | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.vcard_array.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.vcard_array.\*.values.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.roles.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.title | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.description.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.remarks.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.event_action | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.event_date | string | `date` | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.event_actor | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.events.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.handle | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.public_ids.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.public_ids.\*.identifier | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.port43 | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.networks.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.autnums.\* | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.url | string | `url` | |
+action_result.data.\*.attributes.rdap.entities.\*.lang | string | | |
+action_result.data.\*.attributes.rdap.entities.\*.rdap_conformance.\* | string | | |
+action_result.data.\*.attributes.rdap.object_class_name | string | | |
+action_result.data.\*.attributes.rdap.status.\* | string | | |
+action_result.data.\*.attributes.rdap.secure_dns.zone_signed | boolean | | True False |
+action_result.data.\*.attributes.rdap.secure_dns.delegation_signed | boolean | | True False |
+action_result.data.\*.attributes.rdap.secure_dns.max_sig_life | numeric | | |
+action_result.data.\*.attributes.rdap.secure_dns.ds_data.\* | string | | |
+action_result.data.\*.attributes.rdap.secure_dns.key_data.\* | string | | |
+action_result.data.\*.attributes.rdap.port43 | string | | |
+action_result.data.\*.attributes.rdap.unicode_name | string | | |
+action_result.data.\*.attributes.rdap.punycode | string | | |
+action_result.data.\*.attributes.rdap.type | string | | |
+action_result.data.\*.attributes.rdap.links.\*.value | string | `url` | |
+action_result.data.\*.attributes.rdap.links.\*.rel | string | | |
+action_result.data.\*.attributes.rdap.links.\*.href | string | `url` | |
+action_result.data.\*.attributes.rdap.links.\*.type | string | | |
+action_result.data.\*.attributes.rdap.links.\*.title | string | | |
+action_result.data.\*.attributes.rdap.links.\*.media | string | | |
+action_result.data.\*.attributes.rdap.links.\*.href_lang.\* | string | | |
+action_result.data.\*.attributes.rdap.switch_name | string | | |
+action_result.data.\*.attributes.rdap.public_ids.\*.type | string | | |
+action_result.data.\*.attributes.rdap.public_ids.\*.identifier | string | | |
+action_result.data.\*.attributes.rdap.lang | string | | |
+action_result.data.\*.attributes.rdap.remarks.\* | string | | |
+action_result.data.\*.attributes.rdap.nask0_state | string | | |
+action_result.data.\*.attributes.rdap.variants.\* | string | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.undetected | numeric | | |
+action_result.summary.source | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'make request'
+
+make request
+
+Type: **generic** <br>
+Read only: **False**
+
+'make request' action for the app. Used to handle arbitrary HTTP requests with the app's asset
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**http_method** | required | The HTTP method to use for the request. | string | |
+**endpoint** | required | Valid VirusTotal endpoint that will be appended to the end of the base url, https://www.virustotal.com/api/v3. An example of a valid endpoint is 'domains/example.com'. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
+**timeout** | optional | The timeout for the request in seconds. | numeric | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default is False. | boolean | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.http_method | string | | |
+action_result.parameter.endpoint | string | | |
+action_result.parameter.headers | string | | |
+action_result.parameter.query_parameters | string | | |
+action_result.parameter.body | string | | |
+action_result.parameter.timeout | numeric | | |
+action_result.parameter.verify_ssl | boolean | | |
+action_result.data.\*.status_code | numeric | | 200 |
+action_result.data.\*.response_body | string | | Success |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -210,131 +781,684 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.hash | string | `hash` `sha256` `sha1` `md5` | 999999999999c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
-action_result.data.\*.attributes.authentihash | string | | 999999990b465f7bd1e7568640397f01fc4f8819ce6f0c1415690ecee646464cec |
-action_result.data.\*.attributes.creation_date | numeric | | 1410950077 |
-action_result.data.\*.attributes.detectiteasy.filetype | string | | PE32 |
-action_result.data.\*.attributes.detectiteasy.values.\*.info | string | | EXE32 |
-action_result.data.\*.attributes.detectiteasy.values.\*.name | string | | EP:Microsoft Visual C/C++ |
-action_result.data.\*.attributes.detectiteasy.values.\*.type | string | | Compiler |
-action_result.data.\*.attributes.detectiteasy.values.\*.version | string | | 2008-2010 |
-action_result.data.\*.attributes.first_submission_date | numeric | | 1612961082 |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1613635130 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | undetected |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_update | string | | 20210218 |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_version | string | | 2.10.2019.1 |
-action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
-action_result.data.\*.attributes.last_analysis_results.\*.result | string | | |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.confirmed-timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.failure | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.type-unsupported | numeric | | 16 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 59 |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1613635210 |
-action_result.data.\*.attributes.last_submission_date | numeric | | 1613635130 |
-action_result.data.\*.attributes.magic | string | | a python2.7\\015script text executable |
-action_result.data.\*.attributes.md5 | string | `md5` | 2e65153f2c49c91a0206ee7a8c00e659 |
-action_result.data.\*.attributes.meaningful_name | string | | update_cr.py |
-action_result.data.\*.attributes.names | string | | update_cr.py |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.hash | string | `hash` `sha256` `sha1` `md5` | |
+action_result.data.\*.id | string | `sha256` | |
+action_result.data.\*.type | string | | file |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.known_distributors.distributors.\* | string | | |
+action_result.data.\*.attributes.known_distributors.filenames.\* | string | | |
+action_result.data.\*.attributes.known_distributors.products.\* | string | | |
+action_result.data.\*.attributes.known_distributors.data_sources.\* | string | | |
+action_result.data.\*.attributes.type_tag | string | | |
+action_result.data.\*.attributes.md5 | string | `md5` | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.category | string | | malicious harmless suspicious |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.confidence | numeric | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.malware_classification.\* | string | | CLEAN |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.malware_names.\* | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.sandbox_name | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.category | string | | malicious harmless suspicious |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.confidence | numeric | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.malware_classification.\* | string | | CLEAN |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.malware_names.\* | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.sandbox_name | string | | |
+action_result.data.\*.attributes.sha256 | string | `sha256` | |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.trid.\*.file_type | string | | |
+action_result.data.\*.attributes.trid.\*.probability | numeric | | |
+action_result.data.\*.attributes.filecondis.raw_md5 | string | `md5` | |
+action_result.data.\*.attributes.filecondis.dhash | string | `hash` | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.confirmed_timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.failure | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.type_unsupported | numeric | | |
+action_result.data.\*.attributes.ssdeep | string | | |
+action_result.data.\*.attributes.type_description | string | | |
+action_result.data.\*.attributes.size | numeric | | |
+action_result.data.\*.attributes.magic | string | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.times_submitted | numeric | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.meaningful_name | string | | |
+action_result.data.\*.attributes.tlsh | string | | |
+action_result.data.\*.attributes.first_seen_itw_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.sha1 | string | `sha1` | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.unique_sources | numeric | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.MicroWorld_eScan.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ClamAV.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CTX.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Skyhigh.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ALYac.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwarebytes.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zillya.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sangfor.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7AntiVirus.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.K7GW.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CrowdStrike.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Baidu.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Symantec.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET_NOD32.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro_HouseCall.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cynet.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.NANO_Antivirus.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SUPERAntiSpyware.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Rising.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.F_Secure.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.DrWeb.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrendMicro.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.McAfeeD.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ikarus.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Jiangmin.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avira.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kingsoft.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Microsoft.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acrabit.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViRobot.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZoneAlarm.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.GData.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Varist.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AhnLab_V3.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.VBA32.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.TACHYON.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zoner.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Tencent.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.TrellixENS.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.huorong.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.MaxSecure.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AVG.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Panda.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.alibabacloud.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.VirIT.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CAT_QuickHeal.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Avast_Mobile.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SymantecMobileInsight.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefenderFalx.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.DeepInstinct.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Elastic.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.APEX.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Paloalto.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trapmine.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Alibaba.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cylance.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SentinelOne.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.tehtris.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustlook.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Nucleon.vendor | string | | |
+action_result.data.\*.attributes.type_extension | string | | py |
+action_result.data.\*.attributes.magika | string | | |
+action_result.data.\*.attributes.type_tags.\* | string | | |
+action_result.data.\*.attributes.names.\* | string | | |
 action_result.data.\*.attributes.pdf_info.acroform | numeric | | |
 action_result.data.\*.attributes.pdf_info.autoaction | numeric | | |
 action_result.data.\*.attributes.pdf_info.embedded_file | numeric | | |
 action_result.data.\*.attributes.pdf_info.encrypted | numeric | | |
 action_result.data.\*.attributes.pdf_info.flash | numeric | | |
-action_result.data.\*.attributes.pdf_info.header | string | | %PDF-1.5 |
+action_result.data.\*.attributes.pdf_info.header | string | | |
 action_result.data.\*.attributes.pdf_info.javascript | numeric | | |
 action_result.data.\*.attributes.pdf_info.jbig2_compression | numeric | | |
 action_result.data.\*.attributes.pdf_info.js | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_endobj | numeric | | 29 |
-action_result.data.\*.attributes.pdf_info.num_endstream | numeric | | 28 |
+action_result.data.\*.attributes.pdf_info.num_endobj | numeric | | |
+action_result.data.\*.attributes.pdf_info.num_endstream | numeric | | |
 action_result.data.\*.attributes.pdf_info.num_launch_actions | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_obj | numeric | | 29 |
-action_result.data.\*.attributes.pdf_info.num_object_streams | numeric | | 1 |
+action_result.data.\*.attributes.pdf_info.num_obj | numeric | | |
+action_result.data.\*.attributes.pdf_info.num_object_streams | numeric | | |
 action_result.data.\*.attributes.pdf_info.num_pages | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_stream | numeric | | 28 |
+action_result.data.\*.attributes.pdf_info.num_stream | numeric | | |
 action_result.data.\*.attributes.pdf_info.openaction | numeric | | |
-action_result.data.\*.attributes.pdf_info.startxref | numeric | | 1 |
+action_result.data.\*.attributes.pdf_info.startxref | numeric | | |
 action_result.data.\*.attributes.pdf_info.suspicious_colors | numeric | | |
 action_result.data.\*.attributes.pdf_info.trailer | numeric | | |
 action_result.data.\*.attributes.pdf_info.xfa | numeric | | |
 action_result.data.\*.attributes.pdf_info.xref | numeric | | |
-action_result.data.\*.attributes.pe_info.entry_point | numeric | | 14768 |
-action_result.data.\*.attributes.pe_info.imphash | string | | 999984447a5c5ca9b4a55946317137951 |
-action_result.data.\*.attributes.pe_info.import_list.\*.library_name | string | | COMDLG32.dll |
-action_result.data.\*.attributes.pe_info.machine_type | numeric | | 332 |
-action_result.data.\*.attributes.pe_info.resource_details.\*.chi2 | numeric | | 8137.34814453125 |
-action_result.data.\*.attributes.pe_info.resource_details.\*.entropy | numeric | | 5.789552211761475 |
-action_result.data.\*.attributes.pe_info.resource_details.\*.filetype | string | | Data |
-action_result.data.\*.attributes.pe_info.resource_details.\*.lang | string | | ENGLISH US |
-action_result.data.\*.attributes.pe_info.resource_details.\*.sha256 | string | | 999999999981e8d88978836b23ee932ade6652ba798989bf20697afffd6113e |
-action_result.data.\*.attributes.pe_info.resource_details.\*.type | string | | RT_BITMAP |
-action_result.data.\*.attributes.pe_info.resource_langs.ENGLISH US | numeric | | 6 |
-action_result.data.\*.attributes.pe_info.resource_langs.RUSSIAN | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_BITMAP | numeric | | 2 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_DIALOG | numeric | | 2 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_MANIFEST | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_MENU | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_VERSION | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.rich_pe_header_hash | string | | fa4dbca9180170710b3c245464efa483 |
-action_result.data.\*.attributes.pe_info.sections.\*.chi2 | numeric | | 292981.44 |
-action_result.data.\*.attributes.pe_info.sections.\*.entropy | numeric | | 6.75 |
-action_result.data.\*.attributes.pe_info.sections.\*.flags | string | | rx |
-action_result.data.\*.attributes.pe_info.sections.\*.md5 | string | | 99999998c3e0636712e10326c07d56b645 |
-action_result.data.\*.attributes.pe_info.sections.\*.name | string | | .text |
-action_result.data.\*.attributes.pe_info.sections.\*.raw_size | numeric | | 54784 |
-action_result.data.\*.attributes.pe_info.sections.\*.virtual_address | numeric | | 4096 |
-action_result.data.\*.attributes.pe_info.sections.\*.virtual_size | numeric | | 54434 |
-action_result.data.\*.attributes.pe_info.timestamp | numeric | | 1410950077 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | 30 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.value | string | | trojan |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | 13 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | zbot |
-action_result.data.\*.attributes.popular_threat_classification.suggested_threat_label | string | | trojan.zbot/foreign |
-action_result.data.\*.attributes.reputation | numeric | | 0 |
-action_result.data.\*.attributes.sandbox_verdicts.Tencent HABO.\* | string | | xyz |
-action_result.data.\*.attributes.sandbox_verdicts.Tencent HABO.category | string | | malicious |
-action_result.data.\*.attributes.sandbox_verdicts.Tencent HABO.sandbox_name | string | | Tencent HABO |
-action_result.data.\*.attributes.sandbox_verdicts.Zenbox.category | string | | harmless |
-action_result.data.\*.attributes.sandbox_verdicts.Zenbox.confidence | numeric | | 1 |
-action_result.data.\*.attributes.sandbox_verdicts.Zenbox.sandbox_name | string | | Zenbox |
-action_result.data.\*.attributes.sha1 | string | `sha1` | 9999969a19142292710254cde97df84e46dfe33a |
-action_result.data.\*.attributes.sha256 | string | `sha256` | 9999999ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
-action_result.data.\*.attributes.signature_info.\* | string | | xyz |
-action_result.data.\*.attributes.signature_info.copyright | string | | Copyright 2003-2013 |
-action_result.data.\*.attributes.signature_info.description | string | | WinMerge Shell Integration |
-action_result.data.\*.attributes.signature_info.file version | string | | 1.0.1.6 |
-action_result.data.\*.attributes.signature_info.internal name | string | | ShellExtension |
-action_result.data.\*.attributes.signature_info.original name | string | | ShellExtension |
-action_result.data.\*.attributes.signature_info.product | string | | ShellExtension |
-action_result.data.\*.attributes.size | numeric | | 6285 |
-action_result.data.\*.attributes.ssdeep | string | | 192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygiINVALIDu7ThPBLkv:pq7Mgg0/NdMu/1BLkv |
-action_result.data.\*.attributes.tags | string | | python |
-action_result.data.\*.attributes.times_submitted | numeric | | 13 |
-action_result.data.\*.attributes.tlsh | string | | 9999999905AC5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 0 |
-action_result.data.\*.attributes.trid.\*.file_type | string | | Unix-like shebang (var.1) (gen) |
-action_result.data.\*.attributes.trid.\*.probability | numeric | | 100 |
-action_result.data.\*.attributes.type_description | string | | Python |
-action_result.data.\*.attributes.type_extension | string | | py |
-action_result.data.\*.attributes.type_tag | string | | python |
-action_result.data.\*.attributes.unique_sources | numeric | | 1 |
-action_result.data.\*.attributes.vhash | string | | 999996657d755510804011z9005b9z25z12z3afz |
-action_result.data.\*.id | string | `sha256` | 9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
-action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/files/e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
-action_result.data.\*.type | string | | file |
-action_result.summary.harmless | numeric | | 0 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.source | string | | new from virustotal |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 59 |
-action_result.message | string | | Harmless: 0, Malicious: 0, Suspicious: 0, Undetected: 59 |
+action_result.data.\*.attributes.detectiteasy.filetype | string | | |
+action_result.data.\*.attributes.detectiteasy.values.\*.info | string | | |
+action_result.data.\*.attributes.detectiteasy.values.\*.name | string | | |
+action_result.data.\*.attributes.detectiteasy.values.\*.type | string | | |
+action_result.data.\*.attributes.detectiteasy.values.\*.version | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.age | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.guid | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.name | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.signature | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.timestamp | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.fpo.functions | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.datatype | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.length | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.unicode | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.data | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.reserved | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.reserved10.value | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.size | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.timestamp | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.type | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.type_str | string | | |
+action_result.data.\*.attributes.pe_info.entry_point | numeric | | |
+action_result.data.\*.attributes.pe_info.exports.\* | string | | |
+action_result.data.\*.attributes.pe_info.imphash | string | | |
+action_result.data.\*.attributes.pe_info.import_list.\*.imported_functions.\* | string | | |
+action_result.data.\*.attributes.pe_info.import_list.\*.library_name | string | | |
+action_result.data.\*.attributes.pe_info.machine_type | string | | |
+action_result.data.\*.attributes.pe_info.overlay.chi2 | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.filetype | string | | |
+action_result.data.\*.attributes.pe_info.overlay.md5 | string | `md5` | |
+action_result.data.\*.attributes.pe_info.overlay.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.size | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.chi2 | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.filetype | string | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.lang | string | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.sha256 | string | `sha256` | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.type | string | | |
+action_result.data.\*.attributes.pe_info.sections.\*.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.md5 | string | `md5` | |
+action_result.data.\*.attributes.pe_info.sections.\*.name | string | | |
+action_result.data.\*.attributes.pe_info.sections.\*.raw_size | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.virtual_address | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.virtual_size | numeric | | |
+action_result.data.\*.attributes.pe_info.timestamp | numeric | `timestamp` | |
+action_result.data.\*.attributes.popular_threat_classification.suggested_threat_label | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.value | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -355,13 +1479,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.hash | string | `hash` `sha256` `sha1` `md5` | |
-action_result.data | string | | |
-action_result.summary | string | | |
+action_result.status | string | | success failure |
 action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.parameter.hash | string | `hash` `sha256` `sha1` `md5` | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'ip reputation'
 
@@ -380,72 +1502,446 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.ip | string | `ip` `ipv6` | 2.3.4.5 |
-action_result.data.\*.attributes.as_owner | string | | Orange |
-action_result.data.\*.attributes.asn | numeric | | 3215 |
-action_result.data.\*.attributes.continent | string | | EU |
-action_result.data.\*.attributes.country | string | | FR |
-action_result.data.\*.attributes.crowdsourced_context.\*.detail | string | | A domain seen in a CnC panel URL for the Oski malware resolved to this IP address |
-action_result.data.\*.attributes.crowdsourced_context.\*.severity | string | | high |
-action_result.data.\*.attributes.crowdsourced_context.\*.source | string | | benkow.cc |
-action_result.data.\*.attributes.crowdsourced_context.\*.timestamp | numeric | | 1622592000 |
-action_result.data.\*.attributes.crowdsourced_context.\*.title | string | | CnC Panel |
-action_result.data.\*.attributes.jarm | string | | 29d3fd00029d29d00042d43d00041d598ac0c1012db967bb1ad0ff2491b3ae |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1679467461 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | harmless |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CRDF |
-action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
-action_result.data.\*.attributes.last_analysis_results.\*.result | string | | clean |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 86 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 11 |
-action_result.data.\*.attributes.last_https_certificate.cert_signature.signature | string | | 9999999991eed2a66b7aef3c70912cd032acbd2c8791021a3c8cb90b38c579d5fa02d04e4e897b1762981b455d77cea92c56bcf902451a76148582a1e80acc1aeb2a0d72f7e8db8739f874e83a48553311eb3cfe48a0d065a309cedf35930ae3e2cb0d4dca8dba64dc7b5f707debac4f28ce313db8623e235790002b37a8dbc63c99276335c4a59faf1957d5384fc318c56b159e51213c21699e328821f64efc433d74372962d6d160f92b5f1dbbc4e8e11c74ce673e8c52f6270c40c1192cf7bf2bbf44660818b8999085388ac8949332f178b294d409334e8d70ca051a5a7ed53df82e58a46ee2c07afa08f0e0f9ea87311f1a8e79ad3406292e811a5c6 |
-action_result.data.\*.attributes.last_https_certificate.cert_signature.signature_algorithm | string | | sha256RSA |
-action_result.data.\*.attributes.last_https_certificate.extensions.1.3.6.1.4.1.11129.2.4.2 | string | | 999999100ef007600eec095ee8d72640f92e3c3b91bc712a3696a097b4b6a1a14 |
-action_result.data.\*.attributes.last_https_certificate.extensions.CA | boolean | | True |
-action_result.data.\*.attributes.last_https_certificate.extensions.authority_key_identifier.keyid | string | | 999997faf85cdee95cd3d9cd0e24614f371351d27 |
-action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.CA Issuers | string | | http://pki.goog/repo/certs/gts1c3.der |
-action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.OCSP | string | | http://ocsp.pki.goog/gts1c3 |
-action_result.data.\*.attributes.last_https_certificate.extensions.subject_key_identifier | string | | 9999921f3772284cf53c30f681f14bf6ed035cd9 |
-action_result.data.\*.attributes.last_https_certificate.issuer.\* | string | | xyz |
-action_result.data.\*.attributes.last_https_certificate.issuer.C | string | | US |
-action_result.data.\*.attributes.last_https_certificate.issuer.CN | string | | GTS CA 1C3 |
-action_result.data.\*.attributes.last_https_certificate.issuer.O | string | | Google Trust Services LLC |
-action_result.data.\*.attributes.last_https_certificate.public_key.algorithm | string | | RSA |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.exponent | string | | 010001 |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.key_size | numeric | | 2048 |
-action_result.data.\*.attributes.last_https_certificate.public_key.rsa.modulus | string | | 999999999f74bea72e3cb68a2a6bb74521f2ee951338a5d9f6a738f98996e2d72295009f544112aa918e99b93ab48f073322711b992887a46211dc853c48e2f22372419c8841221f3dad453289c2331d3b4c881c67660ecc5093bf601130a7aef9f54419ee8e64754c3b07125893af7dabf0bb0f7232d0226605620e12a4416fb22d5c9182394941b218009f6fe2d28d170a1042a0aa726eb9b052a84a57597a4b9a556be00c004ba024bd310d9e4faf17482b137f81b35f470ead7d7d9e418a6653799e9d04f9fd1d4b588809c0e2ac0680f406ba8f4358a143e3cacc7fe792ab9655cc73729dbcd3d7362a7ffe6f903942dc3d588c97917930a9b28b8561c9219b |
-action_result.data.\*.attributes.last_https_certificate.serial_number | string | | 999999999f93320b7b0a00000000f2c8e9 |
-action_result.data.\*.attributes.last_https_certificate.signature_algorithm | string | | sha256RSA |
-action_result.data.\*.attributes.last_https_certificate.size | numeric | | 1509 |
-action_result.data.\*.attributes.last_https_certificate.subject.CN | string | | dns.test |
-action_result.data.\*.attributes.last_https_certificate.thumbprint | string | | 999999993948b043f8f258cceebe9eb7a8dd7d06de |
-action_result.data.\*.attributes.last_https_certificate.thumbprint_sha256 | string | | 999999e0344c78df40dfcfc2ecd6f83d01b4bcf1def8c548c87691211d904f05 |
-action_result.data.\*.attributes.last_https_certificate.validity.not_after | string | | 2021-10-04 03:52:55 |
-action_result.data.\*.attributes.last_https_certificate.validity.not_before | string | | 2021-07-12 03:52:56 |
-action_result.data.\*.attributes.last_https_certificate.version | string | | V3 |
-action_result.data.\*.attributes.last_https_certificate_date | numeric | | 1628548284 |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1612735030 |
-action_result.data.\*.attributes.network | string | | 2.0.0.0/12 |
-action_result.data.\*.attributes.regional_internet_registry | string | | RIPE NCC |
-action_result.data.\*.attributes.reputation | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 0 |
-action_result.data.\*.attributes.whois | string | | Test data NetRange: 2.0.0.0 - 2.255.255.255 CIDR: 2.0.0.0/8 NetName: 2-RIPE NetHandle: NET-2-0-0-0-1 Parent: () NetType: Allocated to RIPE NCC OriginAS: Organization: RIPE Network Coordination Centre (RIPE) RegDate: 2009-09-29 Updated: 2009-09-30 Comment: These addresses have been further assigned to users in Comment: the RIPE NCC region. Contact information can be found in Comment: the RIPE database at http://www.ripe.net/whois Ref: https://rdap.arin.net/registry/ip/2.0.0.0 ResourceLink: https://apps.db.ripe.net/search/query.html ResourceLink: whois.ripe.net OrgName: RIPE Network Coordination Centre OrgId: RIPE Address: P.O. Box 10096 City: Amsterdam StateProv: PostalCode: 1001EB Country: NL RegDate: Updated: 2013-07-29 Ref: https://rdap.arin.net/registry/entity/RIPE ReferralServer: whois://whois.ripe.net ResourceLink: https://apps.db.ripe.net/search/query.html OrgAbuseHandle: ABUSE3850-ARIN OrgAbuseName: Abuse Contact OrgAbusePhone: +31205354444 OrgAbuseEmail: abuse@ripe.net OrgAbuseRef: https://rdap.arin.net/registry/entity/ABUSE3850-ARIN OrgTechHandle: RNO29-ARIN OrgTechName: RIPE NCC Operations OrgTechPhone: +31 20 535 4444 OrgTechEmail: hostmaster@ripe.net OrgTechRef: https://rdap.arin.net/registry/entity/RNO29-ARIN inetnum: 2.3.0.0 - 2.3.7.255 netname: IP2000-ADSL-BAS descr: POP CLE country: FR admin-c: WITR1-RIPE tech-c: WITR1-RIPE status: ASSIGNED PA remarks: for hacking, spamming or security problems send mail to remarks: abuse@orange.fr mnt-by: FT-BRX created: 2017-07-27T08:58:11Z last-modified: 2017-07-27T08:58:11Z source: RIPE role: Wanadoo France Technical Role address: FRANCE TELECOM/SCR address: 48 rue Camille Desmoulins address: 92791 ISSY LES MOULINEAUX CEDEX 9 address: FR phone: +33 1 58 88 50 00 abuse-mailbox: abuse@orange.fr admin-c: BRX1-RIPE tech-c: BRX1-RIPE nic-hdl: WITR1-RIPE mnt-by: FT-BRX created: 2001-12-04T17:57:08Z last-modified: 2013-07-16T14:09:50Z source: RIPE # Filtered route: 2.3.0.0/16 descr: France Telecom Orange origin: AS3215 mnt-by: RAIN-TRANSPAC mnt-by: FT-BRX created: 2012-11-22T09:32:05Z |
-action_result.data.\*.attributes.whois_date | numeric | | 1612735030 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.ip | string | `ip` `ipv6` | |
 action_result.data.\*.id | string | `ip` | 2.3.4.5 |
-action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/ip_addresses/2.3.4.5 |
 action_result.data.\*.type | string | | ip_address |
-action_result.summary.harmless | numeric | | 86 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.source | string | | new from virustotal |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 11 |
-action_result.message | string | | Harmless: 86, Malicious: 0, Suspicious: 0, Undetected: 11 |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.data.\*.attributes.as_owner | string | | |
+action_result.data.\*.attributes.asn | numeric | | |
+action_result.data.\*.attributes.network | string | `ip` | |
+action_result.data.\*.attributes.country | string | | |
+action_result.data.\*.attributes.continent | string | | |
+action_result.data.\*.attributes.jarm | string | | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Acronis.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.0xSI_f33d.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Abusix.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Abusix.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Abusix.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Abusix.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ADMINUSLabs.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Axur.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Axur.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Axur.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Axur.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ChainPatrol.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Criminal_IP.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AILabs_MONITORAPP.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlienVault.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.alphaMountain_ai.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AlphaSOC.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Antiy_AVL.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ArcSight_Threat_Intelligence.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.AutoShun.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.benkow_cc.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bfore_Ai_PreCrime.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.BitDefender.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Bkav.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Blueliv.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Certego.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Certego.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Certego.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Certego.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Chong_Lua_Dao.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CINS_Army.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cluster25.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CRDF.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CRDF.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CRDF.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CRDF.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CSIS_Security_Group.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Snort_IP_sample_list.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CMC_Threat_Intelligence.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyan.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyan.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyan.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyan.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyble.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyble.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyble.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Cyble.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.CyRadar.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.DNS8.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.DNS8.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.DNS8.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.DNS8.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Dr_Web.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ermes.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ermes.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ermes.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Ermes.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESET.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ESTsecurity.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.EmergingThreats.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Emsisoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Forcepoint_ThreatSeeker.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Fortinet.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.G_Data.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.G_Data.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.G_Data.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.G_Data.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.GCP_Abuse_Intelligence.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Google_Safebrowsing.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.GreenSnow.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Gridinsoft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Heimdal_Security.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Hunt_io_Intelligence.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.IPsum.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.IPsum.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.IPsum.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.IPsum.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Juniper_Networks.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Kaspersky.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lionic.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lumu.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lumu.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lumu.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Lumu.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwarePatrol.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.MalwareURL.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwared.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwared.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwared.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Malwared.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Mimecast.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Netcraft.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.OpenPhish.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishing_Database.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishFort.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.PhishLabs.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Phishtank.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.PREBYTES.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.PrecisionSec.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quick_Heal.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quttera.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quttera.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quttera.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Quttera.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SafeToOpen.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sansec_eComscan.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Scantitan.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SCUMWARE_org.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Seclookup.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SecureBrain.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.SOCRadar.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sophos.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Spam404.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Spam404.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Spam404.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Spam404.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.StopForumSpam.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Sucuri_SiteCheck.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ThreatHive.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Threatsourcing.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Trustwave.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Underworld.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Underworld.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Underworld.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Underworld.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLhaus.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.URLQuery.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Viettel_Threat_Intelligence.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.VIPRE.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.VX_Vault.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ViriBack.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Webroot.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Yandex_Safebrowsing.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.ZeroCERT.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.desenmascara_me.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.malwares_com_URL_checker.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.securolytics.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.securolytics.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.securolytics.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.securolytics.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Xcitium_Verdict_Cloud.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.zvelo.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.zvelo.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.zvelo.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.zvelo.result | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zerofox.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zerofox.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zerofox.method | string | | |
+action_result.data.\*.attributes.last_analysis_results.Zerofox.result | string | | |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.cert_signature.signature | string | | |
+action_result.data.\*.attributes.last_https_certificate.cert_signature.signature_algorithm | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.authority_key_identifier.keyid | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.subject_key_identifier | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.subject_alternative_name.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.certificate_policies.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.key_usage.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.extended_key_usage.\* | string | | |
+action_result.data.\*.attributes.last_https_certificate.extensions.crl_distribution_points.\* | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.CA_Issuers | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.ca_information_access.OCSP | string | `url` | |
+action_result.data.\*.attributes.last_https_certificate.extensions.CA | boolean | | True False |
+action_result.data.\*.attributes.last_https_certificate.extensions.1_3_6_1_4_1_11129_2_4_2 | string | | |
+action_result.data.\*.attributes.last_https_certificate.validity.not_before | string | `date` | |
+action_result.data.\*.attributes.last_https_certificate.validity.not_after | string | `date` | |
+action_result.data.\*.attributes.last_https_certificate.size | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.version | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.algorithm | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.exponent | string | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.key_size | numeric | | |
+action_result.data.\*.attributes.last_https_certificate.public_key.rsa.modulus | string | | |
+action_result.data.\*.attributes.last_https_certificate.thumbprint_sha256 | string | | |
+action_result.data.\*.attributes.last_https_certificate.thumbprint | string | | |
+action_result.data.\*.attributes.last_https_certificate.serial_number | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.CN | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.O | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.C | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.L | string | | |
+action_result.data.\*.attributes.last_https_certificate.issuer.ST | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.CN | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.O | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.C | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.L | string | | |
+action_result.data.\*.attributes.last_https_certificate.subject.ST | string | | |
+action_result.data.\*.attributes.last_https_certificate_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.whois | string | | |
+action_result.data.\*.attributes.whois_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.tags.\* | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -466,103 +1962,53 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.url | string | `url` `domain` | http://www.test123.com |
-action_result.data.\*.attributes.categories.\* | string | | searchengines |
-action_result.data.\*.attributes.categories.BitDefender | string | | computersandsoftware |
-action_result.data.\*.attributes.categories.Comodo Valkyrie Verdict | string | | media sharing |
-action_result.data.\*.attributes.categories.Dr.Web | string | | e-mail |
-action_result.data.\*.attributes.categories.Forcepoint ThreatSeeker | string | | information technology |
-action_result.data.\*.attributes.categories.Sophos | string | | information technology |
-action_result.data.\*.attributes.categories.Xcitium Verdict Cloud | string | | media sharing |
-action_result.data.\*.attributes.categories.alphaMountain.ai | string | | File Sharing/Storage, Search Engines/Portals |
-action_result.data.\*.attributes.first_submission_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | harmless |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CRDF |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.url | string | `url` `domain` | |
+action_result.data.\*.attributes.categories.alphaMountain_ai | string | | |
+action_result.data.\*.attributes.categories.BitDefender | string | | |
+action_result.data.\*.attributes.categories.Xcitium_Verdict_Cloud | string | | |
+action_result.data.\*.attributes.categories.Sophos | string | | |
+action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
+action_result.data.\*.attributes.favicon.dhash | string | | |
+action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
+action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
-action_result.data.\*.attributes.last_analysis_results.\*.result | string | | clean |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 78 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 1 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 8 |
-action_result.data.\*.attributes.last_final_url | string | | https://www.test.com |
-action_result.data.\*.attributes.last_http_response_code | numeric | | 200 |
-action_result.data.\*.attributes.last_http_response_content_length | numeric | | 154896 |
-action_result.data.\*.attributes.last_http_response_content_sha256 | string | | 9999993534b9c77669d1ebc821aed90fb34e31b587a4df32eba708193b25770d9 |
-action_result.data.\*.attributes.last_http_response_cookies.\* | string | | xyz |
-action_result.data.\*.attributes.last_http_response_cookies.PROMO | string | | ltv_pid=&ltv_new=1&ltv_ts=1659707757&ltv_sts=1659707757&ltv_c=1 |
-action_result.data.\*.attributes.last_http_response_headers.\* | string | | same-origin-allow-popups; report-to="TestUi" |
-action_result.data.\*.attributes.last_http_response_headers.Accept-CH | string | | Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version, Sec-CH-UA-Arch, Sec-CH-UA-Model, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version-List, Sec-CH-UA-WoW64 |
-action_result.data.\*.attributes.last_http_response_headers.Accept-Ranges | string | | bytes |
-action_result.data.\*.attributes.last_http_response_headers.Age | string | | 0 |
-action_result.data.\*.attributes.last_http_response_headers.Alt-Svc | string | | h3=":443"; ma=2592000,h3-29=":443"; ma=2592000 |
-action_result.data.\*.attributes.last_http_response_headers.Cache-Control | string | | max-age=3600 |
-action_result.data.\*.attributes.last_http_response_headers.Connection | string | | keep-alive |
-action_result.data.\*.attributes.last_http_response_headers.Content-Encoding | string | | gzip |
-action_result.data.\*.attributes.last_http_response_headers.Content-Length | string | | 17018 |
-action_result.data.\*.attributes.last_http_response_headers.Content-Security-Policy | string | | upgrade-insecure-requests |
-action_result.data.\*.attributes.last_http_response_headers.Content-Security-Policy-Report-Only | string | | object-src 'none';base-uri 'self';script-src 'nonce-foInPZdOHkO_qcMKb-VGOQ' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp |
-action_result.data.\*.attributes.last_http_response_headers.Content-Type | string | | text/html |
-action_result.data.\*.attributes.last_http_response_headers.Cross-Origin-Opener-Policy | string | | same-origin-allow-popups; report-to="gws" |
-action_result.data.\*.attributes.last_http_response_headers.Date | string | | Thu, 09 Mar 2023 15:15:29 GMT |
-action_result.data.\*.attributes.last_http_response_headers.ETag | string | | "128ff-5f63ddbca4199-gzip" |
-action_result.data.\*.attributes.last_http_response_headers.Expect-CT | string | | max-age=31536000, enforce |
-action_result.data.\*.attributes.last_http_response_headers.Expires | string | | Thu, 09 Mar 2023 16:15:29 GMT |
-action_result.data.\*.attributes.last_http_response_headers.Last-Modified | string | | Mon, 06 Mar 2023 16:33:44 GMT |
-action_result.data.\*.attributes.last_http_response_headers.Origin-Trial | string | | INVALIDzJDKSmEHjzM5ilaa908GuehlLqGb6ezME5lkhelj20qVzfv06zPmQ3LodoeujZuphAolrnhnPA8w4AIAAABfeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJQZXJtaXNzaW9uc1BvbGljeVVubG9hZCIsImV4cGlyeSI6MTY4NTY2Mzk5OX0=, AvudrjMZqL7335p1KLV2lHo1kxdMeIN0dUI15d0CPz9dovVLCcXk8OAqjho1DX4s6NbHbA/AGobuGvcZv0drGgQAAAB9eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJCYWNrRm9yd2FyZENhY2hlTm90UmVzdG9yZWRSZWFzb25zIiwiZXhwaXJ5IjoxNjkxNTM5MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0= |
-action_result.data.\*.attributes.last_http_response_headers.P3P | string | | CP="This is not a P3P policy! See g.co/p3phelp for more info." |
-action_result.data.\*.attributes.last_http_response_headers.Permissions-Policy | string | | unload=() |
-action_result.data.\*.attributes.last_http_response_headers.Referrer-Policy | string | | no-referrer-when-downgrade |
-action_result.data.\*.attributes.last_http_response_headers.Report-To | string | | {"group":"gws","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/gws/other"}]} |
-action_result.data.\*.attributes.last_http_response_headers.Server | string | | Apache |
-action_result.data.\*.attributes.last_http_response_headers.Set-Cookie | string | | INVALID5C560DE64992FF6A94E58729B071419B~YAAQF2IoF7fTtMaGAQAA7gPxxhMyDlfEQK6o6b1VDHh1A4q7gOyp9YKRW51LAjP8LNLyqBS/9X6QK+AWS6ji46AVd+P+YXEK4v2we6cMotyCTXPzSUeR8t7BgwzZdHpKYKw9cguU5OG7DKzGjMPKAYE3AohEOjvVqmHvQZYibzr2FQq0SpEUsTb9TBQHmdKYEMNAmpe7Xlet1DBBK4XAjdRZM0k9C37TCf82HkTnImuoQ/V5guyPnZqiKrlT~1; Domain=.ibm.com; Path=/; Expires=Thu, 09 Mar 2023 17:15:29 GMT; Max-Age=7200; Secure |
-action_result.data.\*.attributes.last_http_response_headers.Strict-Transport-Security | string | | max-age=31536000 |
-action_result.data.\*.attributes.last_http_response_headers.Transfer-Encoding | string | | chunked |
-action_result.data.\*.attributes.last_http_response_headers.Vary | string | | Accept-Encoding |
-action_result.data.\*.attributes.last_http_response_headers.X-Akamai-Transformed | string | | 9 16829 0 pmb=mTOE,2 |
-action_result.data.\*.attributes.last_http_response_headers.X-Content-Type-Options | string | | nosniff |
-action_result.data.\*.attributes.last_http_response_headers.X-Frame-Options | string | | SAMEORIGIN |
-action_result.data.\*.attributes.last_http_response_headers.X-XSS-Protection | string | | 1; mode=block |
-action_result.data.\*.attributes.last_http_response_headers.cache-control | string | | private |
-action_result.data.\*.attributes.last_http_response_headers.content-encoding | string | | gzip |
-action_result.data.\*.attributes.last_http_response_headers.content-length | string | | 18923 |
-action_result.data.\*.attributes.last_http_response_headers.content-type | string | | text/html; charset=UTF-8 |
-action_result.data.\*.attributes.last_http_response_headers.date | string | | Fri, 05 Aug 2022 13:55:57 GMT |
-action_result.data.\*.attributes.last_http_response_headers.p3p | string | | policyref="https://policies.yahoo.com/w3c/p3p.xml", CP="CAO DSP COR CUR ADM DEV TAI PSA PSD IVAi IVDi CONi TELo OTPi OUR DELi SAMi OTRi UNRi PUBi IND PHY ONL UNI PUR FIN COM NAV INT DEM CNT STA POL HEA PRE LOC GOV" |
-action_result.data.\*.attributes.last_http_response_headers.secure_search_bypass | string | | true |
-action_result.data.\*.attributes.last_http_response_headers.server | string | | ATS |
-action_result.data.\*.attributes.last_http_response_headers.set-cookie | string | | PROMO=ltv_pid=&ltv_new=1&ltv_ts=1659707757&ltv_sts=1659707757&ltv_c=1; expires=Sat, 05-Aug-2023 13:55:57 GMT; Max-Age=31536000; path=/; domain=.search.yahoo.com |
-action_result.data.\*.attributes.last_http_response_headers.vary | string | | Accept-Encoding |
-action_result.data.\*.attributes.last_http_response_headers.x-content-type-options | string | | nosniff |
-action_result.data.\*.attributes.last_http_response_headers.x-envoy-upstream-service-time | string | | 40 |
-action_result.data.\*.attributes.last_http_response_headers.x-frame-options | string | | DENY |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1618399456 |
-action_result.data.\*.attributes.last_submission_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.reputation | numeric | | 0 |
-action_result.data.\*.attributes.times_submitted | numeric | | 1 |
-action_result.data.\*.attributes.title | string | | Test |
-action_result.data.\*.attributes.tld | string | | com |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 0 |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.id | string | | 7241469 |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.timestamp | numeric | | 1627544121 |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.url | string | | https://sb.scorecardresearch.com/p?c1=2&c2=7241469&c7=https%3A%2F%2Fin.yahoo.com%2F&c5=97684142&cv=2.0&cj=1&c14=-1 |
-action_result.data.\*.attributes.trackers.Yahoo Dot Tags.\*.timestamp | numeric | | 1627544121 |
-action_result.data.\*.attributes.trackers.Yahoo Dot Tags.\*.url | string | | https://s.yimg.com/rq/darla/4-6-0/js/g-r-min.js |
-action_result.data.\*.attributes.url | string | | https://www.test.com |
+action_result.data.\*.attributes.last_analysis_results.\*.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | AutoShun, CMC |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_final_url | string | | |
+action_result.data.\*.attributes.last_http_response_code | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
+action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.outgoing_links.\* | string | | |
+action_result.data.\*.attributes.redirection_chain.\* | string | | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.data.\*.attributes.times_submitted | numeric | | |
+action_result.data.\*.attributes.title | string | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.url | string | `url` | |
+action_result.data.\*.attributes.has_content | boolean | | True False |
 action_result.data.\*.id | string | | 99999999eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
-action_result.data.\*.links.self | string | | https://www.virustotal.com/api/v3/urls/e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | url |
-action_result.summary.harmless | numeric | | 80 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.scan_id | string | `virustotal scan id` | 999999999b1b9c9999ca75016e4c010bc94836366881b021a658ea7f8548b6543c1e |
-action_result.summary.source | string | | new from virustotal |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 9 |
-action_result.message | string | | Scan id: u-9999999718dd52151f0e6fea2ff6fbf12d68a11046ba4ea3258546906c74f-1613644669, Harmless: 74, Malicious: 0, Suspicious: 0, Undetected: 9 |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -586,502 +2032,629 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.url | string | `url` `domain` | https://www.123test.com |
-action_result.parameter.wait_time | numeric | | 10 |
-action_result.data.\*.attributes.categories.\* | string | | searchengines |
-action_result.data.\*.attributes.categories.BitDefender | string | | computersandsoftware |
-action_result.data.\*.attributes.categories.Comodo Valkyrie Verdict | string | | content server |
-action_result.data.\*.attributes.categories.Dr.Web | string | | e-mail |
-action_result.data.\*.attributes.categories.Forcepoint ThreatSeeker | string | | search engines and portals |
-action_result.data.\*.attributes.categories.Sophos | string | | portal sites |
-action_result.data.\*.attributes.categories.Webroot | string | | Malware Sites |
-action_result.data.\*.attributes.categories.Xcitium Verdict Cloud | string | | mobile communications |
-action_result.data.\*.attributes.categories.alphaMountain.ai | string | | Business/Economy |
-action_result.data.\*.attributes.first_submission_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | harmless |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CRDF |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.url | string | `url` `domain` | |
+action_result.parameter.wait_time | numeric | | |
+action_result.data.\*.attributes.categories.alphaMountain_ai | string | | |
+action_result.data.\*.attributes.categories.BitDefender | string | | |
+action_result.data.\*.attributes.categories.Xcitium_Verdict_Cloud | string | | |
+action_result.data.\*.attributes.categories.Sophos | string | | |
+action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
+action_result.data.\*.attributes.favicon.dhash | string | | |
+action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
+action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
+action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
-action_result.data.\*.attributes.last_analysis_results.\*.result | string | | clean |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 78 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 1 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 8 |
-action_result.data.\*.attributes.last_final_url | string | | https://www.test.com |
-action_result.data.\*.attributes.last_http_response_code | numeric | | 200 |
-action_result.data.\*.attributes.last_http_response_content_length | numeric | | 154896 |
-action_result.data.\*.attributes.last_http_response_content_sha256 | string | | e84603534b9c77669d1ebc821aed90fb34e31b587a4df32eba708193b25770d9 |
-action_result.data.\*.attributes.last_http_response_cookies.\* | string | | xyz |
-action_result.data.\*.attributes.last_http_response_cookies.\_\_cfduid | string | | dd6592227142b1c1144b4b4ff3ea1a8a91572286127 |
-action_result.data.\*.attributes.last_http_response_headers.\* | string | | same-origin-allow-popups; report-to="TestUi" |
-action_result.data.\*.attributes.last_http_response_headers.Accept-CH | string | | Sec-CH-UA-Platform, Sec-CH-UA-Platform-Version, Sec-CH-UA-Full-Version, Sec-CH-UA-Arch, Sec-CH-UA-Model, Sec-CH-UA-Bitness, Sec-CH-UA-Full-Version-List, Sec-CH-UA-WoW64 |
-action_result.data.\*.attributes.last_http_response_headers.Access-Control-Allow-Origin | string | | * |
-action_result.data.\*.attributes.last_http_response_headers.Age | string | | 0 |
-action_result.data.\*.attributes.last_http_response_headers.Alt-Svc | string | | h3=":443"; ma=2592000,h3-29=":443"; ma=2592000 |
-action_result.data.\*.attributes.last_http_response_headers.CF-Cache-Status | string | | DYNAMIC |
-action_result.data.\*.attributes.last_http_response_headers.CF-RAY | string | | 7d1c90339ff22bb3-ORD |
-action_result.data.\*.attributes.last_http_response_headers.Cache-Control | string | | no-store, no-cache, max-age=0, private |
-action_result.data.\*.attributes.last_http_response_headers.Connection | string | | keep-alive |
-action_result.data.\*.attributes.last_http_response_headers.Content-Encoding | string | | gzip |
-action_result.data.\*.attributes.last_http_response_headers.Content-Security-Policy | string | | frame-ancestors 'self' https://\*.builtbygirls.com https://\*.rivals.com https://\*.engadget.com https://\*.intheknow.com https://\*.autoblog.com https://\*.techcrunch.com https://\*.yahoo.com https://\*.aol.com https://\*.huffingtonpost.com https://\*.oath.com https://\*.search.yahoo.com https://\*.pnr.ouryahoo.com https://pnr.ouryahoo.com https://\*.search.aol.com https://\*.search.huffpost.com https://\*.onesearch.com https://\*.verizonmedia.com https://\*.publishing.oath.com https://\*.autoblog.com; sandbox allow-forms allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-presentation; report-uri https://csp.yahoo.com/beacon/csp?src=ats&site=frontpage&region=US&lang=en-US&device=smartphone&yrid=7h2ptmphvv9rl&partner=; |
-action_result.data.\*.attributes.last_http_response_headers.Content-Security-Policy-Report-Only | string | | object-src 'none';base-uri 'self';script-src 'nonce-qGMKc53CjVAFzzZ8RUEtnA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp |
-action_result.data.\*.attributes.last_http_response_headers.Content-Type | string | | text/html; charset=UTF-8 |
-action_result.data.\*.attributes.last_http_response_headers.Cross-Origin-Opener-Policy | string | | same-origin-allow-popups; report-to="gws" |
-action_result.data.\*.attributes.last_http_response_headers.Cross-Origin-Opener-Policy-Report-Only | string | | same-origin; report-to="AccountsSignInUi" |
-action_result.data.\*.attributes.last_http_response_headers.Cross-Origin-Resource-Policy | string | | same-site |
-action_result.data.\*.attributes.last_http_response_headers.Date | string | | Tue, 21 Mar 2023 12:43:43 GMT |
-action_result.data.\*.attributes.last_http_response_headers.ETag | string | | "7cVmZQ" |
-action_result.data.\*.attributes.last_http_response_headers.Expires | string | | -1 |
-action_result.data.\*.attributes.last_http_response_headers.Link | string | | <https://hii.com/wp-json/>; rel="https://api.w.org/", <https://hii.com/wp-json/wp/v2/pages/8298>; rel="alternate"; type="application/json", <https://hii.com/>; rel=shortlink |
-action_result.data.\*.attributes.last_http_response_headers.Origin-Trial | string | | 999999999DKSmEHjzM5ilaa908GuehlLqGb6ezME5lkhelj20qVzfv06zPmQ3LodoeujZuphAolrnhnPA8w4AIAAABfeyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJQZXJtaXNzaW9uc1BvbGljeVVubG9hZCIsImV4cGlyeSI6MTY4NTY2Mzk5OX0=, AvudrjMZqL7335p1KLV2lHo1kxdMeIN0dUI15d0CPz9dovVLCcXk8OAqjho1DX4s6NbHbA/AGobuGvcZv0drGgQAAAB9eyJvcmlnaW4iOiJodHRwczovL3d3dy5nb29nbGUuY29tOjQ0MyIsImZlYXR1cmUiOiJCYWNrRm9yd2FyZENhY2hlTm90UmVzdG9yZWRSZWFzb25zIiwiZXhwaXJ5IjoxNjkxNTM5MTk5LCJpc1N1YmRvbWFpbiI6dHJ1ZX0= |
-action_result.data.\*.attributes.last_http_response_headers.P3P | string | | CP="This is not a P3P policy! See g.co/p3phelp for more info." |
-action_result.data.\*.attributes.last_http_response_headers.Permissions-Policy | string | | unload=() |
-action_result.data.\*.attributes.last_http_response_headers.Pragma | string | | no-cache |
-action_result.data.\*.attributes.last_http_response_headers.Report-To | string | | {"group":"gws","max_age":2592000,"endpoints":[{"url":"https://csp.withgoogle.com/csp/report-to/gws/other"}]} |
-action_result.data.\*.attributes.last_http_response_headers.Server | string | | gws |
-action_result.data.\*.attributes.last_http_response_headers.Set-Cookie | string | | 1P_JAR=2023-03-21-12; expires=Thu, 20-Apr-2023 12:43:43 GMT; path=/; domain=.google.com; Secure; SameSite=none, NID=511=uSBKYmXpnAMHRYvebOLMDNVKuXQVvO8Q-3eHs2Zjj6RhQwWNjU-j04Ysj_9pykK6S60UsbRbhRODW4_ywypZCL6j8dpbVFNJR5Ig-zy7qkEka26Oq-DpJdeV4XPWPVmg-dB6AXJJA6goK0QcMAiqPZK7OanyPrB1fY06uc9zreA; expires=Wed, 20-Sep-2023 12:43:43 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=none |
-action_result.data.\*.attributes.last_http_response_headers.Strict-Transport-Security | string | | max-age=31536000 |
-action_result.data.\*.attributes.last_http_response_headers.Transfer-Encoding | string | | chunked |
-action_result.data.\*.attributes.last_http_response_headers.Vary | string | | Accept-Encoding, Accept-Encoding, Accept-Encoding |
-action_result.data.\*.attributes.last_http_response_headers.X-Cache | string | | HIT: 9 |
-action_result.data.\*.attributes.last_http_response_headers.X-Cache-Group | string | | bot-mobile |
-action_result.data.\*.attributes.last_http_response_headers.X-Cacheable | string | | bot |
-action_result.data.\*.attributes.last_http_response_headers.X-Cloud-Trace-Context | string | | 9999999fda4db85ed68e4e34e7aefac6 |
-action_result.data.\*.attributes.last_http_response_headers.X-Content-Type-Options | string | | nosniff |
-action_result.data.\*.attributes.last_http_response_headers.X-Frame-Options | string | | SAMEORIGIN |
-action_result.data.\*.attributes.last_http_response_headers.X-Powered-By | string | | WP Engine |
-action_result.data.\*.attributes.last_http_response_headers.X-XSS-Protection | string | | 0 |
-action_result.data.\*.attributes.last_http_response_headers.access-control-allow-origin | string | | * |
-action_result.data.\*.attributes.last_http_response_headers.alt-svc | string | | h3=":443"; ma=86400 |
-action_result.data.\*.attributes.last_http_response_headers.cf-ray | string | | 52cedb66e8b6c53c-ORD |
-action_result.data.\*.attributes.last_http_response_headers.connection | string | | keep-alive |
-action_result.data.\*.attributes.last_http_response_headers.content-encoding | string | | gzip |
-action_result.data.\*.attributes.last_http_response_headers.content-length | string | | 15 |
-action_result.data.\*.attributes.last_http_response_headers.content-type | string | | text/html; charset=utf-8 |
-action_result.data.\*.attributes.last_http_response_headers.date | string | | Wed, 01 Mar 2023 19:28:53 GMT |
-action_result.data.\*.attributes.last_http_response_headers.expect-ct | string | | max-age=31536000, report-uri="http://csp.yahoo.com/beacon/csp?src=yahoocom-expect-ct-report-only" |
-action_result.data.\*.attributes.last_http_response_headers.keep-alive | string | | timeout=5, max=100 |
-action_result.data.\*.attributes.last_http_response_headers.referrer-policy | string | | no-referrer-when-downgrade |
-action_result.data.\*.attributes.last_http_response_headers.server | string | | ATS |
-action_result.data.\*.attributes.last_http_response_headers.set-cookie | string | | \_\_cfduid=99999997142b1c1144b4b4ff3ea1a8a91572286127; expires=Tue, 27-Oct-20 18:08:47 GMT; path=/; domain=.ipinfo.in; HttpOnly; Secure |
-action_result.data.\*.attributes.last_http_response_headers.strict-transport-security | string | | max-age=31536000 |
-action_result.data.\*.attributes.last_http_response_headers.vary | string | | User-Agent |
-action_result.data.\*.attributes.last_http_response_headers.x-content-type-options | string | | nosniff |
-action_result.data.\*.attributes.last_http_response_headers.x-envoy-upstream-service-time | string | | 54 |
-action_result.data.\*.attributes.last_http_response_headers.x-frame-options | string | | SAMEORIGIN |
-action_result.data.\*.attributes.last_http_response_headers.x-powered-by | string | | PHP/7.4.29, PleskLin |
-action_result.data.\*.attributes.last_http_response_headers.x-ua-compatible | string | | IE=edge |
-action_result.data.\*.attributes.last_http_response_headers.x-xss-protection | string | | 1; mode=block |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1618399456 |
-action_result.data.\*.attributes.last_submission_date | numeric | | 1618399455 |
-action_result.data.\*.attributes.reputation | numeric | | 0 |
-action_result.data.\*.attributes.times_submitted | numeric | | 1 |
-action_result.data.\*.attributes.title | string | | Test |
-action_result.data.\*.attributes.tld | string | | com |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 0 |
-action_result.data.\*.attributes.trackers.Doubleclick.\*.timestamp | numeric | | 1664533059 |
-action_result.data.\*.attributes.trackers.Doubleclick.\*.url | string | | |
-action_result.data.\*.attributes.trackers.Google Publisher Tags.\*.timestamp | numeric | | 1677698931 |
-action_result.data.\*.attributes.trackers.Google Publisher Tags.\*.url | string | | https://securepubads.g.doubleclick.net/tag/js/gpt.js |
-action_result.data.\*.attributes.trackers.Google Tag Manager.\*.id | string | | G-PTR82E305T |
-action_result.data.\*.attributes.trackers.Google Tag Manager.\*.timestamp | numeric | | 1685843825 |
-action_result.data.\*.attributes.trackers.Google Tag Manager.\*.url | string | | https://www.googletagmanager.com/gtag/js?id=G-PTR82E305T |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.id | string | | 7241469 |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.timestamp | numeric | | 1677698931 |
-action_result.data.\*.attributes.trackers.ScoreCard Research Beacon.\*.url | string | | https://sb.scorecardresearch.com/p?c1=2&c2=7241469&c5=1197228339&c7=https%3A%2F%2Fwww.yahoo.com%2F&c14=-1 |
-action_result.data.\*.attributes.trackers.Yahoo Dot Tags.\*.timestamp | numeric | | 1677698931 |
-action_result.data.\*.attributes.trackers.Yahoo Dot Tags.\*.url | string | | https://s.yimg.com/ss/rapid-3.53.38.js |
-action_result.data.\*.attributes.url | string | | https://www.test.com |
-action_result.data.\*.data.attributes.date | numeric | | 1613648861 |
-action_result.data.\*.data.attributes.results.\*.category | string | | harmless |
-action_result.data.\*.data.attributes.results.\*.engine_name | string | | CRDF |
-action_result.data.\*.data.attributes.results.\*.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.\*.result | string | | clean |
-action_result.data.\*.data.attributes.results.0xSI_f33d.category | string | | undetected |
-action_result.data.\*.data.attributes.results.0xSI_f33d.engine_name | string | | 0xSI_f33d |
-action_result.data.\*.data.attributes.results.0xSI_f33d.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.0xSI_f33d.result | string | | unrated |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.engine_name | string | | ADMINUSLabs |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.result | string | | clean |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).category | string | | harmless |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).engine_name | string | | AICC (MONITORAPP) |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).result | string | | clean |
-action_result.data.\*.data.attributes.results.Abusix.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Abusix.engine_name | string | | Abusix |
-action_result.data.\*.data.attributes.results.Abusix.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Abusix.result | string | | clean |
-action_result.data.\*.data.attributes.results.Acronis.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Acronis.engine_name | string | | Acronis |
-action_result.data.\*.data.attributes.results.Acronis.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Acronis.result | string | | clean |
-action_result.data.\*.data.attributes.results.AlienVault.category | string | | harmless |
-action_result.data.\*.data.attributes.results.AlienVault.engine_name | string | | AlienVault |
-action_result.data.\*.data.attributes.results.AlienVault.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AlienVault.result | string | | clean |
-action_result.data.\*.data.attributes.results.AlphaSOC.category | string | | undetected |
-action_result.data.\*.data.attributes.results.AlphaSOC.engine_name | string | | AlphaSOC |
-action_result.data.\*.data.attributes.results.AlphaSOC.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AlphaSOC.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Antiy-AVL.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Antiy-AVL.engine_name | string | | Antiy-AVL |
-action_result.data.\*.data.attributes.results.Antiy-AVL.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Antiy-AVL.result | string | | clean |
-action_result.data.\*.data.attributes.results.ArcSight Threat Intelligence.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ArcSight Threat Intelligence.engine_name | string | | ArcSight Threat Intelligence |
-action_result.data.\*.data.attributes.results.ArcSight Threat Intelligence.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ArcSight Threat Intelligence.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Artists Against 419.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Artists Against 419.engine_name | string | | Artists Against 419 |
-action_result.data.\*.data.attributes.results.Artists Against 419.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Artists Against 419.result | string | | clean |
-action_result.data.\*.data.attributes.results.AutoShun.category | string | | undetected |
-action_result.data.\*.data.attributes.results.AutoShun.engine_name | string | | AutoShun |
-action_result.data.\*.data.attributes.results.AutoShun.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AutoShun.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Avira.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Avira.engine_name | string | | Avira |
-action_result.data.\*.data.attributes.results.Avira.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Avira.result | string | | clean |
-action_result.data.\*.data.attributes.results.Bfore.Ai PreCrime.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Bfore.Ai PreCrime.engine_name | string | | Bfore.Ai PreCrime |
-action_result.data.\*.data.attributes.results.Bfore.Ai PreCrime.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Bfore.Ai PreCrime.result | string | | clean |
-action_result.data.\*.data.attributes.results.BitDefender.category | string | | harmless |
-action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | BitDefender |
-action_result.data.\*.data.attributes.results.BitDefender.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BitDefender.result | string | | clean |
-action_result.data.\*.data.attributes.results.Bkav.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Bkav.engine_name | string | | Bkav |
-action_result.data.\*.data.attributes.results.Bkav.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Bkav.result | string | | unrated |
-action_result.data.\*.data.attributes.results.BlockList.category | string | | harmless |
-action_result.data.\*.data.attributes.results.BlockList.engine_name | string | | BlockList |
-action_result.data.\*.data.attributes.results.BlockList.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BlockList.result | string | | clean |
-action_result.data.\*.data.attributes.results.Blueliv.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Blueliv.engine_name | string | | Blueliv |
-action_result.data.\*.data.attributes.results.Blueliv.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Blueliv.result | string | | clean |
-action_result.data.\*.data.attributes.results.CINS Army.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CINS Army.engine_name | string | | CINS Army |
-action_result.data.\*.data.attributes.results.CINS Army.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CINS Army.result | string | | clean |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.engine_name | string | | CMC Threat Intelligence |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.result | string | | clean |
-action_result.data.\*.data.attributes.results.CRDF.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CRDF.engine_name | string | | CRDF |
-action_result.data.\*.data.attributes.results.CRDF.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CRDF.result | string | | clean |
-action_result.data.\*.data.attributes.results.Certego.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Certego.engine_name | string | | Certego |
-action_result.data.\*.data.attributes.results.Certego.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Certego.result | string | | clean |
-action_result.data.\*.data.attributes.results.Chong Lua Dao.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Chong Lua Dao.engine_name | string | | Chong Lua Dao |
-action_result.data.\*.data.attributes.results.Chong Lua Dao.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Chong Lua Dao.result | string | | clean |
-action_result.data.\*.data.attributes.results.Cluster25.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Cluster25.engine_name | string | | Cluster25 |
-action_result.data.\*.data.attributes.results.Cluster25.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cluster25.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Criminal IP.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Criminal IP.engine_name | string | | Criminal IP |
-action_result.data.\*.data.attributes.results.Criminal IP.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Criminal IP.result | string | | unrated |
-action_result.data.\*.data.attributes.results.CrowdSec.category | string | | undetected |
-action_result.data.\*.data.attributes.results.CrowdSec.engine_name | string | | CrowdSec |
-action_result.data.\*.data.attributes.results.CrowdSec.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CrowdSec.result | string | | unrated |
-action_result.data.\*.data.attributes.results.CyRadar.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CyRadar.engine_name | string | | CyRadar |
-action_result.data.\*.data.attributes.results.CyRadar.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CyRadar.result | string | | clean |
-action_result.data.\*.data.attributes.results.Cyan.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Cyan.engine_name | string | | Cyan |
-action_result.data.\*.data.attributes.results.Cyan.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cyan.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Cyble.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Cyble.engine_name | string | | Cyble |
-action_result.data.\*.data.attributes.results.Cyble.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cyble.result | string | | clean |
-action_result.data.\*.data.attributes.results.DNS8.category | string | | harmless |
-action_result.data.\*.data.attributes.results.DNS8.engine_name | string | | DNS8 |
-action_result.data.\*.data.attributes.results.DNS8.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.DNS8.result | string | | clean |
-action_result.data.\*.data.attributes.results.Dr.Web.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Dr.Web.engine_name | string | | Dr.Web |
-action_result.data.\*.data.attributes.results.Dr.Web.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Dr.Web.result | string | | clean |
-action_result.data.\*.data.attributes.results.ESET.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ESET.engine_name | string | | ESET |
-action_result.data.\*.data.attributes.results.ESET.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ESET.result | string | | clean |
-action_result.data.\*.data.attributes.results.ESTsecurity.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ESTsecurity.engine_name | string | | ESTsecurity |
-action_result.data.\*.data.attributes.results.ESTsecurity.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ESTsecurity.result | string | | clean |
-action_result.data.\*.data.attributes.results.EmergingThreats.category | string | | harmless |
-action_result.data.\*.data.attributes.results.EmergingThreats.engine_name | string | | EmergingThreats |
-action_result.data.\*.data.attributes.results.EmergingThreats.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.EmergingThreats.result | string | | clean |
-action_result.data.\*.data.attributes.results.Emsisoft.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | Emsisoft |
-action_result.data.\*.data.attributes.results.Emsisoft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Emsisoft.result | string | | clean |
-action_result.data.\*.data.attributes.results.Feodo Tracker.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Feodo Tracker.engine_name | string | | Feodo Tracker |
-action_result.data.\*.data.attributes.results.Feodo Tracker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Feodo Tracker.result | string | | clean |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.engine_name | string | | Forcepoint ThreatSeeker |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Fortinet.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | Fortinet |
-action_result.data.\*.data.attributes.results.Fortinet.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Fortinet.result | string | | clean |
-action_result.data.\*.data.attributes.results.G-Data.category | string | | harmless |
-action_result.data.\*.data.attributes.results.G-Data.engine_name | string | | G-Data |
-action_result.data.\*.data.attributes.results.G-Data.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.G-Data.result | string | | clean |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.engine_name | string | | Google Safebrowsing |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.result | string | | clean |
-action_result.data.\*.data.attributes.results.GreenSnow.category | string | | harmless |
-action_result.data.\*.data.attributes.results.GreenSnow.engine_name | string | | GreenSnow |
-action_result.data.\*.data.attributes.results.GreenSnow.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.GreenSnow.result | string | | clean |
-action_result.data.\*.data.attributes.results.Heimdal Security.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Heimdal Security.engine_name | string | | Heimdal Security |
-action_result.data.\*.data.attributes.results.Heimdal Security.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Heimdal Security.result | string | | clean |
-action_result.data.\*.data.attributes.results.IPsum.category | string | | harmless |
-action_result.data.\*.data.attributes.results.IPsum.engine_name | string | | IPsum |
-action_result.data.\*.data.attributes.results.IPsum.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.IPsum.result | string | | clean |
-action_result.data.\*.data.attributes.results.Juniper Networks.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Juniper Networks.engine_name | string | | Juniper Networks |
-action_result.data.\*.data.attributes.results.Juniper Networks.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Juniper Networks.result | string | | clean |
-action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | harmless |
-action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | K7AntiVirus |
-action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | clean |
-action_result.data.\*.data.attributes.results.Kaspersky.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | Kaspersky |
-action_result.data.\*.data.attributes.results.Kaspersky.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Kaspersky.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Lionic.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | Lionic |
-action_result.data.\*.data.attributes.results.Lionic.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Lionic.result | string | | clean |
-action_result.data.\*.data.attributes.results.Lumu.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Lumu.engine_name | string | | Lumu |
-action_result.data.\*.data.attributes.results.Lumu.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Lumu.result | string | | unrated |
-action_result.data.\*.data.attributes.results.MalwarePatrol.category | string | | harmless |
-action_result.data.\*.data.attributes.results.MalwarePatrol.engine_name | string | | MalwarePatrol |
-action_result.data.\*.data.attributes.results.MalwarePatrol.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MalwarePatrol.result | string | | clean |
-action_result.data.\*.data.attributes.results.Malwared.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Malwared.engine_name | string | | Malwared |
-action_result.data.\*.data.attributes.results.Malwared.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Malwared.result | string | | clean |
-action_result.data.\*.data.attributes.results.Netcraft.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Netcraft.engine_name | string | | Netcraft |
-action_result.data.\*.data.attributes.results.Netcraft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Netcraft.result | string | | unrated |
-action_result.data.\*.data.attributes.results.OpenPhish.category | string | | harmless |
-action_result.data.\*.data.attributes.results.OpenPhish.engine_name | string | | OpenPhish |
-action_result.data.\*.data.attributes.results.OpenPhish.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.OpenPhish.result | string | | clean |
-action_result.data.\*.data.attributes.results.PREBYTES.category | string | | harmless |
-action_result.data.\*.data.attributes.results.PREBYTES.engine_name | string | | PREBYTES |
-action_result.data.\*.data.attributes.results.PREBYTES.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PREBYTES.result | string | | clean |
-action_result.data.\*.data.attributes.results.PhishFort.category | string | | undetected |
-action_result.data.\*.data.attributes.results.PhishFort.engine_name | string | | PhishFort |
-action_result.data.\*.data.attributes.results.PhishFort.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PhishFort.result | string | | unrated |
-action_result.data.\*.data.attributes.results.PhishLabs.category | string | | undetected |
-action_result.data.\*.data.attributes.results.PhishLabs.engine_name | string | | PhishLabs |
-action_result.data.\*.data.attributes.results.PhishLabs.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PhishLabs.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Phishing Database.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Phishing Database.engine_name | string | | Phishing Database |
-action_result.data.\*.data.attributes.results.Phishing Database.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Phishing Database.result | string | | clean |
-action_result.data.\*.data.attributes.results.Phishtank.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Phishtank.engine_name | string | | Phishtank |
-action_result.data.\*.data.attributes.results.Phishtank.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Phishtank.result | string | | clean |
-action_result.data.\*.data.attributes.results.PrecisionSec.category | string | | undetected |
-action_result.data.\*.data.attributes.results.PrecisionSec.engine_name | string | | PrecisionSec |
-action_result.data.\*.data.attributes.results.PrecisionSec.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PrecisionSec.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Quick Heal.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Quick Heal.engine_name | string | | Quick Heal |
-action_result.data.\*.data.attributes.results.Quick Heal.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Quick Heal.result | string | | clean |
-action_result.data.\*.data.attributes.results.Quttera.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Quttera.engine_name | string | | Quttera |
-action_result.data.\*.data.attributes.results.Quttera.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Quttera.result | string | | clean |
-action_result.data.\*.data.attributes.results.Rising.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Rising.engine_name | string | | Rising |
-action_result.data.\*.data.attributes.results.Rising.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Rising.result | string | | clean |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.category | string | | harmless |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.engine_name | string | | SCUMWARE.org |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.result | string | | clean |
-action_result.data.\*.data.attributes.results.SOCRadar.category | string | | undetected |
-action_result.data.\*.data.attributes.results.SOCRadar.engine_name | string | | SOCRadar |
-action_result.data.\*.data.attributes.results.SOCRadar.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SOCRadar.result | string | | unrated |
-action_result.data.\*.data.attributes.results.SafeToOpen.category | string | | undetected |
-action_result.data.\*.data.attributes.results.SafeToOpen.engine_name | string | | SafeToOpen |
-action_result.data.\*.data.attributes.results.SafeToOpen.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SafeToOpen.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Sangfor.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | Sangfor |
-action_result.data.\*.data.attributes.results.Sangfor.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sangfor.result | string | | clean |
-action_result.data.\*.data.attributes.results.Scantitan.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Scantitan.engine_name | string | | Scantitan |
-action_result.data.\*.data.attributes.results.Scantitan.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Scantitan.result | string | | clean |
-action_result.data.\*.data.attributes.results.Seclookup.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Seclookup.engine_name | string | | Seclookup |
-action_result.data.\*.data.attributes.results.Seclookup.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Seclookup.result | string | | clean |
-action_result.data.\*.data.attributes.results.SecureBrain.category | string | | harmless |
-action_result.data.\*.data.attributes.results.SecureBrain.engine_name | string | | SecureBrain |
-action_result.data.\*.data.attributes.results.SecureBrain.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SecureBrain.result | string | | clean |
-action_result.data.\*.data.attributes.results.Snort IP sample list.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Snort IP sample list.engine_name | string | | Snort IP sample list |
-action_result.data.\*.data.attributes.results.Snort IP sample list.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Snort IP sample list.result | string | | clean |
-action_result.data.\*.data.attributes.results.Sophos.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | Sophos |
-action_result.data.\*.data.attributes.results.Sophos.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sophos.result | string | | clean |
-action_result.data.\*.data.attributes.results.Spam404.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Spam404.engine_name | string | | Spam404 |
-action_result.data.\*.data.attributes.results.Spam404.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Spam404.result | string | | clean |
-action_result.data.\*.data.attributes.results.StopForumSpam.category | string | | harmless |
-action_result.data.\*.data.attributes.results.StopForumSpam.engine_name | string | | StopForumSpam |
-action_result.data.\*.data.attributes.results.StopForumSpam.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.StopForumSpam.result | string | | clean |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.engine_name | string | | Sucuri SiteCheck |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.result | string | | clean |
-action_result.data.\*.data.attributes.results.ThreatHive.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ThreatHive.engine_name | string | | ThreatHive |
-action_result.data.\*.data.attributes.results.ThreatHive.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ThreatHive.result | string | | clean |
-action_result.data.\*.data.attributes.results.Threatsourcing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Threatsourcing.engine_name | string | | Threatsourcing |
-action_result.data.\*.data.attributes.results.Threatsourcing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Threatsourcing.result | string | | clean |
-action_result.data.\*.data.attributes.results.Trustwave.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Trustwave.engine_name | string | | Trustwave |
-action_result.data.\*.data.attributes.results.Trustwave.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Trustwave.result | string | | clean |
-action_result.data.\*.data.attributes.results.URLQuery.category | string | | undetected |
-action_result.data.\*.data.attributes.results.URLQuery.engine_name | string | | URLQuery |
-action_result.data.\*.data.attributes.results.URLQuery.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.URLQuery.result | string | | unrated |
-action_result.data.\*.data.attributes.results.URLhaus.category | string | | harmless |
-action_result.data.\*.data.attributes.results.URLhaus.engine_name | string | | URLhaus |
-action_result.data.\*.data.attributes.results.URLhaus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.URLhaus.result | string | | clean |
-action_result.data.\*.data.attributes.results.VIPRE.category | string | | undetected |
-action_result.data.\*.data.attributes.results.VIPRE.engine_name | string | | VIPRE |
-action_result.data.\*.data.attributes.results.VIPRE.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VIPRE.result | string | | unrated |
-action_result.data.\*.data.attributes.results.VX Vault.category | string | | harmless |
-action_result.data.\*.data.attributes.results.VX Vault.engine_name | string | | VX Vault |
-action_result.data.\*.data.attributes.results.VX Vault.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VX Vault.result | string | | clean |
-action_result.data.\*.data.attributes.results.Viettel Threat Intelligence.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Viettel Threat Intelligence.engine_name | string | | Viettel Threat Intelligence |
-action_result.data.\*.data.attributes.results.Viettel Threat Intelligence.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Viettel Threat Intelligence.result | string | | clean |
-action_result.data.\*.data.attributes.results.ViriBack.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ViriBack.engine_name | string | | ViriBack |
-action_result.data.\*.data.attributes.results.ViriBack.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ViriBack.result | string | | clean |
-action_result.data.\*.data.attributes.results.Webroot.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Webroot.engine_name | string | | Webroot |
-action_result.data.\*.data.attributes.results.Webroot.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Webroot.result | string | | clean |
-action_result.data.\*.data.attributes.results.Xcitium Verdict Cloud.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Xcitium Verdict Cloud.engine_name | string | | Xcitium Verdict Cloud |
-action_result.data.\*.data.attributes.results.Xcitium Verdict Cloud.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Xcitium Verdict Cloud.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.engine_name | string | | Yandex Safebrowsing |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.result | string | | clean |
-action_result.data.\*.data.attributes.results.ZeroCERT.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ZeroCERT.engine_name | string | | ZeroCERT |
-action_result.data.\*.data.attributes.results.ZeroCERT.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ZeroCERT.result | string | | clean |
-action_result.data.\*.data.attributes.results.alphaMountain.ai.category | string | | harmless |
-action_result.data.\*.data.attributes.results.alphaMountain.ai.engine_name | string | | alphaMountain.ai |
-action_result.data.\*.data.attributes.results.alphaMountain.ai.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.alphaMountain.ai.result | string | | clean |
-action_result.data.\*.data.attributes.results.benkow.cc.category | string | | harmless |
-action_result.data.\*.data.attributes.results.benkow.cc.engine_name | string | | benkow.cc |
-action_result.data.\*.data.attributes.results.benkow.cc.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.benkow.cc.result | string | | clean |
-action_result.data.\*.data.attributes.results.desenmascara.me.category | string | | harmless |
-action_result.data.\*.data.attributes.results.desenmascara.me.engine_name | string | | desenmascara.me |
-action_result.data.\*.data.attributes.results.desenmascara.me.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.desenmascara.me.result | string | | clean |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.category | string | | harmless |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.engine_name | string | | malwares.com URL checker |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.result | string | | clean |
-action_result.data.\*.data.attributes.results.securolytics.category | string | | harmless |
-action_result.data.\*.data.attributes.results.securolytics.engine_name | string | | securolytics |
-action_result.data.\*.data.attributes.results.securolytics.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.securolytics.result | string | | clean |
-action_result.data.\*.data.attributes.stats.harmless | numeric | | 76 |
-action_result.data.\*.data.attributes.stats.malicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.suspicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.timeout | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.undetected | numeric | | 7 |
+action_result.data.\*.attributes.last_analysis_results.\*.result | string | | Trojan.GenericKD.3275421 |
+action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | AutoShun, CMC |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_final_url | string | | |
+action_result.data.\*.attributes.last_http_response_code | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
+action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
+action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.outgoing_links.\* | string | | |
+action_result.data.\*.attributes.redirection_chain.\* | string | | |
+action_result.data.\*.attributes.reputation | numeric | | |
+action_result.data.\*.attributes.tags.\* | string | | |
+action_result.data.\*.attributes.times_submitted | numeric | | |
+action_result.data.\*.attributes.title | string | | |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.url | string | `url` | |
+action_result.data.\*.attributes.has_content | boolean | | True False |
+action_result.data.\*.data.attributes.date | numeric | `timestamp` | 1613651763 |
+action_result.data.\*.data.attributes.results.Bkav.category | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Bkav.method | string | | |
+action_result.data.\*.data.attributes.results.Bkav.result | string | | |
+action_result.data.\*.data.attributes.results.Bkav.vendor | string | | |
+action_result.data.\*.data.attributes.results.Lionic.category | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Lionic.method | string | | |
+action_result.data.\*.data.attributes.results.Lionic.result | string | | |
+action_result.data.\*.data.attributes.results.Lionic.vendor | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.category | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.method | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.result | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.vendor | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.category | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.method | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.result | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.vendor | string | | |
+action_result.data.\*.data.attributes.results.CTX.category | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CTX.method | string | | |
+action_result.data.\*.data.attributes.results.CTX.result | string | | |
+action_result.data.\*.data.attributes.results.CTX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.category | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.method | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.result | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.vendor | string | | |
+action_result.data.\*.data.attributes.results.ALYac.category | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ALYac.method | string | | |
+action_result.data.\*.data.attributes.results.ALYac.result | string | | |
+action_result.data.\*.data.attributes.results.ALYac.vendor | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.category | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.method | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.result | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zillya.category | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zillya.method | string | | |
+action_result.data.\*.data.attributes.results.Zillya.result | string | | |
+action_result.data.\*.data.attributes.results.Zillya.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.category | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.method | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.result | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7GW.category | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7GW.method | string | | |
+action_result.data.\*.data.attributes.results.K7GW.result | string | | |
+action_result.data.\*.data.attributes.results.K7GW.vendor | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.category | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.method | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.result | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.vendor | string | | |
+action_result.data.\*.data.attributes.results.Baidu.category | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Baidu.method | string | | |
+action_result.data.\*.data.attributes.results.Baidu.result | string | | |
+action_result.data.\*.data.attributes.results.Baidu.vendor | string | | |
+action_result.data.\*.data.attributes.results.Symantec.category | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Symantec.method | string | | |
+action_result.data.\*.data.attributes.results.Symantec.result | string | | |
+action_result.data.\*.data.attributes.results.Symantec.vendor | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.category | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.method | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.result | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast.category | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast.method | string | | |
+action_result.data.\*.data.attributes.results.Avast.result | string | | |
+action_result.data.\*.data.attributes.results.Avast.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cynet.category | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cynet.method | string | | |
+action_result.data.\*.data.attributes.results.Cynet.result | string | | |
+action_result.data.\*.data.attributes.results.Cynet.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.category | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.method | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.result | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.vendor | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.category | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.method | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.result | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.category | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.method | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.result | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.vendor | string | | |
+action_result.data.\*.data.attributes.results.Rising.category | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Rising.method | string | | |
+action_result.data.\*.data.attributes.results.Rising.result | string | | |
+action_result.data.\*.data.attributes.results.Rising.vendor | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.category | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.method | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.result | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.category | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.method | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.result | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.vendor | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.category | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.method | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.result | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.vendor | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.category | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.method | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.result | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.vendor | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.category | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_name | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_version | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_update | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.method | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.result | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.vendor | string | | |
+action_result.data.\*.data.attributes.results.CMC.category | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CMC.method | string | | |
+action_result.data.\*.data.attributes.results.CMC.result | string | | |
+action_result.data.\*.data.attributes.results.CMC.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sophos.category | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sophos.method | string | | |
+action_result.data.\*.data.attributes.results.Sophos.result | string | | |
+action_result.data.\*.data.attributes.results.Sophos.vendor | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.category | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.method | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.result | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.vendor | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.category | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.method | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.result | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.vendor | string | | |
+action_result.data.\*.data.attributes.results.Google.category | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Google.method | string | | |
+action_result.data.\*.data.attributes.results.Google.result | string | | |
+action_result.data.\*.data.attributes.results.Google.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avira.category | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avira.method | string | | |
+action_result.data.\*.data.attributes.results.Avira.result | string | | |
+action_result.data.\*.data.attributes.results.Avira.vendor | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.category | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.method | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.result | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.category | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.method | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.result | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.category | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.method | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.result | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.vendor | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.category | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.method | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.result | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.vendor | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.category | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.method | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.result | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.vendor | string | | |
+action_result.data.\*.data.attributes.results.GData.category | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_name | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_version | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_update | string | | |
+action_result.data.\*.data.attributes.results.GData.method | string | | |
+action_result.data.\*.data.attributes.results.GData.result | string | | |
+action_result.data.\*.data.attributes.results.GData.vendor | string | | |
+action_result.data.\*.data.attributes.results.Varist.category | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Varist.method | string | | |
+action_result.data.\*.data.attributes.results.Varist.result | string | | |
+action_result.data.\*.data.attributes.results.Varist.vendor | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.category | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.method | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.result | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acronis.category | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acronis.method | string | | |
+action_result.data.\*.data.attributes.results.Acronis.result | string | | |
+action_result.data.\*.data.attributes.results.Acronis.vendor | string | | |
+action_result.data.\*.data.attributes.results.VBA32.category | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VBA32.method | string | | |
+action_result.data.\*.data.attributes.results.VBA32.result | string | | |
+action_result.data.\*.data.attributes.results.VBA32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.category | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.method | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.result | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zoner.category | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zoner.method | string | | |
+action_result.data.\*.data.attributes.results.Zoner.result | string | | |
+action_result.data.\*.data.attributes.results.Zoner.vendor | string | | |
+action_result.data.\*.data.attributes.results.Tencent.category | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Tencent.method | string | | |
+action_result.data.\*.data.attributes.results.Tencent.result | string | | |
+action_result.data.\*.data.attributes.results.Tencent.vendor | string | | |
+action_result.data.\*.data.attributes.results.Yandex.category | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Yandex.method | string | | |
+action_result.data.\*.data.attributes.results.Yandex.result | string | | |
+action_result.data.\*.data.attributes.results.Yandex.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.category | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.method | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.result | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.vendor | string | | |
+action_result.data.\*.data.attributes.results.huorong.category | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_name | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_version | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_update | string | | |
+action_result.data.\*.data.attributes.results.huorong.method | string | | |
+action_result.data.\*.data.attributes.results.huorong.result | string | | |
+action_result.data.\*.data.attributes.results.huorong.vendor | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.category | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.method | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.result | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.vendor | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.category | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.method | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.result | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.vendor | string | | |
+action_result.data.\*.data.attributes.results.AVG.category | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AVG.method | string | | |
+action_result.data.\*.data.attributes.results.AVG.result | string | | |
+action_result.data.\*.data.attributes.results.AVG.vendor | string | | |
+action_result.data.\*.data.attributes.results.Panda.category | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Panda.method | string | | |
+action_result.data.\*.data.attributes.results.Panda.result | string | | |
+action_result.data.\*.data.attributes.results.Panda.vendor | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.category | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_name | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_version | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_update | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.method | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.result | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.vendor | string | | |
+action_result.data.\*.data.attributes.results.VirIT.category | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VirIT.method | string | | |
+action_result.data.\*.data.attributes.results.VirIT.result | string | | |
+action_result.data.\*.data.attributes.results.VirIT.vendor | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.category | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.method | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.result | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.category | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.method | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.result | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.vendor | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.category | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.method | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.result | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.vendor | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.category | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.method | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.result | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.vendor | string | | |
+action_result.data.\*.data.attributes.results.Elastic.category | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Elastic.method | string | | |
+action_result.data.\*.data.attributes.results.Elastic.result | string | | |
+action_result.data.\*.data.attributes.results.Elastic.vendor | string | | |
+action_result.data.\*.data.attributes.results.APEX.category | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.APEX.method | string | | |
+action_result.data.\*.data.attributes.results.APEX.result | string | | |
+action_result.data.\*.data.attributes.results.APEX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.category | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.method | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.result | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.category | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.method | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.result | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.vendor | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.category | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.method | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.result | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.vendor | string | | |
+action_result.data.\*.data.attributes.results.Webroot.category | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Webroot.method | string | | |
+action_result.data.\*.data.attributes.results.Webroot.result | string | | |
+action_result.data.\*.data.attributes.results.Webroot.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cylance.category | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cylance.method | string | | |
+action_result.data.\*.data.attributes.results.Cylance.result | string | | |
+action_result.data.\*.data.attributes.results.Cylance.vendor | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.category | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.method | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.result | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.vendor | string | | |
+action_result.data.\*.data.attributes.results.tehtris.category | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_name | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_version | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_update | string | | |
+action_result.data.\*.data.attributes.results.tehtris.method | string | | |
+action_result.data.\*.data.attributes.results.tehtris.result | string | | |
+action_result.data.\*.data.attributes.results.tehtris.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.category | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.method | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.result | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.vendor | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.category | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_name | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_version | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_update | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.method | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.result | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.vendor | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.category | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.method | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.result | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.vendor | string | | |
+action_result.data.\*.data.attributes.stats.malicious | numeric | | |
+action_result.data.\*.data.attributes.stats.suspicious | numeric | | |
+action_result.data.\*.data.attributes.stats.undetected | numeric | | |
+action_result.data.\*.data.attributes.stats.harmless | numeric | | |
+action_result.data.\*.data.attributes.stats.timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.confirmed_timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.failure | numeric | | |
+action_result.data.\*.data.attributes.stats.type_unsupported | numeric | | |
 action_result.data.\*.data.attributes.status | string | | completed |
-action_result.data.\*.data.id | string | `virustotal scan id` | u-e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861 |
-action_result.data.\*.data.links.item | string | | https://www.virustotal.com/api/v3/urls/5f08bb2001dfc7f3f2c2026038cfe2868a08b96eab48298d808a4008fafcb2aa |
-action_result.data.\*.data.links.self | string | | https://www.virustotal.com/api/v3/analyses/u-5f08bb2001dfc7f3f2c2026038cfe2868a08b96eab48298d808a4008fafcb2aa-1684316846 |
-action_result.data.\*.data.type | string | | analysis |
+action_result.data.\*.data.id | string | `virustotal scan id` | MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw== |
+action_result.data.\*.data.links.item | string | | https://www.virustotal.com/api/v3/files/917c72a2684d1573ea363b2f91e3aedcef1996fc34668ba9d369ad9123d1380f |
+action_result.data.\*.data.links.self | string | | https://www.virustotal.com/api/v3/analyses/ZDhhNjY5NmU2NDJlYzUyMDUwMmEwNWE0YWRkOGMxNzk6MTY3ODY4OTQ5Mg== |
+action_result.data.\*.data.type | string | | |
+action_result.data.\*.data.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.data.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.data.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.data.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.data.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.id | string | | e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
-action_result.data.\*.links.self | string | | https://www.virustotal.com/api/v3/urls/e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063 |
-action_result.data.\*.meta.url_info.id | string | `sha256` | e4195c91df67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761 |
-action_result.data.\*.meta.url_info.url | string | `url` | https://www.123test.com/ |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.data.\*.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | url |
-action_result.summary.harmless | numeric | | 80 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.scan_id | string | `virustotal scan id` | u-99999999999c9999ca75016e4c010bc94836366881b021a658ea7f8548b6543c1e |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 7 |
-action_result.message | string | | Scan id: u-9999999999f67204cf910c8472bdb0a676eb054785b285364f9e23a6caca06761-1613648861, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7 |
+action_result.data.\*.scan_id | string | | |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -1105,44 +2678,117 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.vault_id | string | `vault id` `sha1` | 99999999919142292710254cde97df84e46dfe33a |
-action_result.parameter.wait_time | numeric | | 10 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.vault_id | string | `vault id` `sha1` | |
+action_result.parameter.wait_time | numeric | | |
+action_result.data.\*.vault_id | string | | |
+action_result.data.\*.attributes.androguard.Activities.\* | string | | |
 action_result.data.\*.attributes.androguard.AndroguardVersion | string | | 3.0-dev |
 action_result.data.\*.attributes.androguard.AndroidApplication | numeric | | 1 |
-action_result.data.\*.attributes.androguard.AndroidApplicationError | boolean | | False |
+action_result.data.\*.attributes.androguard.AndroidApplicationError | boolean | | True False |
 action_result.data.\*.attributes.androguard.AndroidApplicationInfo | string | | APK |
 action_result.data.\*.attributes.androguard.AndroidVersionCode | string | | 1 |
 action_result.data.\*.attributes.androguard.AndroidVersionName | string | | 1.0 |
 action_result.data.\*.attributes.androguard.MinSdkVersion | string | | 11 |
 action_result.data.\*.attributes.androguard.Package | string | | com.ibm.android.analyzer.test |
-action_result.data.\*.attributes.androguard.RiskIndicator.APK.\* | numeric | | 1 |
-action_result.data.\*.attributes.androguard.RiskIndicator.PERM.\* | numeric | | 1 |
+action_result.data.\*.attributes.androguard.RiskIndicator.APK.\*.key | string | | ACTIVITY |
+action_result.data.\*.attributes.androguard.RiskIndicator.APK.\*.value | numeric | | 5 |
+action_result.data.\*.attributes.androguard.RiskIndicator.PERM.\*.key | string | | ACTIVITY |
+action_result.data.\*.attributes.androguard.RiskIndicator.PERM.\*.value | numeric | | 5 |
 action_result.data.\*.attributes.androguard.TargetSdkVersion | string | | 11 |
 action_result.data.\*.attributes.androguard.VTAndroidInfo | numeric | | 1.41 |
-action_result.data.\*.attributes.androguard.certificate.Issuer.\* | string | | C:US, CN:Android Debug, O:Android |
-action_result.data.\*.attributes.androguard.certificate.Subject.\* | string | | US |
-action_result.data.\*.attributes.androguard.certificate.serialnumber | string | | 6f20b2e6 |
-action_result.data.\*.attributes.androguard.certificate.thumbprint | string | | 7bd81368b868225bde96fc1a3fee59a8ea06296a |
-action_result.data.\*.attributes.androguard.certificate.validfrom | string | | 2016-01-27 08:46:16 |
-action_result.data.\*.attributes.androguard.certificate.validto | string | | 2046-01-19 08:46:16 |
+action_result.data.\*.attributes.androguard.certificate.cert_signature.signature | string | | |
+action_result.data.\*.attributes.androguard.certificate.cert_signature.signature_algorithm | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.authority_key_identifier.keyid | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.subject_key_identifier | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.subject_alternative_name.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.certificate_policies.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.key_usage.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.extended_key_usage.\* | string | | |
+action_result.data.\*.attributes.androguard.certificate.extensions.crl_distribution_points.\* | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.ca_information_access.CA_Issuers | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.ca_information_access.OCSP | string | `url` | |
+action_result.data.\*.attributes.androguard.certificate.extensions.CA | boolean | | True False |
+action_result.data.\*.attributes.androguard.certificate.extensions.1_3_6_1_4_1_11129_2_4_2 | string | | |
+action_result.data.\*.attributes.androguard.certificate.validity.not_before | string | `date` | |
+action_result.data.\*.attributes.androguard.certificate.validity.not_after | string | `date` | |
+action_result.data.\*.attributes.androguard.certificate.size | numeric | | |
+action_result.data.\*.attributes.androguard.certificate.version | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.algorithm | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.exponent | string | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.key_size | numeric | | |
+action_result.data.\*.attributes.androguard.certificate.public_key.rsa.modulus | string | | |
+action_result.data.\*.attributes.androguard.certificate.thumbprint_sha256 | string | | |
+action_result.data.\*.attributes.androguard.certificate.thumbprint | string | | |
+action_result.data.\*.attributes.androguard.certificate.serial_number | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.CN | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.O | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.C | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.L | string | | |
+action_result.data.\*.attributes.androguard.certificate.issuer.ST | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.CN | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.O | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.C | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.L | string | | |
+action_result.data.\*.attributes.androguard.certificate.subject.ST | string | | |
 action_result.data.\*.attributes.androguard.main_activity | string | | com.ibm.android.analyzer.test.xas.CAS |
-action_result.data.\*.attributes.androguard.permission_details.android.permission.\*.full_description | string | | Allows an application to create network sockets. |
-action_result.data.\*.attributes.androguard.permission_details.android.permission.\*.permission_type | string | | dangerous |
-action_result.data.\*.attributes.androguard.permission_details.android.permission.\*.short_description | string | | full Internet access |
-action_result.data.\*.attributes.androguard.permission_details.com.ibm.android.analyzer.test.\*.full_description | string | | Unknown permission from android reference |
-action_result.data.\*.attributes.androguard.permission_details.com.ibm.android.analyzer.test.\*.permission_type | string | | normal |
-action_result.data.\*.attributes.androguard.permission_details.com.ibm.android.analyzer.test.\*.short_description | string | | Unknown permission from android reference |
+action_result.data.\*.attributes.androguard.Services.\* | string | | |
+action_result.data.\*.attributes.androguard.StringsInformation.\* | string | | |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.INTERNET.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_EXTERNAL_STORAGE.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_EXTERNAL_STORAGE.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_EXTERNAL_STORAGE.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_EXTERNAL_STORAGE.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_EXTERNAL_STORAGE.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_EXTERNAL_STORAGE.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_NETWORK_STATE.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_NETWORK_STATE.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_NETWORK_STATE.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CAMERA.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CAMERA.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CAMERA.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.RECORD_AUDIO.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.RECORD_AUDIO.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.RECORD_AUDIO.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_FINE_LOCATION.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_FINE_LOCATION.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_FINE_LOCATION.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_COARSE_LOCATION.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_COARSE_LOCATION.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.ACCESS_COARSE_LOCATION.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_CONTACTS.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_CONTACTS.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_CONTACTS.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_CONTACTS.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_CONTACTS.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.WRITE_CONTACTS.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_SMS.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_SMS.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_SMS.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.SEND_SMS.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.SEND_SMS.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.SEND_SMS.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CALL_PHONE.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CALL_PHONE.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.CALL_PHONE.short_description | string | | full Internet access |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_PHONE_STATE.full_description | string | | Allows an application to create network sockets. |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_PHONE_STATE.permission_type | string | | dangerous |
+action_result.data.\*.attributes.androguard.permission_details.android.permission.READ_PHONE_STATE.short_description | string | | full Internet access |
 action_result.data.\*.attributes.authentihash | string | | 9999999999a601c12ac88d70736e5a5064dac716fe071ce9e3bb206d67b1b9a5 |
-action_result.data.\*.attributes.bundle_info.extensions.\* | numeric | | 1 |
-action_result.data.\*.attributes.bundle_info.file_types.\* | numeric | | 1 |
+action_result.data.\*.attributes.bundle_info.extensions.\*.key | string | | .exe |
+action_result.data.\*.attributes.bundle_info.extensions.\*.count | string | | 1 |
+action_result.data.\*.attributes.bundle_info.file_types.\*.key | string | | .exe |
+action_result.data.\*.attributes.bundle_info.file_types.\*.count | string | | 1 |
 action_result.data.\*.attributes.bundle_info.highest_datetime | string | | 2019-01-03 12:33:40 |
 action_result.data.\*.attributes.bundle_info.lowest_datetime | string | | 2019-01-03 12:33:40 |
 action_result.data.\*.attributes.bundle_info.num_children | numeric | | 1 |
 action_result.data.\*.attributes.bundle_info.type | string | | ZIP |
 action_result.data.\*.attributes.bundle_info.uncompressed_size | numeric | | 481 |
 action_result.data.\*.attributes.bytehero_info | string | | Trojan.Win32.Heur.Gen |
-action_result.data.\*.attributes.creation_date | numeric | | 1539102614 |
+action_result.data.\*.attributes.creation_date | numeric | `timestamp` | 1539102614 |
 action_result.data.\*.attributes.crowdsourced_ids_results.\*.alert_severity | string | | medium |
 action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_category | string | | Potentially Bad Traffic |
 action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_id | string | | 1:2027865 |
@@ -1151,580 +2797,719 @@ action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_raw | string |
 action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_source | string | | Proofpoint Emerging Threats Open |
 action_result.data.\*.attributes.crowdsourced_ids_results.\*.rule_url | string | | https://rules.emergingthreats.net/ |
 action_result.data.\*.attributes.crowdsourced_ids_stats.\* | numeric | | 0 |
-action_result.data.\*.attributes.first_seen_itw_date | numeric | | 1502111702 |
-action_result.data.\*.attributes.first_submission_date | numeric | | 1612961082 |
-action_result.data.\*.attributes.html_info.iframes.\*.attributes.\* | string | | ./test_html_files/list.html |
-action_result.data.\*.attributes.html_info.scripts.\*.attributes.src | string | | ./test_html_files/exerc.js.download |
-action_result.data.\*.attributes.last_analysis_date | numeric | | 1613635130 |
-action_result.data.\*.attributes.last_analysis_results.\*.category | string | | undetected |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_update | string | | 20210218 |
-action_result.data.\*.attributes.last_analysis_results.\*.engine_version | string | | 2.10.2019.1 |
-action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
+action_result.data.\*.attributes.first_seen_itw_date | numeric | `timestamp` | 1502111702 |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | 1612961082 |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.width | string | | 100% |
+action_result.data.\*.attributes.html_info.iframes.\*.attributes.height | string | | 400px |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.src | string | | ./test_html_files/list.html |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.width | string | | 100% |
+action_result.data.\*.attributes.html_info.scripts.\*.attributes.height | string | | 400px |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | 1613635130 |
+action_result.data.\*.attributes.last_analysis_results.\*.category | string | | |
+action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | |
+action_result.data.\*.attributes.last_analysis_results.\*.engine_version | string | | |
+action_result.data.\*.attributes.last_analysis_results.\*.engine_update | string | | |
+action_result.data.\*.attributes.last_analysis_results.\*.method | string | | |
 action_result.data.\*.attributes.last_analysis_results.\*.result | string | | |
-action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | Symantec |
-action_result.data.\*.attributes.last_analysis_stats.confirmed-timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.failure | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | 0 |
-action_result.data.\*.attributes.last_analysis_stats.type-unsupported | numeric | | 16 |
-action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | 59 |
-action_result.data.\*.attributes.last_modification_date | numeric | | 1613635210 |
-action_result.data.\*.attributes.last_submission_date | numeric | | 1613635130 |
+action_result.data.\*.attributes.last_analysis_results.\*.vendor | string | | |
+action_result.data.\*.attributes.last_analysis_stats.malicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.suspicious | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.undetected | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.harmless | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.confirmed_timeout | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.failure | numeric | | |
+action_result.data.\*.attributes.last_analysis_stats.type_unsupported | numeric | | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | 1613635210 |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | 1613635130 |
 action_result.data.\*.attributes.magic | string | | a python2.7\\015script text executable |
 action_result.data.\*.attributes.md5 | string | `md5` | 99999999992c49c91a0206ee7a8c00e659 |
 action_result.data.\*.attributes.meaningful_name | string | | update_cr.py |
-action_result.data.\*.attributes.names | string | | update_cr.py |
-action_result.data.\*.attributes.packers.F-PROT | string | | appended, docwrite |
-action_result.data.\*.attributes.pdf_info.\* | numeric | | 0 |
+action_result.data.\*.attributes.names.\* | string | | ['update_cr.py'] |
+action_result.data.\*.attributes.packers.F_PROT | string | | appended, docwrite |
 action_result.data.\*.attributes.pdf_info.acroform | numeric | | |
 action_result.data.\*.attributes.pdf_info.autoaction | numeric | | |
 action_result.data.\*.attributes.pdf_info.embedded_file | numeric | | |
 action_result.data.\*.attributes.pdf_info.encrypted | numeric | | |
 action_result.data.\*.attributes.pdf_info.flash | numeric | | |
-action_result.data.\*.attributes.pdf_info.header | string | | %PDF-1.5 |
+action_result.data.\*.attributes.pdf_info.header | string | | |
 action_result.data.\*.attributes.pdf_info.javascript | numeric | | |
 action_result.data.\*.attributes.pdf_info.jbig2_compression | numeric | | |
 action_result.data.\*.attributes.pdf_info.js | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_endobj | numeric | | 29 |
-action_result.data.\*.attributes.pdf_info.num_endstream | numeric | | 28 |
+action_result.data.\*.attributes.pdf_info.num_endobj | numeric | | |
+action_result.data.\*.attributes.pdf_info.num_endstream | numeric | | |
 action_result.data.\*.attributes.pdf_info.num_launch_actions | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_obj | numeric | | 29 |
-action_result.data.\*.attributes.pdf_info.num_object_streams | numeric | | 1 |
+action_result.data.\*.attributes.pdf_info.num_obj | numeric | | |
+action_result.data.\*.attributes.pdf_info.num_object_streams | numeric | | |
 action_result.data.\*.attributes.pdf_info.num_pages | numeric | | |
-action_result.data.\*.attributes.pdf_info.num_stream | numeric | | 28 |
+action_result.data.\*.attributes.pdf_info.num_stream | numeric | | |
 action_result.data.\*.attributes.pdf_info.openaction | numeric | | |
-action_result.data.\*.attributes.pdf_info.startxref | numeric | | 1 |
+action_result.data.\*.attributes.pdf_info.startxref | numeric | | |
 action_result.data.\*.attributes.pdf_info.suspicious_colors | numeric | | |
 action_result.data.\*.attributes.pdf_info.trailer | numeric | | |
 action_result.data.\*.attributes.pdf_info.xfa | numeric | | |
 action_result.data.\*.attributes.pdf_info.xref | numeric | | |
-action_result.data.\*.attributes.pe_info.entry_point | numeric | | 176128 |
-action_result.data.\*.attributes.pe_info.imphash | string | | 6bff2c73afd9249c4261ecfba6ff33c3 |
-action_result.data.\*.attributes.pe_info.import_list.\*.library_name | string | | MSVCP60.dll |
-action_result.data.\*.attributes.pe_info.machine_type | numeric | | 332 |
-action_result.data.\*.attributes.pe_info.overlay.\* | string | | xyz |
-action_result.data.\*.attributes.pe_info.resource_details.\*.chi2 | numeric | | 33203.078125 |
-action_result.data.\*.attributes.pe_info.resource_details.\*.entropy | numeric | | 1.802635908126831 |
-action_result.data.\*.attributes.pe_info.resource_details.\*.filetype | string | | Data |
-action_result.data.\*.attributes.pe_info.resource_details.\*.lang | string | | CHINESE SIMPLIFIED |
-action_result.data.\*.attributes.pe_info.resource_details.\*.sha256 | string | | 9999999999f0f912228ae647d10e15a014b8ce40dd164fa30290913227d |
-action_result.data.\*.attributes.pe_info.resource_details.\*.type | string | | RT_CURSOR |
-action_result.data.\*.attributes.pe_info.resource_langs.CHINESE SIMPLIFIED | numeric | | 8 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_BITMAP | numeric | | 4 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_CURSOR | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_GROUP_CURSOR | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_MENU | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.resource_types.RT_VERSION | numeric | | 1 |
-action_result.data.\*.attributes.pe_info.rich_pe_header_hash | string | | 9999999999167a185aba138b2846e0b906 |
-action_result.data.\*.attributes.pe_info.sections.\*.chi2 | numeric | | 672207.13 |
-action_result.data.\*.attributes.pe_info.sections.\*.entropy | numeric | | 6.46 |
-action_result.data.\*.attributes.pe_info.sections.\*.flags | string | | rx |
-action_result.data.\*.attributes.pe_info.sections.\*.md5 | string | | 999999999982ea3987560f91ce29f946f4 |
-action_result.data.\*.attributes.pe_info.sections.\*.name | string | | .text |
-action_result.data.\*.attributes.pe_info.sections.\*.raw_size | numeric | | 90112 |
-action_result.data.\*.attributes.pe_info.sections.\*.virtual_address | numeric | | 4096 |
-action_result.data.\*.attributes.pe_info.sections.\*.virtual_size | numeric | | 90112 |
-action_result.data.\*.attributes.pe_info.timestamp | numeric | | 1259933759 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | 16 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.value | string | | virus |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | 32 |
-action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | parite |
-action_result.data.\*.attributes.popular_threat_classification.suggested_threat_label | string | | virus.parite/pate |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.age | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.guid | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.name | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.signature | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.codeview.timestamp | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.fpo.functions | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.datatype | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.length | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.unicode | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.data | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.misc.reserved | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.reserved10.value | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.size | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.timestamp | string | | |
+action_result.data.\*.attributes.pe_info.debug.\*.type | numeric | | |
+action_result.data.\*.attributes.pe_info.debug.\*.type_str | string | | |
+action_result.data.\*.attributes.pe_info.entry_point | numeric | | |
+action_result.data.\*.attributes.pe_info.exports.\* | string | | |
+action_result.data.\*.attributes.pe_info.imphash | string | | |
+action_result.data.\*.attributes.pe_info.import_list.\*.imported_functions.\* | string | | |
+action_result.data.\*.attributes.pe_info.import_list.\*.library_name | string | | |
+action_result.data.\*.attributes.pe_info.machine_type | string | | |
+action_result.data.\*.attributes.pe_info.overlay.chi2 | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.filetype | string | | |
+action_result.data.\*.attributes.pe_info.overlay.md5 | string | `md5` | |
+action_result.data.\*.attributes.pe_info.overlay.offset | numeric | | |
+action_result.data.\*.attributes.pe_info.overlay.size | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.chi2 | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.filetype | string | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.lang | string | | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.sha256 | string | `sha256` | |
+action_result.data.\*.attributes.pe_info.resource_details.\*.type | string | | |
+action_result.data.\*.attributes.pe_info.sections.\*.entropy | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.md5 | string | `md5` | |
+action_result.data.\*.attributes.pe_info.sections.\*.name | string | | |
+action_result.data.\*.attributes.pe_info.sections.\*.raw_size | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.virtual_address | numeric | | |
+action_result.data.\*.attributes.pe_info.sections.\*.virtual_size | numeric | | |
+action_result.data.\*.attributes.pe_info.timestamp | numeric | `timestamp` | |
+action_result.data.\*.attributes.popular_threat_classification.suggested_threat_label | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.value | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | |
+action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | |
 action_result.data.\*.attributes.reputation | numeric | | 0 |
-action_result.data.\*.attributes.sandbox_verdicts.Lastline.\* | string | | xyz |
-action_result.data.\*.attributes.sandbox_verdicts.Tencent HABO.\* | string | | xyz |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.category | string | | malicious harmless suspicious |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.confidence | numeric | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.malware_classification.\* | string | | CLEAN |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.malware_names.\* | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox.sandbox_name | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.category | string | | malicious harmless suspicious |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.confidence | numeric | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.malware_classification.\* | string | | CLEAN |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.malware_names.\* | string | | |
+action_result.data.\*.attributes.sandbox_verdicts.Zenbox_Linux.sandbox_name | string | | |
 action_result.data.\*.attributes.sha1 | string | `sha1` | 99999999999142292710254cde97df84e46dfe33a |
 action_result.data.\*.attributes.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
 action_result.data.\*.attributes.signature_info.\* | string | | xyz |
 action_result.data.\*.attributes.size | numeric | | 6285 |
 action_result.data.\*.attributes.ssdeep | string | | 192:MPv2vv/ybXAhgPpyN3ipdw0fRAdygi6OLxgUHzYu7ThPBLkv:pq7Mgg0/NdMu/1BLkv |
-action_result.data.\*.attributes.tags | string | | python |
+action_result.data.\*.attributes.tags.\* | string | | ['python'] |
 action_result.data.\*.attributes.times_submitted | numeric | | 13 |
 action_result.data.\*.attributes.tlsh | string | | 9999999999C5E941C47329D1EDD16FD1BEB0122B724296327B46CA2997FB0468C3E14FC |
-action_result.data.\*.attributes.total_votes.harmless | numeric | | 0 |
-action_result.data.\*.attributes.total_votes.malicious | numeric | | 0 |
-action_result.data.\*.attributes.trid.\*.file_type | string | | Unix-like shebang (var.1) (gen) |
-action_result.data.\*.attributes.trid.\*.probability | numeric | | 100 |
+action_result.data.\*.attributes.total_votes.harmless | numeric | | |
+action_result.data.\*.attributes.total_votes.malicious | numeric | | |
+action_result.data.\*.attributes.trid.\*.file_type | string | | |
+action_result.data.\*.attributes.trid.\*.probability | numeric | | |
 action_result.data.\*.attributes.type_description | string | | Python |
 action_result.data.\*.attributes.type_extension | string | | py |
 action_result.data.\*.attributes.type_tag | string | | python |
 action_result.data.\*.attributes.unique_sources | numeric | | 1 |
-action_result.data.\*.attributes.vhash | string | | 999999999904dba990373ab2f3da0c7dd3f |
-action_result.data.\*.data.attributes.date | numeric | | 1613651763 |
-action_result.data.\*.data.attributes.results.\*.category | string | | undetected |
-action_result.data.\*.data.attributes.results.\*.engine_name | string | | CMC |
-action_result.data.\*.data.attributes.results.\*.engine_update | string | | 20210218 |
-action_result.data.\*.data.attributes.results.\*.engine_version | string | | 2.10.2019.1 |
-action_result.data.\*.data.attributes.results.\*.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.\*.result | string | | |
-action_result.data.\*.data.attributes.results.ALYac.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ALYac.engine_name | string | | ALYac |
-action_result.data.\*.data.attributes.results.ALYac.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.ALYac.engine_version | string | | 1.1.3.1 |
-action_result.data.\*.data.attributes.results.ALYac.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ALYac.result | string | | |
-action_result.data.\*.data.attributes.results.APEX.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.APEX.engine_name | string | | APEX |
-action_result.data.\*.data.attributes.results.APEX.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.APEX.engine_version | string | | 6.396 |
-action_result.data.\*.data.attributes.results.APEX.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.APEX.result | string | | |
-action_result.data.\*.data.attributes.results.AVG.category | string | | undetected |
-action_result.data.\*.data.attributes.results.AVG.engine_name | string | | AVG |
-action_result.data.\*.data.attributes.results.AVG.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.AVG.engine_version | string | | 22.11.7701.0 |
-action_result.data.\*.data.attributes.results.AVG.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AVG.result | string | | |
-action_result.data.\*.data.attributes.results.Acronis.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Acronis.engine_name | string | | Acronis |
-action_result.data.\*.data.attributes.results.Acronis.engine_update | string | | 20230219 |
-action_result.data.\*.data.attributes.results.Acronis.engine_version | string | | 1.2.0.114 |
-action_result.data.\*.data.attributes.results.Acronis.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Acronis.result | string | | |
-action_result.data.\*.data.attributes.results.AhnLab-V3.category | string | | undetected |
-action_result.data.\*.data.attributes.results.AhnLab-V3.engine_name | string | | AhnLab-V3 |
-action_result.data.\*.data.attributes.results.AhnLab-V3.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.AhnLab-V3.engine_version | string | | 3.23.1.10344 |
-action_result.data.\*.data.attributes.results.AhnLab-V3.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AhnLab-V3.result | string | | |
-action_result.data.\*.data.attributes.results.Alibaba.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Alibaba.engine_name | string | | Alibaba |
-action_result.data.\*.data.attributes.results.Alibaba.engine_update | string | | 20190527 |
-action_result.data.\*.data.attributes.results.Alibaba.engine_version | string | | 0.3.0.5 |
-action_result.data.\*.data.attributes.results.Alibaba.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Alibaba.result | string | | |
-action_result.data.\*.data.attributes.results.Antiy-AVL.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Antiy-AVL.engine_name | string | | Antiy-AVL |
-action_result.data.\*.data.attributes.results.Antiy-AVL.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Antiy-AVL.engine_version | string | | 3.0 |
-action_result.data.\*.data.attributes.results.Antiy-AVL.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Antiy-AVL.result | string | | |
-action_result.data.\*.data.attributes.results.Arcabit.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Arcabit.engine_name | string | | Arcabit |
-action_result.data.\*.data.attributes.results.Arcabit.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Arcabit.engine_version | string | | 2022.0.0.18 |
-action_result.data.\*.data.attributes.results.Arcabit.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Arcabit.result | string | | |
-action_result.data.\*.data.attributes.results.Avast-Mobile.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Avast-Mobile.engine_name | string | | Avast-Mobile |
-action_result.data.\*.data.attributes.results.Avast-Mobile.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Avast-Mobile.engine_version | string | | 230312-00 |
-action_result.data.\*.data.attributes.results.Avast-Mobile.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Avast-Mobile.result | string | | |
-action_result.data.\*.data.attributes.results.Avast.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Avast.engine_name | string | | Avast |
-action_result.data.\*.data.attributes.results.Avast.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Avast.engine_version | string | | 22.11.7701.0 |
-action_result.data.\*.data.attributes.results.Avast.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Avast.result | string | | |
-action_result.data.\*.data.attributes.results.Avira.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Avira.engine_name | string | | Avira |
-action_result.data.\*.data.attributes.results.Avira.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Avira.engine_version | string | | 8.3.3.16 |
-action_result.data.\*.data.attributes.results.Avira.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Avira.result | string | | |
-action_result.data.\*.data.attributes.results.Baidu.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Baidu.engine_name | string | | Baidu |
-action_result.data.\*.data.attributes.results.Baidu.engine_update | string | | 20190318 |
-action_result.data.\*.data.attributes.results.Baidu.engine_version | string | | 1.0.0.2 |
-action_result.data.\*.data.attributes.results.Baidu.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Baidu.result | string | | |
-action_result.data.\*.data.attributes.results.BitDefender.category | string | | undetected |
-action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | BitDefender |
-action_result.data.\*.data.attributes.results.BitDefender.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.BitDefender.engine_version | string | | 7.2 |
-action_result.data.\*.data.attributes.results.BitDefender.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BitDefender.result | string | | |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_name | string | | BitDefenderFalx |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_update | string | | 20230203 |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_version | string | | 2.0.936 |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BitDefenderFalx.result | string | | |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.category | string | | undetected |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.engine_name | string | | BitDefenderTheta |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.engine_update | string | | 20230228 |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.engine_version | string | | 7.2.37796.0 |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BitDefenderTheta.result | string | | |
-action_result.data.\*.data.attributes.results.Bkav.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Bkav.engine_name | string | | Bkav |
-action_result.data.\*.data.attributes.results.Bkav.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Bkav.engine_version | string | | 1.3.0.9899 |
-action_result.data.\*.data.attributes.results.Bkav.method | string | | blacklist |
+action_result.data.\*.attributes.vhash | string | | |
+action_result.data.\*.data.attributes.date | numeric | `timestamp` | 1613651763 |
+action_result.data.\*.data.attributes.results.Bkav.category | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Bkav.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Bkav.method | string | | |
 action_result.data.\*.data.attributes.results.Bkav.result | string | | |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.category | string | | undetected |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.engine_name | string | | CAT-QuickHeal |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.engine_version | string | | 22.00 |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CAT-QuickHeal.result | string | | |
-action_result.data.\*.data.attributes.results.CMC.category | string | | undetected |
-action_result.data.\*.data.attributes.results.CMC.engine_name | string | | CMC |
-action_result.data.\*.data.attributes.results.CMC.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.CMC.engine_version | string | | 2.4.2022.1 |
-action_result.data.\*.data.attributes.results.CMC.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CMC.result | string | | |
-action_result.data.\*.data.attributes.results.ClamAV.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ClamAV.engine_name | string | | ClamAV |
-action_result.data.\*.data.attributes.results.ClamAV.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.ClamAV.engine_version | string | | 1.0.1.0 |
-action_result.data.\*.data.attributes.results.ClamAV.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ClamAV.result | string | | |
-action_result.data.\*.data.attributes.results.CrowdStrike.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.CrowdStrike.engine_name | string | | CrowdStrike |
-action_result.data.\*.data.attributes.results.CrowdStrike.engine_update | string | | 20220812 |
-action_result.data.\*.data.attributes.results.CrowdStrike.engine_version | string | | 1.0 |
-action_result.data.\*.data.attributes.results.CrowdStrike.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CrowdStrike.result | string | | |
-action_result.data.\*.data.attributes.results.Cylance.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Cylance.engine_name | string | | Cylance |
-action_result.data.\*.data.attributes.results.Cylance.engine_update | string | | 20230302 |
-action_result.data.\*.data.attributes.results.Cylance.engine_version | string | | 2.0.0.0 |
-action_result.data.\*.data.attributes.results.Cylance.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cylance.result | string | | |
-action_result.data.\*.data.attributes.results.Cynet.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Cynet.engine_name | string | | Cynet |
-action_result.data.\*.data.attributes.results.Cynet.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Cynet.engine_version | string | | 4.0.0.27 |
-action_result.data.\*.data.attributes.results.Cynet.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cynet.result | string | | |
-action_result.data.\*.data.attributes.results.Cyren.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Cyren.engine_name | string | | Cyren |
-action_result.data.\*.data.attributes.results.Cyren.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Cyren.engine_version | string | | 6.5.1.2 |
-action_result.data.\*.data.attributes.results.Cyren.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cyren.result | string | | |
-action_result.data.\*.data.attributes.results.DrWeb.category | string | | undetected |
-action_result.data.\*.data.attributes.results.DrWeb.engine_name | string | | DrWeb |
-action_result.data.\*.data.attributes.results.DrWeb.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.DrWeb.engine_version | string | | 7.0.59.12300 |
-action_result.data.\*.data.attributes.results.DrWeb.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.DrWeb.result | string | | |
-action_result.data.\*.data.attributes.results.ESET-NOD32.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ESET-NOD32.engine_name | string | | ESET-NOD32 |
-action_result.data.\*.data.attributes.results.ESET-NOD32.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.ESET-NOD32.engine_version | string | | 26892 |
-action_result.data.\*.data.attributes.results.ESET-NOD32.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ESET-NOD32.result | string | | |
-action_result.data.\*.data.attributes.results.Elastic.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Elastic.engine_name | string | | Elastic |
-action_result.data.\*.data.attributes.results.Elastic.engine_update | string | | 20230302 |
-action_result.data.\*.data.attributes.results.Elastic.engine_version | string | | 4.0.80 |
-action_result.data.\*.data.attributes.results.Elastic.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Elastic.result | string | | |
-action_result.data.\*.data.attributes.results.Emsisoft.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | Emsisoft |
-action_result.data.\*.data.attributes.results.Emsisoft.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Emsisoft.engine_version | string | | 2022.6.0.32461 |
-action_result.data.\*.data.attributes.results.Emsisoft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Emsisoft.result | string | | |
-action_result.data.\*.data.attributes.results.F-Secure.category | string | | undetected |
-action_result.data.\*.data.attributes.results.F-Secure.engine_name | string | | F-Secure |
-action_result.data.\*.data.attributes.results.F-Secure.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.F-Secure.engine_version | string | | 18.10.1137.128 |
-action_result.data.\*.data.attributes.results.F-Secure.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.F-Secure.result | string | | |
-action_result.data.\*.data.attributes.results.FireEye.category | string | | undetected |
-action_result.data.\*.data.attributes.results.FireEye.engine_name | string | | FireEye |
-action_result.data.\*.data.attributes.results.FireEye.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.FireEye.engine_version | string | | 35.24.1.0 |
-action_result.data.\*.data.attributes.results.FireEye.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.FireEye.result | string | | |
-action_result.data.\*.data.attributes.results.Fortinet.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | Fortinet |
-action_result.data.\*.data.attributes.results.Fortinet.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Fortinet.engine_version | string | | 6.4.258.0 |
-action_result.data.\*.data.attributes.results.Fortinet.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Fortinet.result | string | | |
-action_result.data.\*.data.attributes.results.GData.category | string | | undetected |
-action_result.data.\*.data.attributes.results.GData.engine_name | string | | GData |
-action_result.data.\*.data.attributes.results.GData.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.GData.engine_version | string | | A:25.35442B:27.30944 |
-action_result.data.\*.data.attributes.results.GData.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.GData.result | string | | |
-action_result.data.\*.data.attributes.results.Google.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Google.engine_name | string | | Google |
-action_result.data.\*.data.attributes.results.Google.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Google.engine_version | string | | 1678687243 |
-action_result.data.\*.data.attributes.results.Google.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Google.result | string | | |
-action_result.data.\*.data.attributes.results.Gridinsoft.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Gridinsoft.engine_name | string | | Gridinsoft |
-action_result.data.\*.data.attributes.results.Gridinsoft.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Gridinsoft.engine_version | string | | 1.0.110.174 |
-action_result.data.\*.data.attributes.results.Gridinsoft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Gridinsoft.result | string | | |
-action_result.data.\*.data.attributes.results.Ikarus.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Ikarus.engine_name | string | | Ikarus |
-action_result.data.\*.data.attributes.results.Ikarus.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Ikarus.engine_version | string | | 6.0.33.0 |
-action_result.data.\*.data.attributes.results.Ikarus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Ikarus.result | string | | |
-action_result.data.\*.data.attributes.results.Jiangmin.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Jiangmin.engine_name | string | | Jiangmin |
-action_result.data.\*.data.attributes.results.Jiangmin.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Jiangmin.engine_version | string | | 16.0.100 |
-action_result.data.\*.data.attributes.results.Jiangmin.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Jiangmin.result | string | | |
-action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | undetected |
-action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | K7AntiVirus |
-action_result.data.\*.data.attributes.results.K7AntiVirus.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.K7AntiVirus.engine_version | string | | 12.72.47258 |
-action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | |
-action_result.data.\*.data.attributes.results.K7GW.category | string | | undetected |
-action_result.data.\*.data.attributes.results.K7GW.engine_name | string | | K7GW |
-action_result.data.\*.data.attributes.results.K7GW.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.K7GW.engine_version | string | | 12.72.47258 |
-action_result.data.\*.data.attributes.results.K7GW.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.K7GW.result | string | | |
-action_result.data.\*.data.attributes.results.Kaspersky.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | Kaspersky |
-action_result.data.\*.data.attributes.results.Kaspersky.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Kaspersky.engine_version | string | | 22.0.1.28 |
-action_result.data.\*.data.attributes.results.Kaspersky.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Kaspersky.result | string | | |
-action_result.data.\*.data.attributes.results.Lionic.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | Lionic |
-action_result.data.\*.data.attributes.results.Lionic.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Lionic.engine_version | string | | 7.5 |
-action_result.data.\*.data.attributes.results.Lionic.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.Bkav.vendor | string | | |
+action_result.data.\*.data.attributes.results.Lionic.category | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Lionic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Lionic.method | string | | |
 action_result.data.\*.data.attributes.results.Lionic.result | string | | |
-action_result.data.\*.data.attributes.results.MAX.category | string | | undetected |
-action_result.data.\*.data.attributes.results.MAX.engine_name | string | | MAX |
-action_result.data.\*.data.attributes.results.MAX.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.MAX.engine_version | string | | 2023.1.4.1 |
-action_result.data.\*.data.attributes.results.MAX.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MAX.result | string | | |
-action_result.data.\*.data.attributes.results.Malwarebytes.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Malwarebytes.engine_name | string | | Malwarebytes |
-action_result.data.\*.data.attributes.results.Malwarebytes.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Malwarebytes.engine_version | string | | 4.4.4.52 |
-action_result.data.\*.data.attributes.results.Malwarebytes.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.Lionic.vendor | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.category | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.method | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.result | string | | |
+action_result.data.\*.data.attributes.results.MicroWorld_eScan.vendor | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.category | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.method | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.result | string | | |
+action_result.data.\*.data.attributes.results.ClamAV.vendor | string | | |
+action_result.data.\*.data.attributes.results.CTX.category | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CTX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CTX.method | string | | |
+action_result.data.\*.data.attributes.results.CTX.result | string | | |
+action_result.data.\*.data.attributes.results.CTX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.category | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.method | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.result | string | | |
+action_result.data.\*.data.attributes.results.Skyhigh.vendor | string | | |
+action_result.data.\*.data.attributes.results.ALYac.category | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ALYac.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ALYac.method | string | | |
+action_result.data.\*.data.attributes.results.ALYac.result | string | | |
+action_result.data.\*.data.attributes.results.ALYac.vendor | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.category | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Malwarebytes.method | string | | |
 action_result.data.\*.data.attributes.results.Malwarebytes.result | string | | |
-action_result.data.\*.data.attributes.results.MaxSecure.category | string | | undetected |
-action_result.data.\*.data.attributes.results.MaxSecure.engine_name | string | | MaxSecure |
-action_result.data.\*.data.attributes.results.MaxSecure.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.MaxSecure.engine_version | string | | 1.0.0.1 |
-action_result.data.\*.data.attributes.results.MaxSecure.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MaxSecure.result | string | | |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.category | string | | undetected |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.engine_name | string | | McAfee-GW-Edition |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.engine_version | string | | v2021.2.0+4045 |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.McAfee-GW-Edition.result | string | | |
-action_result.data.\*.data.attributes.results.McAfee.category | string | | undetected |
-action_result.data.\*.data.attributes.results.McAfee.engine_name | string | | McAfee |
-action_result.data.\*.data.attributes.results.McAfee.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.McAfee.engine_version | string | | 6.0.6.653 |
-action_result.data.\*.data.attributes.results.McAfee.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.McAfee.result | string | | |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.category | string | | undetected |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.engine_name | string | | MicroWorld-eScan |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.engine_version | string | | 14.0.409.0 |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MicroWorld-eScan.result | string | | |
-action_result.data.\*.data.attributes.results.Microsoft.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Microsoft.engine_name | string | | Microsoft |
-action_result.data.\*.data.attributes.results.Microsoft.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Microsoft.engine_version | string | | 1.1.20000.2 |
-action_result.data.\*.data.attributes.results.Microsoft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Microsoft.result | string | | |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.category | string | | undetected |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.engine_name | string | | NANO-Antivirus |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.engine_version | string | | 1.0.146.25743 |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.NANO-Antivirus.result | string | | |
-action_result.data.\*.data.attributes.results.Paloalto.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Paloalto.engine_name | string | | Paloalto |
-action_result.data.\*.data.attributes.results.Paloalto.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Paloalto.engine_version | string | | 0.9.0.1003 |
-action_result.data.\*.data.attributes.results.Paloalto.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Paloalto.result | string | | |
-action_result.data.\*.data.attributes.results.Panda.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Panda.engine_name | string | | Panda |
-action_result.data.\*.data.attributes.results.Panda.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Panda.engine_version | string | | 4.6.4.2 |
-action_result.data.\*.data.attributes.results.Panda.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Panda.result | string | | |
-action_result.data.\*.data.attributes.results.Rising.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Rising.engine_name | string | | Rising |
-action_result.data.\*.data.attributes.results.Rising.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Rising.engine_version | string | | 25.0.0.27 |
-action_result.data.\*.data.attributes.results.Rising.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Rising.result | string | | |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.category | string | | undetected |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_name | string | | SUPERAntiSpyware |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_version | string | | 5.6.0.1032 |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SUPERAntiSpyware.result | string | | |
-action_result.data.\*.data.attributes.results.Sangfor.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | Sangfor |
-action_result.data.\*.data.attributes.results.Sangfor.engine_update | string | | 20230309 |
-action_result.data.\*.data.attributes.results.Sangfor.engine_version | string | | 2.23.0.0 |
-action_result.data.\*.data.attributes.results.Sangfor.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sangfor.result | string | | |
-action_result.data.\*.data.attributes.results.SentinelOne.category | string | | undetected |
-action_result.data.\*.data.attributes.results.SentinelOne.engine_name | string | | SentinelOne |
-action_result.data.\*.data.attributes.results.SentinelOne.engine_update | string | | 20230216 |
-action_result.data.\*.data.attributes.results.SentinelOne.engine_version | string | | 23.1.3.2 |
-action_result.data.\*.data.attributes.results.SentinelOne.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SentinelOne.result | string | | |
-action_result.data.\*.data.attributes.results.Sophos.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | Sophos |
-action_result.data.\*.data.attributes.results.Sophos.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Sophos.engine_version | string | | 2.1.2.0 |
-action_result.data.\*.data.attributes.results.Sophos.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sophos.result | string | | |
-action_result.data.\*.data.attributes.results.Symantec.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Symantec.engine_name | string | | Symantec |
-action_result.data.\*.data.attributes.results.Symantec.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Symantec.engine_version | string | | 1.19.0.0 |
-action_result.data.\*.data.attributes.results.Symantec.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Symantec.result | string | | |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_name | string | | SymantecMobileInsight |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_update | string | | 20230119 |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_version | string | | 2.0 |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SymantecMobileInsight.result | string | | |
-action_result.data.\*.data.attributes.results.TACHYON.category | string | | undetected |
-action_result.data.\*.data.attributes.results.TACHYON.engine_name | string | | TACHYON |
-action_result.data.\*.data.attributes.results.TACHYON.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.TACHYON.engine_version | string | | 2023-03-13.01 |
-action_result.data.\*.data.attributes.results.TACHYON.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.TACHYON.result | string | | |
-action_result.data.\*.data.attributes.results.Tencent.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Tencent.engine_name | string | | Tencent |
-action_result.data.\*.data.attributes.results.Tencent.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Tencent.engine_version | string | | 1.0.0.1 |
-action_result.data.\*.data.attributes.results.Tencent.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Tencent.result | string | | |
-action_result.data.\*.data.attributes.results.Trapmine.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Trapmine.engine_name | string | | Trapmine |
-action_result.data.\*.data.attributes.results.Trapmine.engine_update | string | | 20230103 |
-action_result.data.\*.data.attributes.results.Trapmine.engine_version | string | | 4.0.10.141 |
-action_result.data.\*.data.attributes.results.Trapmine.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Trapmine.result | string | | |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.category | string | | undetected |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.engine_name | string | | TrendMicro-HouseCall |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.engine_version | string | | 10.0.0.1040 |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.TrendMicro-HouseCall.result | string | | |
-action_result.data.\*.data.attributes.results.TrendMicro.category | string | | undetected |
-action_result.data.\*.data.attributes.results.TrendMicro.engine_name | string | | TrendMicro |
-action_result.data.\*.data.attributes.results.TrendMicro.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.TrendMicro.engine_version | string | | 11.0.0.1006 |
-action_result.data.\*.data.attributes.results.TrendMicro.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.TrendMicro.result | string | | |
-action_result.data.\*.data.attributes.results.Trustlook.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Trustlook.engine_name | string | | Trustlook |
-action_result.data.\*.data.attributes.results.Trustlook.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Trustlook.engine_version | string | | 1.0 |
-action_result.data.\*.data.attributes.results.Trustlook.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Trustlook.result | string | | |
-action_result.data.\*.data.attributes.results.VBA32.category | string | | undetected |
-action_result.data.\*.data.attributes.results.VBA32.engine_name | string | | VBA32 |
-action_result.data.\*.data.attributes.results.VBA32.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.VBA32.engine_version | string | | 5.0.0 |
-action_result.data.\*.data.attributes.results.VBA32.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VBA32.result | string | | |
-action_result.data.\*.data.attributes.results.VIPRE.category | string | | undetected |
-action_result.data.\*.data.attributes.results.VIPRE.engine_name | string | | VIPRE |
-action_result.data.\*.data.attributes.results.VIPRE.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.VIPRE.engine_version | string | | 6.0.0.35 |
-action_result.data.\*.data.attributes.results.VIPRE.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VIPRE.result | string | | |
-action_result.data.\*.data.attributes.results.ViRobot.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ViRobot.engine_name | string | | ViRobot |
-action_result.data.\*.data.attributes.results.ViRobot.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.ViRobot.engine_version | string | | 2014.3.20.0 |
-action_result.data.\*.data.attributes.results.ViRobot.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ViRobot.result | string | | |
-action_result.data.\*.data.attributes.results.VirIT.category | string | | undetected |
-action_result.data.\*.data.attributes.results.VirIT.engine_name | string | | VirIT |
-action_result.data.\*.data.attributes.results.VirIT.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.VirIT.engine_version | string | | 9.5.405 |
-action_result.data.\*.data.attributes.results.VirIT.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VirIT.result | string | | |
-action_result.data.\*.data.attributes.results.Webroot.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.Webroot.engine_name | string | | Webroot |
-action_result.data.\*.data.attributes.results.Webroot.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.Webroot.engine_version | string | | 1.0.0.403 |
-action_result.data.\*.data.attributes.results.Webroot.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Webroot.result | string | | |
-action_result.data.\*.data.attributes.results.Xcitium.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Xcitium.engine_name | string | | Xcitium |
-action_result.data.\*.data.attributes.results.Xcitium.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.Xcitium.engine_version | string | | 35481 |
-action_result.data.\*.data.attributes.results.Xcitium.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Xcitium.result | string | | |
-action_result.data.\*.data.attributes.results.Yandex.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Yandex.engine_name | string | | Yandex |
-action_result.data.\*.data.attributes.results.Yandex.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Yandex.engine_version | string | | 5.5.2.24 |
-action_result.data.\*.data.attributes.results.Yandex.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Yandex.result | string | | |
-action_result.data.\*.data.attributes.results.Zillya.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Zillya.engine_name | string | | Zillya |
-action_result.data.\*.data.attributes.results.Zillya.engine_update | string | | 20230310 |
-action_result.data.\*.data.attributes.results.Zillya.engine_version | string | | 2.0.0.4829 |
-action_result.data.\*.data.attributes.results.Zillya.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.Malwarebytes.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zillya.category | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zillya.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zillya.method | string | | |
 action_result.data.\*.data.attributes.results.Zillya.result | string | | |
-action_result.data.\*.data.attributes.results.ZoneAlarm.category | string | | undetected |
-action_result.data.\*.data.attributes.results.ZoneAlarm.engine_name | string | | ZoneAlarm |
-action_result.data.\*.data.attributes.results.ZoneAlarm.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.ZoneAlarm.engine_version | string | | 1.0 |
-action_result.data.\*.data.attributes.results.ZoneAlarm.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.Zillya.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.category | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.method | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.result | string | | |
+action_result.data.\*.data.attributes.results.Sangfor.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | |
+action_result.data.\*.data.attributes.results.K7AntiVirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.K7GW.category | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_name | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_version | string | | |
+action_result.data.\*.data.attributes.results.K7GW.engine_update | string | | |
+action_result.data.\*.data.attributes.results.K7GW.method | string | | |
+action_result.data.\*.data.attributes.results.K7GW.result | string | | |
+action_result.data.\*.data.attributes.results.K7GW.vendor | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.category | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.method | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.result | string | | |
+action_result.data.\*.data.attributes.results.CrowdStrike.vendor | string | | |
+action_result.data.\*.data.attributes.results.Baidu.category | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Baidu.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Baidu.method | string | | |
+action_result.data.\*.data.attributes.results.Baidu.result | string | | |
+action_result.data.\*.data.attributes.results.Baidu.vendor | string | | |
+action_result.data.\*.data.attributes.results.Symantec.category | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Symantec.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Symantec.method | string | | |
+action_result.data.\*.data.attributes.results.Symantec.result | string | | |
+action_result.data.\*.data.attributes.results.Symantec.vendor | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.category | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.method | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.result | string | | |
+action_result.data.\*.data.attributes.results.ESET_NOD32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro_HouseCall.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast.category | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast.method | string | | |
+action_result.data.\*.data.attributes.results.Avast.result | string | | |
+action_result.data.\*.data.attributes.results.Avast.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cynet.category | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cynet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cynet.method | string | | |
+action_result.data.\*.data.attributes.results.Cynet.result | string | | |
+action_result.data.\*.data.attributes.results.Cynet.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.category | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.method | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.result | string | | |
+action_result.data.\*.data.attributes.results.Kaspersky.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefender.vendor | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.category | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.method | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.result | string | | |
+action_result.data.\*.data.attributes.results.NANO_Antivirus.vendor | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.category | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.method | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.result | string | | |
+action_result.data.\*.data.attributes.results.SUPERAntiSpyware.vendor | string | | |
+action_result.data.\*.data.attributes.results.Rising.category | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Rising.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Rising.method | string | | |
+action_result.data.\*.data.attributes.results.Rising.result | string | | |
+action_result.data.\*.data.attributes.results.Rising.vendor | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.category | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.method | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.result | string | | |
+action_result.data.\*.data.attributes.results.Emsisoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.category | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.method | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.result | string | | |
+action_result.data.\*.data.attributes.results.F_Secure.vendor | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.category | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.method | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.result | string | | |
+action_result.data.\*.data.attributes.results.DrWeb.vendor | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.category | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.method | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.result | string | | |
+action_result.data.\*.data.attributes.results.VIPRE.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.category | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.method | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.result | string | | |
+action_result.data.\*.data.attributes.results.TrendMicro.vendor | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.category | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_name | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_version | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.engine_update | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.method | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.result | string | | |
+action_result.data.\*.data.attributes.results.McAfeeD.vendor | string | | |
+action_result.data.\*.data.attributes.results.CMC.category | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CMC.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CMC.method | string | | |
+action_result.data.\*.data.attributes.results.CMC.result | string | | |
+action_result.data.\*.data.attributes.results.CMC.vendor | string | | |
+action_result.data.\*.data.attributes.results.Sophos.category | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Sophos.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Sophos.method | string | | |
+action_result.data.\*.data.attributes.results.Sophos.result | string | | |
+action_result.data.\*.data.attributes.results.Sophos.vendor | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.category | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.method | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.result | string | | |
+action_result.data.\*.data.attributes.results.Ikarus.vendor | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.category | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.method | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.result | string | | |
+action_result.data.\*.data.attributes.results.Jiangmin.vendor | string | | |
+action_result.data.\*.data.attributes.results.Google.category | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Google.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Google.method | string | | |
+action_result.data.\*.data.attributes.results.Google.result | string | | |
+action_result.data.\*.data.attributes.results.Google.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avira.category | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avira.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avira.method | string | | |
+action_result.data.\*.data.attributes.results.Avira.result | string | | |
+action_result.data.\*.data.attributes.results.Avira.vendor | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.category | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.method | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.result | string | | |
+action_result.data.\*.data.attributes.results.Antiy_AVL.vendor | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Kingsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Microsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.category | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.method | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.result | string | | |
+action_result.data.\*.data.attributes.results.Gridinsoft.vendor | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.category | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.method | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.result | string | | |
+action_result.data.\*.data.attributes.results.Xcitium.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.category | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.method | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.result | string | | |
+action_result.data.\*.data.attributes.results.Acrabit.vendor | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.category | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.method | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.result | string | | |
+action_result.data.\*.data.attributes.results.ViRobot.vendor | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.category | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_name | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_version | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.engine_update | string | | |
+action_result.data.\*.data.attributes.results.ZoneAlarm.method | string | | |
 action_result.data.\*.data.attributes.results.ZoneAlarm.result | string | | |
-action_result.data.\*.data.attributes.results.Zoner.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Zoner.engine_name | string | | Zoner |
-action_result.data.\*.data.attributes.results.Zoner.engine_update | string | | 20230312 |
-action_result.data.\*.data.attributes.results.Zoner.engine_version | string | | 2.2.2.0 |
-action_result.data.\*.data.attributes.results.Zoner.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.ZoneAlarm.vendor | string | | |
+action_result.data.\*.data.attributes.results.GData.category | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_name | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_version | string | | |
+action_result.data.\*.data.attributes.results.GData.engine_update | string | | |
+action_result.data.\*.data.attributes.results.GData.method | string | | |
+action_result.data.\*.data.attributes.results.GData.result | string | | |
+action_result.data.\*.data.attributes.results.GData.vendor | string | | |
+action_result.data.\*.data.attributes.results.Varist.category | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Varist.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Varist.method | string | | |
+action_result.data.\*.data.attributes.results.Varist.result | string | | |
+action_result.data.\*.data.attributes.results.Varist.vendor | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.category | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.method | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.result | string | | |
+action_result.data.\*.data.attributes.results.AhnLab_V3.vendor | string | | |
+action_result.data.\*.data.attributes.results.Acronis.category | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Acronis.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Acronis.method | string | | |
+action_result.data.\*.data.attributes.results.Acronis.result | string | | |
+action_result.data.\*.data.attributes.results.Acronis.vendor | string | | |
+action_result.data.\*.data.attributes.results.VBA32.category | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VBA32.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VBA32.method | string | | |
+action_result.data.\*.data.attributes.results.VBA32.result | string | | |
+action_result.data.\*.data.attributes.results.VBA32.vendor | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.category | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.method | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.result | string | | |
+action_result.data.\*.data.attributes.results.TACHYON.vendor | string | | |
+action_result.data.\*.data.attributes.results.Zoner.category | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Zoner.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Zoner.method | string | | |
 action_result.data.\*.data.attributes.results.Zoner.result | string | | |
-action_result.data.\*.data.attributes.results.tehtris.category | string | | type-unsupported |
-action_result.data.\*.data.attributes.results.tehtris.engine_name | string | | tehtris |
-action_result.data.\*.data.attributes.results.tehtris.engine_update | string | | 20230313 |
-action_result.data.\*.data.attributes.results.tehtris.engine_version | string | | v0.1.4 |
-action_result.data.\*.data.attributes.results.tehtris.method | string | | blacklist |
+action_result.data.\*.data.attributes.results.Zoner.vendor | string | | |
+action_result.data.\*.data.attributes.results.Tencent.category | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Tencent.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Tencent.method | string | | |
+action_result.data.\*.data.attributes.results.Tencent.result | string | | |
+action_result.data.\*.data.attributes.results.Tencent.vendor | string | | |
+action_result.data.\*.data.attributes.results.Yandex.category | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Yandex.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Yandex.method | string | | |
+action_result.data.\*.data.attributes.results.Yandex.result | string | | |
+action_result.data.\*.data.attributes.results.Yandex.vendor | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.category | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_name | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_version | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.engine_update | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.method | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.result | string | | |
+action_result.data.\*.data.attributes.results.TrellixENS.vendor | string | | |
+action_result.data.\*.data.attributes.results.huorong.category | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_name | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_version | string | | |
+action_result.data.\*.data.attributes.results.huorong.engine_update | string | | |
+action_result.data.\*.data.attributes.results.huorong.method | string | | |
+action_result.data.\*.data.attributes.results.huorong.result | string | | |
+action_result.data.\*.data.attributes.results.huorong.vendor | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.category | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_name | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_version | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.engine_update | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.method | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.result | string | | |
+action_result.data.\*.data.attributes.results.MaxSecure.vendor | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.category | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.method | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.result | string | | |
+action_result.data.\*.data.attributes.results.Fortinet.vendor | string | | |
+action_result.data.\*.data.attributes.results.AVG.category | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_name | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_version | string | | |
+action_result.data.\*.data.attributes.results.AVG.engine_update | string | | |
+action_result.data.\*.data.attributes.results.AVG.method | string | | |
+action_result.data.\*.data.attributes.results.AVG.result | string | | |
+action_result.data.\*.data.attributes.results.AVG.vendor | string | | |
+action_result.data.\*.data.attributes.results.Panda.category | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Panda.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Panda.method | string | | |
+action_result.data.\*.data.attributes.results.Panda.result | string | | |
+action_result.data.\*.data.attributes.results.Panda.vendor | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.category | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_name | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_version | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.engine_update | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.method | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.result | string | | |
+action_result.data.\*.data.attributes.results.alibabacloud.vendor | string | | |
+action_result.data.\*.data.attributes.results.VirIT.category | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_name | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_version | string | | |
+action_result.data.\*.data.attributes.results.VirIT.engine_update | string | | |
+action_result.data.\*.data.attributes.results.VirIT.method | string | | |
+action_result.data.\*.data.attributes.results.VirIT.result | string | | |
+action_result.data.\*.data.attributes.results.VirIT.vendor | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.category | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_name | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_version | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.engine_update | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.method | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.result | string | | |
+action_result.data.\*.data.attributes.results.CAT_QuickHeal.vendor | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.category | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.method | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.result | string | | |
+action_result.data.\*.data.attributes.results.Avast_Mobile.vendor | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.category | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.method | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.result | string | | |
+action_result.data.\*.data.attributes.results.SymantecMobileInsight.vendor | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.category | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_name | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_version | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.engine_update | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.method | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.result | string | | |
+action_result.data.\*.data.attributes.results.BitDefenderFalx.vendor | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.category | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_name | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_version | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.engine_update | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.method | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.result | string | | |
+action_result.data.\*.data.attributes.results.DeepInstinct.vendor | string | | |
+action_result.data.\*.data.attributes.results.Elastic.category | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Elastic.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Elastic.method | string | | |
+action_result.data.\*.data.attributes.results.Elastic.result | string | | |
+action_result.data.\*.data.attributes.results.Elastic.vendor | string | | |
+action_result.data.\*.data.attributes.results.APEX.category | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_name | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_version | string | | |
+action_result.data.\*.data.attributes.results.APEX.engine_update | string | | |
+action_result.data.\*.data.attributes.results.APEX.method | string | | |
+action_result.data.\*.data.attributes.results.APEX.result | string | | |
+action_result.data.\*.data.attributes.results.APEX.vendor | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.category | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.method | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.result | string | | |
+action_result.data.\*.data.attributes.results.Paloalto.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.category | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.method | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.result | string | | |
+action_result.data.\*.data.attributes.results.Trapmine.vendor | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.category | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.method | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.result | string | | |
+action_result.data.\*.data.attributes.results.Alibaba.vendor | string | | |
+action_result.data.\*.data.attributes.results.Webroot.category | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Webroot.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Webroot.method | string | | |
+action_result.data.\*.data.attributes.results.Webroot.result | string | | |
+action_result.data.\*.data.attributes.results.Webroot.vendor | string | | |
+action_result.data.\*.data.attributes.results.Cylance.category | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Cylance.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Cylance.method | string | | |
+action_result.data.\*.data.attributes.results.Cylance.result | string | | |
+action_result.data.\*.data.attributes.results.Cylance.vendor | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.category | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_name | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_version | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.engine_update | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.method | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.result | string | | |
+action_result.data.\*.data.attributes.results.SentinelOne.vendor | string | | |
+action_result.data.\*.data.attributes.results.tehtris.category | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_name | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_version | string | | |
+action_result.data.\*.data.attributes.results.tehtris.engine_update | string | | |
+action_result.data.\*.data.attributes.results.tehtris.method | string | | |
 action_result.data.\*.data.attributes.results.tehtris.result | string | | |
-action_result.data.\*.data.attributes.stats.confirmed-timeout | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.failure | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.harmless | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.malicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.suspicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.timeout | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.type-unsupported | numeric | | 16 |
-action_result.data.\*.data.attributes.stats.undetected | numeric | | 59 |
+action_result.data.\*.data.attributes.results.tehtris.vendor | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.category | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.method | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.result | string | | |
+action_result.data.\*.data.attributes.results.Trustlook.vendor | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.category | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_name | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_version | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.engine_update | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.method | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.result | string | | |
+action_result.data.\*.data.attributes.results.OpenPhish.vendor | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.category | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_name | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_version | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.engine_update | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.method | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.result | string | | |
+action_result.data.\*.data.attributes.results.Nucleon.vendor | string | | |
+action_result.data.\*.data.attributes.stats.malicious | numeric | | |
+action_result.data.\*.data.attributes.stats.suspicious | numeric | | |
+action_result.data.\*.data.attributes.stats.undetected | numeric | | |
+action_result.data.\*.data.attributes.stats.harmless | numeric | | |
+action_result.data.\*.data.attributes.stats.timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.confirmed_timeout | numeric | | |
+action_result.data.\*.data.attributes.stats.failure | numeric | | |
+action_result.data.\*.data.attributes.stats.type_unsupported | numeric | | |
 action_result.data.\*.data.attributes.status | string | | completed |
 action_result.data.\*.data.id | string | `virustotal scan id` | MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw== |
 action_result.data.\*.data.links.item | string | | https://www.virustotal.com/api/v3/files/917c72a2684d1573ea363b2f91e3aedcef1996fc34668ba9d369ad9123d1380f |
 action_result.data.\*.data.links.self | string | | https://www.virustotal.com/api/v3/analyses/ZDhhNjY5NmU2NDJlYzUyMDUwMmEwNWE0YWRkOGMxNzk6MTY3ODY4OTQ5Mg== |
-action_result.data.\*.data.type | string | | analysis |
+action_result.data.\*.data.type | string | | |
+action_result.data.\*.data.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.data.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.data.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.data.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.data.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.data.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.id | string | `sha256` | 9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
-action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/files/e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.links.self | string | `url` | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
 action_result.data.\*.meta.file_info.name | string | | update_cr.py |
 action_result.data.\*.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
 action_result.data.\*.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
 action_result.data.\*.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
 action_result.data.\*.type | string | | file |
-action_result.summary.harmless | numeric | | 0 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.scan_id | string | `virustotal scan id` | u-9999999999c9999ca75016e4c010bc94836366881b021a658ea7f8548b6543c1e |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 59 |
-action_result.message | string | | Scan id: 99999999995YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw==, Harmless: 0, Malicious: 0, Suspicious: 0, Undetected: 59 |
+action_result.data.\*.scan_id | string | | |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -1748,367 +3533,583 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.scan_id | string | `virustotal scan id` | u-9999999999868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266 |
-action_result.parameter.wait_time | numeric | | 10 |
-action_result.data.\*.data.attributes.date | numeric | | 1613467266 |
-action_result.data.\*.data.attributes.results.\*.category | string | | harmless |
-action_result.data.\*.data.attributes.results.\*.engine_name | string | | CRDF |
-action_result.data.\*.data.attributes.results.\*.engine_update | string | | 20210218 |
-action_result.data.\*.data.attributes.results.\*.engine_version | string | | 2.10.2019.1 |
-action_result.data.\*.data.attributes.results.\*.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.\*.result | string | | clean |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.engine_name | string | | ADMINUSLabs |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ADMINUSLabs.result | string | | clean |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).category | string | | harmless |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).engine_name | string | | AICC (MONITORAPP) |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AICC (MONITORAPP).result | string | | clean |
-action_result.data.\*.data.attributes.results.AlienVault.category | string | | harmless |
-action_result.data.\*.data.attributes.results.AlienVault.engine_name | string | | AlienVault |
-action_result.data.\*.data.attributes.results.AlienVault.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AlienVault.result | string | | clean |
-action_result.data.\*.data.attributes.results.Antiy-AVL.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Antiy-AVL.engine_name | string | | Antiy-AVL |
-action_result.data.\*.data.attributes.results.Antiy-AVL.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Antiy-AVL.result | string | | clean |
-action_result.data.\*.data.attributes.results.Armis.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Armis.engine_name | string | | Armis |
-action_result.data.\*.data.attributes.results.Armis.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Armis.result | string | | clean |
-action_result.data.\*.data.attributes.results.Artists Against 419.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Artists Against 419.engine_name | string | | Artists Against 419 |
-action_result.data.\*.data.attributes.results.Artists Against 419.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Artists Against 419.result | string | | clean |
-action_result.data.\*.data.attributes.results.AutoShun.category | string | | undetected |
-action_result.data.\*.data.attributes.results.AutoShun.engine_name | string | | AutoShun |
-action_result.data.\*.data.attributes.results.AutoShun.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.AutoShun.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Avira.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Avira.engine_name | string | | Avira |
-action_result.data.\*.data.attributes.results.Avira.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Avira.result | string | | clean |
-action_result.data.\*.data.attributes.results.BADWARE.INFO.category | string | | harmless |
-action_result.data.\*.data.attributes.results.BADWARE.INFO.engine_name | string | | BADWARE.INFO |
-action_result.data.\*.data.attributes.results.BADWARE.INFO.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BADWARE.INFO.result | string | | clean |
-action_result.data.\*.data.attributes.results.Baidu-International.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Baidu-International.engine_name | string | | Baidu-International |
-action_result.data.\*.data.attributes.results.Baidu-International.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Baidu-International.result | string | | clean |
-action_result.data.\*.data.attributes.results.BitDefender.category | string | | harmless |
-action_result.data.\*.data.attributes.results.BitDefender.engine_name | string | | BitDefender |
-action_result.data.\*.data.attributes.results.BitDefender.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BitDefender.result | string | | clean |
-action_result.data.\*.data.attributes.results.BlockList.category | string | | harmless |
-action_result.data.\*.data.attributes.results.BlockList.engine_name | string | | BlockList |
-action_result.data.\*.data.attributes.results.BlockList.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.BlockList.result | string | | clean |
-action_result.data.\*.data.attributes.results.Blueliv.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Blueliv.engine_name | string | | Blueliv |
-action_result.data.\*.data.attributes.results.Blueliv.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Blueliv.result | string | | clean |
-action_result.data.\*.data.attributes.results.CINS Army.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CINS Army.engine_name | string | | CINS Army |
-action_result.data.\*.data.attributes.results.CINS Army.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CINS Army.result | string | | clean |
-action_result.data.\*.data.attributes.results.CLEAN MX.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CLEAN MX.engine_name | string | | CLEAN MX |
-action_result.data.\*.data.attributes.results.CLEAN MX.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CLEAN MX.result | string | | clean |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.engine_name | string | | CMC Threat Intelligence |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CMC Threat Intelligence.result | string | | clean |
-action_result.data.\*.data.attributes.results.CRDF.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CRDF.engine_name | string | | CRDF |
-action_result.data.\*.data.attributes.results.CRDF.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CRDF.result | string | | clean |
-action_result.data.\*.data.attributes.results.Certego.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Certego.engine_name | string | | Certego |
-action_result.data.\*.data.attributes.results.Certego.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Certego.result | string | | clean |
-action_result.data.\*.data.attributes.results.Comodo Valkyrie Verdict.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Comodo Valkyrie Verdict.engine_name | string | | Comodo Valkyrie Verdict |
-action_result.data.\*.data.attributes.results.Comodo Valkyrie Verdict.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Comodo Valkyrie Verdict.result | string | | unrated |
-action_result.data.\*.data.attributes.results.CyRadar.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CyRadar.engine_name | string | | CyRadar |
-action_result.data.\*.data.attributes.results.CyRadar.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CyRadar.result | string | | clean |
-action_result.data.\*.data.attributes.results.Cyan.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Cyan.engine_name | string | | Cyan |
-action_result.data.\*.data.attributes.results.Cyan.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cyan.result | string | | unrated |
-action_result.data.\*.data.attributes.results.CyberCrime.category | string | | harmless |
-action_result.data.\*.data.attributes.results.CyberCrime.engine_name | string | | CyberCrime |
-action_result.data.\*.data.attributes.results.CyberCrime.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.CyberCrime.result | string | | clean |
-action_result.data.\*.data.attributes.results.Cyren.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Cyren.engine_name | string | | Cyren |
-action_result.data.\*.data.attributes.results.Cyren.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Cyren.result | string | | clean |
-action_result.data.\*.data.attributes.results.DNS8.category | string | | harmless |
-action_result.data.\*.data.attributes.results.DNS8.engine_name | string | | DNS8 |
-action_result.data.\*.data.attributes.results.DNS8.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.DNS8.result | string | | clean |
-action_result.data.\*.data.attributes.results.Dr.Web.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Dr.Web.engine_name | string | | Dr.Web |
-action_result.data.\*.data.attributes.results.Dr.Web.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Dr.Web.result | string | | clean |
-action_result.data.\*.data.attributes.results.ESET.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ESET.engine_name | string | | ESET |
-action_result.data.\*.data.attributes.results.ESET.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ESET.result | string | | clean |
-action_result.data.\*.data.attributes.results.EmergingThreats.category | string | | harmless |
-action_result.data.\*.data.attributes.results.EmergingThreats.engine_name | string | | EmergingThreats |
-action_result.data.\*.data.attributes.results.EmergingThreats.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.EmergingThreats.result | string | | clean |
-action_result.data.\*.data.attributes.results.Emsisoft.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Emsisoft.engine_name | string | | Emsisoft |
-action_result.data.\*.data.attributes.results.Emsisoft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Emsisoft.result | string | | clean |
-action_result.data.\*.data.attributes.results.EonScope.category | string | | harmless |
-action_result.data.\*.data.attributes.results.EonScope.engine_name | string | | EonScope |
-action_result.data.\*.data.attributes.results.EonScope.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.EonScope.result | string | | clean |
-action_result.data.\*.data.attributes.results.Feodo Tracker.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Feodo Tracker.engine_name | string | | Feodo Tracker |
-action_result.data.\*.data.attributes.results.Feodo Tracker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Feodo Tracker.result | string | | clean |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.engine_name | string | | Forcepoint ThreatSeeker |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Forcepoint ThreatSeeker.result | string | | clean |
-action_result.data.\*.data.attributes.results.Fortinet.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Fortinet.engine_name | string | | Fortinet |
-action_result.data.\*.data.attributes.results.Fortinet.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Fortinet.result | string | | clean |
-action_result.data.\*.data.attributes.results.FraudScore.category | string | | harmless |
-action_result.data.\*.data.attributes.results.FraudScore.engine_name | string | | FraudScore |
-action_result.data.\*.data.attributes.results.FraudScore.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.FraudScore.result | string | | clean |
-action_result.data.\*.data.attributes.results.G-Data.category | string | | harmless |
-action_result.data.\*.data.attributes.results.G-Data.engine_name | string | | G-Data |
-action_result.data.\*.data.attributes.results.G-Data.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.G-Data.result | string | | clean |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.engine_name | string | | Google Safebrowsing |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Google Safebrowsing.result | string | | clean |
-action_result.data.\*.data.attributes.results.GreenSnow.category | string | | harmless |
-action_result.data.\*.data.attributes.results.GreenSnow.engine_name | string | | GreenSnow |
-action_result.data.\*.data.attributes.results.GreenSnow.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.GreenSnow.result | string | | clean |
-action_result.data.\*.data.attributes.results.Hoplite Industries.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Hoplite Industries.engine_name | string | | Hoplite Industries |
-action_result.data.\*.data.attributes.results.Hoplite Industries.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Hoplite Industries.result | string | | clean |
-action_result.data.\*.data.attributes.results.IPsum.category | string | | harmless |
-action_result.data.\*.data.attributes.results.IPsum.engine_name | string | | IPsum |
-action_result.data.\*.data.attributes.results.IPsum.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.IPsum.result | string | | clean |
-action_result.data.\*.data.attributes.results.K7AntiVirus.category | string | | harmless |
-action_result.data.\*.data.attributes.results.K7AntiVirus.engine_name | string | | K7AntiVirus |
-action_result.data.\*.data.attributes.results.K7AntiVirus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.K7AntiVirus.result | string | | clean |
-action_result.data.\*.data.attributes.results.Kaspersky.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Kaspersky.engine_name | string | | Kaspersky |
-action_result.data.\*.data.attributes.results.Kaspersky.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Kaspersky.result | string | | clean |
-action_result.data.\*.data.attributes.results.Lionic.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Lionic.engine_name | string | | Lionic |
-action_result.data.\*.data.attributes.results.Lionic.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Lionic.result | string | | clean |
-action_result.data.\*.data.attributes.results.Lumu.category | string | | undetected |
-action_result.data.\*.data.attributes.results.Lumu.engine_name | string | | Lumu |
-action_result.data.\*.data.attributes.results.Lumu.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Lumu.result | string | | unrated |
-action_result.data.\*.data.attributes.results.MalBeacon.category | string | | harmless |
-action_result.data.\*.data.attributes.results.MalBeacon.engine_name | string | | MalBeacon |
-action_result.data.\*.data.attributes.results.MalBeacon.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MalBeacon.result | string | | clean |
-action_result.data.\*.data.attributes.results.MalSilo.category | string | | harmless |
-action_result.data.\*.data.attributes.results.MalSilo.engine_name | string | | MalSilo |
-action_result.data.\*.data.attributes.results.MalSilo.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MalSilo.result | string | | clean |
-action_result.data.\*.data.attributes.results.Malware Domain Blocklist.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Malware Domain Blocklist.engine_name | string | | Malware Domain Blocklist |
-action_result.data.\*.data.attributes.results.Malware Domain Blocklist.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Malware Domain Blocklist.result | string | | clean |
-action_result.data.\*.data.attributes.results.MalwareDomainList.category | string | | harmless |
-action_result.data.\*.data.attributes.results.MalwareDomainList.engine_name | string | | MalwareDomainList |
-action_result.data.\*.data.attributes.results.MalwareDomainList.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MalwareDomainList.result | string | | clean |
-action_result.data.\*.data.attributes.results.MalwarePatrol.category | string | | harmless |
-action_result.data.\*.data.attributes.results.MalwarePatrol.engine_name | string | | MalwarePatrol |
-action_result.data.\*.data.attributes.results.MalwarePatrol.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.MalwarePatrol.result | string | | clean |
-action_result.data.\*.data.attributes.results.Malwared.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Malwared.engine_name | string | | Malwared |
-action_result.data.\*.data.attributes.results.Malwared.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Malwared.result | string | | clean |
-action_result.data.\*.data.attributes.results.Netcraft.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Netcraft.engine_name | string | | Netcraft |
-action_result.data.\*.data.attributes.results.Netcraft.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Netcraft.result | string | | clean |
-action_result.data.\*.data.attributes.results.NotMining.category | string | | undetected |
-action_result.data.\*.data.attributes.results.NotMining.engine_name | string | | NotMining |
-action_result.data.\*.data.attributes.results.NotMining.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.NotMining.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Nucleon.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Nucleon.engine_name | string | | Nucleon |
-action_result.data.\*.data.attributes.results.Nucleon.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Nucleon.result | string | | clean |
-action_result.data.\*.data.attributes.results.OpenPhish.category | string | | harmless |
-action_result.data.\*.data.attributes.results.OpenPhish.engine_name | string | | OpenPhish |
-action_result.data.\*.data.attributes.results.OpenPhish.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.OpenPhish.result | string | | clean |
-action_result.data.\*.data.attributes.results.PREBYTES.category | string | | harmless |
-action_result.data.\*.data.attributes.results.PREBYTES.engine_name | string | | PREBYTES |
-action_result.data.\*.data.attributes.results.PREBYTES.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PREBYTES.result | string | | clean |
-action_result.data.\*.data.attributes.results.PhishLabs.category | string | | undetected |
-action_result.data.\*.data.attributes.results.PhishLabs.engine_name | string | | PhishLabs |
-action_result.data.\*.data.attributes.results.PhishLabs.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.PhishLabs.result | string | | unrated |
-action_result.data.\*.data.attributes.results.Phishing Database.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Phishing Database.engine_name | string | | Phishing Database |
-action_result.data.\*.data.attributes.results.Phishing Database.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Phishing Database.result | string | | clean |
-action_result.data.\*.data.attributes.results.Phishtank.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Phishtank.engine_name | string | | Phishtank |
-action_result.data.\*.data.attributes.results.Phishtank.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Phishtank.result | string | | clean |
-action_result.data.\*.data.attributes.results.Quick Heal.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Quick Heal.engine_name | string | | Quick Heal |
-action_result.data.\*.data.attributes.results.Quick Heal.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Quick Heal.result | string | | clean |
-action_result.data.\*.data.attributes.results.Quttera.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Quttera.engine_name | string | | Quttera |
-action_result.data.\*.data.attributes.results.Quttera.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Quttera.result | string | | clean |
-action_result.data.\*.data.attributes.results.Rising.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Rising.engine_name | string | | Rising |
-action_result.data.\*.data.attributes.results.Rising.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Rising.result | string | | clean |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.category | string | | harmless |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.engine_name | string | | SCUMWARE.org |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SCUMWARE.org.result | string | | clean |
-action_result.data.\*.data.attributes.results.Sangfor.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sangfor.engine_name | string | | Sangfor |
-action_result.data.\*.data.attributes.results.Sangfor.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sangfor.result | string | | clean |
-action_result.data.\*.data.attributes.results.SecureBrain.category | string | | harmless |
-action_result.data.\*.data.attributes.results.SecureBrain.engine_name | string | | SecureBrain |
-action_result.data.\*.data.attributes.results.SecureBrain.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.SecureBrain.result | string | | clean |
-action_result.data.\*.data.attributes.results.Snort IP sample list.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Snort IP sample list.engine_name | string | | Snort IP sample list |
-action_result.data.\*.data.attributes.results.Snort IP sample list.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Snort IP sample list.result | string | | clean |
-action_result.data.\*.data.attributes.results.Sophos.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sophos.engine_name | string | | Sophos |
-action_result.data.\*.data.attributes.results.Sophos.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sophos.result | string | | clean |
-action_result.data.\*.data.attributes.results.Spam404.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Spam404.engine_name | string | | Spam404 |
-action_result.data.\*.data.attributes.results.Spam404.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Spam404.result | string | | clean |
-action_result.data.\*.data.attributes.results.Spamhaus.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Spamhaus.engine_name | string | | Spamhaus |
-action_result.data.\*.data.attributes.results.Spamhaus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Spamhaus.result | string | | clean |
-action_result.data.\*.data.attributes.results.StopBadware.category | string | | undetected |
-action_result.data.\*.data.attributes.results.StopBadware.engine_name | string | | StopBadware |
-action_result.data.\*.data.attributes.results.StopBadware.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.StopBadware.result | string | | unrated |
-action_result.data.\*.data.attributes.results.StopForumSpam.category | string | | harmless |
-action_result.data.\*.data.attributes.results.StopForumSpam.engine_name | string | | StopForumSpam |
-action_result.data.\*.data.attributes.results.StopForumSpam.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.StopForumSpam.result | string | | clean |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.engine_name | string | | Sucuri SiteCheck |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Sucuri SiteCheck.result | string | | clean |
-action_result.data.\*.data.attributes.results.Tencent.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Tencent.engine_name | string | | Tencent |
-action_result.data.\*.data.attributes.results.Tencent.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Tencent.result | string | | clean |
-action_result.data.\*.data.attributes.results.ThreatHive.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ThreatHive.engine_name | string | | ThreatHive |
-action_result.data.\*.data.attributes.results.ThreatHive.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ThreatHive.result | string | | clean |
-action_result.data.\*.data.attributes.results.Threatsourcing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Threatsourcing.engine_name | string | | Threatsourcing |
-action_result.data.\*.data.attributes.results.Threatsourcing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Threatsourcing.result | string | | clean |
-action_result.data.\*.data.attributes.results.Trustwave.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Trustwave.engine_name | string | | Trustwave |
-action_result.data.\*.data.attributes.results.Trustwave.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Trustwave.result | string | | clean |
-action_result.data.\*.data.attributes.results.URLhaus.category | string | | harmless |
-action_result.data.\*.data.attributes.results.URLhaus.engine_name | string | | URLhaus |
-action_result.data.\*.data.attributes.results.URLhaus.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.URLhaus.result | string | | clean |
-action_result.data.\*.data.attributes.results.VX Vault.category | string | | harmless |
-action_result.data.\*.data.attributes.results.VX Vault.engine_name | string | | VX Vault |
-action_result.data.\*.data.attributes.results.VX Vault.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.VX Vault.result | string | | clean |
-action_result.data.\*.data.attributes.results.Virusdie External Site Scan.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Virusdie External Site Scan.engine_name | string | | Virusdie External Site Scan |
-action_result.data.\*.data.attributes.results.Virusdie External Site Scan.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Virusdie External Site Scan.result | string | | clean |
-action_result.data.\*.data.attributes.results.Web Security Guard.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Web Security Guard.engine_name | string | | Web Security Guard |
-action_result.data.\*.data.attributes.results.Web Security Guard.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Web Security Guard.result | string | | clean |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.category | string | | harmless |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.engine_name | string | | Yandex Safebrowsing |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.Yandex Safebrowsing.result | string | | clean |
-action_result.data.\*.data.attributes.results.ZeroCERT.category | string | | harmless |
-action_result.data.\*.data.attributes.results.ZeroCERT.engine_name | string | | ZeroCERT |
-action_result.data.\*.data.attributes.results.ZeroCERT.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.ZeroCERT.result | string | | clean |
-action_result.data.\*.data.attributes.results.desenmascara.me.category | string | | harmless |
-action_result.data.\*.data.attributes.results.desenmascara.me.engine_name | string | | desenmascara.me |
-action_result.data.\*.data.attributes.results.desenmascara.me.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.desenmascara.me.result | string | | clean |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.category | string | | harmless |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.engine_name | string | | malwares.com URL checker |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.malwares.com URL checker.result | string | | clean |
-action_result.data.\*.data.attributes.results.securolytics.category | string | | harmless |
-action_result.data.\*.data.attributes.results.securolytics.engine_name | string | | securolytics |
-action_result.data.\*.data.attributes.results.securolytics.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.securolytics.result | string | | clean |
-action_result.data.\*.data.attributes.results.zvelo.category | string | | harmless |
-action_result.data.\*.data.attributes.results.zvelo.engine_name | string | | zvelo |
-action_result.data.\*.data.attributes.results.zvelo.method | string | | blacklist |
-action_result.data.\*.data.attributes.results.zvelo.result | string | | clean |
-action_result.data.\*.data.attributes.stats.harmless | numeric | | 76 |
-action_result.data.\*.data.attributes.stats.malicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.suspicious | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.timeout | numeric | | 0 |
-action_result.data.\*.data.attributes.stats.undetected | numeric | | 7 |
-action_result.data.\*.data.attributes.status | string | | completed |
-action_result.data.\*.data.id | string | | u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266 |
-action_result.data.\*.data.links.item | string | | https://www.virustotal.com/api/v3/urls/f351f690f46ea50132cc1da00d1f1e2a537bb40f8db5dbf777221981d8d49354 |
-action_result.data.\*.data.links.self | string | `url` | https://www.virustotal.com/api/v3/analyses/u-114fb86b9b4e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266 |
-action_result.data.\*.data.type | string | | analysis |
-action_result.data.\*.meta.file_info.sha256 | string | | 9999999999149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 |
-action_result.data.\*.meta.url_info.id | string | `sha256` | 19999999999e868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488 |
-action_result.data.\*.meta.url_info.url | string | | http://shinedezign.tk/ |
-action_result.summary.harmless | numeric | | 76 |
-action_result.summary.malicious | numeric | | 0 |
-action_result.summary.scan_id | string | | u-99999999998f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266 |
-action_result.summary.suspicious | numeric | | 0 |
-action_result.summary.undetected | numeric | | 7 |
-action_result.message | string | | Scan id: u-9999999999868f8bac2249eb5c444b545f0240c3dadd23312a0bc1622b5488-1613467266, Harmless: 76, Malicious: 0, Suspicious: 0, Undetected: 7 |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.scan_id | string | `virustotal scan id` | |
+action_result.parameter.wait_time | numeric | | |
+action_result.data.\*.attributes.date | numeric | `timestamp` | 1613651763 |
+action_result.data.\*.attributes.results.Bkav.category | string | | |
+action_result.data.\*.attributes.results.Bkav.engine_name | string | | |
+action_result.data.\*.attributes.results.Bkav.engine_version | string | | |
+action_result.data.\*.attributes.results.Bkav.engine_update | string | | |
+action_result.data.\*.attributes.results.Bkav.method | string | | |
+action_result.data.\*.attributes.results.Bkav.result | string | | |
+action_result.data.\*.attributes.results.Bkav.vendor | string | | |
+action_result.data.\*.attributes.results.Lionic.category | string | | |
+action_result.data.\*.attributes.results.Lionic.engine_name | string | | |
+action_result.data.\*.attributes.results.Lionic.engine_version | string | | |
+action_result.data.\*.attributes.results.Lionic.engine_update | string | | |
+action_result.data.\*.attributes.results.Lionic.method | string | | |
+action_result.data.\*.attributes.results.Lionic.result | string | | |
+action_result.data.\*.attributes.results.Lionic.vendor | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.category | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.engine_name | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.engine_version | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.engine_update | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.method | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.result | string | | |
+action_result.data.\*.attributes.results.MicroWorld_eScan.vendor | string | | |
+action_result.data.\*.attributes.results.ClamAV.category | string | | |
+action_result.data.\*.attributes.results.ClamAV.engine_name | string | | |
+action_result.data.\*.attributes.results.ClamAV.engine_version | string | | |
+action_result.data.\*.attributes.results.ClamAV.engine_update | string | | |
+action_result.data.\*.attributes.results.ClamAV.method | string | | |
+action_result.data.\*.attributes.results.ClamAV.result | string | | |
+action_result.data.\*.attributes.results.ClamAV.vendor | string | | |
+action_result.data.\*.attributes.results.CTX.category | string | | |
+action_result.data.\*.attributes.results.CTX.engine_name | string | | |
+action_result.data.\*.attributes.results.CTX.engine_version | string | | |
+action_result.data.\*.attributes.results.CTX.engine_update | string | | |
+action_result.data.\*.attributes.results.CTX.method | string | | |
+action_result.data.\*.attributes.results.CTX.result | string | | |
+action_result.data.\*.attributes.results.CTX.vendor | string | | |
+action_result.data.\*.attributes.results.Skyhigh.category | string | | |
+action_result.data.\*.attributes.results.Skyhigh.engine_name | string | | |
+action_result.data.\*.attributes.results.Skyhigh.engine_version | string | | |
+action_result.data.\*.attributes.results.Skyhigh.engine_update | string | | |
+action_result.data.\*.attributes.results.Skyhigh.method | string | | |
+action_result.data.\*.attributes.results.Skyhigh.result | string | | |
+action_result.data.\*.attributes.results.Skyhigh.vendor | string | | |
+action_result.data.\*.attributes.results.ALYac.category | string | | |
+action_result.data.\*.attributes.results.ALYac.engine_name | string | | |
+action_result.data.\*.attributes.results.ALYac.engine_version | string | | |
+action_result.data.\*.attributes.results.ALYac.engine_update | string | | |
+action_result.data.\*.attributes.results.ALYac.method | string | | |
+action_result.data.\*.attributes.results.ALYac.result | string | | |
+action_result.data.\*.attributes.results.ALYac.vendor | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.category | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.engine_name | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.engine_version | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.engine_update | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.method | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.result | string | | |
+action_result.data.\*.attributes.results.Malwarebytes.vendor | string | | |
+action_result.data.\*.attributes.results.Zillya.category | string | | |
+action_result.data.\*.attributes.results.Zillya.engine_name | string | | |
+action_result.data.\*.attributes.results.Zillya.engine_version | string | | |
+action_result.data.\*.attributes.results.Zillya.engine_update | string | | |
+action_result.data.\*.attributes.results.Zillya.method | string | | |
+action_result.data.\*.attributes.results.Zillya.result | string | | |
+action_result.data.\*.attributes.results.Zillya.vendor | string | | |
+action_result.data.\*.attributes.results.Sangfor.category | string | | |
+action_result.data.\*.attributes.results.Sangfor.engine_name | string | | |
+action_result.data.\*.attributes.results.Sangfor.engine_version | string | | |
+action_result.data.\*.attributes.results.Sangfor.engine_update | string | | |
+action_result.data.\*.attributes.results.Sangfor.method | string | | |
+action_result.data.\*.attributes.results.Sangfor.result | string | | |
+action_result.data.\*.attributes.results.Sangfor.vendor | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.category | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.engine_name | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.engine_version | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.engine_update | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.method | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.result | string | | |
+action_result.data.\*.attributes.results.K7AntiVirus.vendor | string | | |
+action_result.data.\*.attributes.results.K7GW.category | string | | |
+action_result.data.\*.attributes.results.K7GW.engine_name | string | | |
+action_result.data.\*.attributes.results.K7GW.engine_version | string | | |
+action_result.data.\*.attributes.results.K7GW.engine_update | string | | |
+action_result.data.\*.attributes.results.K7GW.method | string | | |
+action_result.data.\*.attributes.results.K7GW.result | string | | |
+action_result.data.\*.attributes.results.K7GW.vendor | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.category | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.engine_name | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.engine_version | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.engine_update | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.method | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.result | string | | |
+action_result.data.\*.attributes.results.CrowdStrike.vendor | string | | |
+action_result.data.\*.attributes.results.Baidu.category | string | | |
+action_result.data.\*.attributes.results.Baidu.engine_name | string | | |
+action_result.data.\*.attributes.results.Baidu.engine_version | string | | |
+action_result.data.\*.attributes.results.Baidu.engine_update | string | | |
+action_result.data.\*.attributes.results.Baidu.method | string | | |
+action_result.data.\*.attributes.results.Baidu.result | string | | |
+action_result.data.\*.attributes.results.Baidu.vendor | string | | |
+action_result.data.\*.attributes.results.Symantec.category | string | | |
+action_result.data.\*.attributes.results.Symantec.engine_name | string | | |
+action_result.data.\*.attributes.results.Symantec.engine_version | string | | |
+action_result.data.\*.attributes.results.Symantec.engine_update | string | | |
+action_result.data.\*.attributes.results.Symantec.method | string | | |
+action_result.data.\*.attributes.results.Symantec.result | string | | |
+action_result.data.\*.attributes.results.Symantec.vendor | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.category | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.engine_name | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.engine_version | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.engine_update | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.method | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.result | string | | |
+action_result.data.\*.attributes.results.ESET_NOD32.vendor | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.category | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.engine_name | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.engine_version | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.engine_update | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.method | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.result | string | | |
+action_result.data.\*.attributes.results.TrendMicro_HouseCall.vendor | string | | |
+action_result.data.\*.attributes.results.Avast.category | string | | |
+action_result.data.\*.attributes.results.Avast.engine_name | string | | |
+action_result.data.\*.attributes.results.Avast.engine_version | string | | |
+action_result.data.\*.attributes.results.Avast.engine_update | string | | |
+action_result.data.\*.attributes.results.Avast.method | string | | |
+action_result.data.\*.attributes.results.Avast.result | string | | |
+action_result.data.\*.attributes.results.Avast.vendor | string | | |
+action_result.data.\*.attributes.results.Cynet.category | string | | |
+action_result.data.\*.attributes.results.Cynet.engine_name | string | | |
+action_result.data.\*.attributes.results.Cynet.engine_version | string | | |
+action_result.data.\*.attributes.results.Cynet.engine_update | string | | |
+action_result.data.\*.attributes.results.Cynet.method | string | | |
+action_result.data.\*.attributes.results.Cynet.result | string | | |
+action_result.data.\*.attributes.results.Cynet.vendor | string | | |
+action_result.data.\*.attributes.results.Kaspersky.category | string | | |
+action_result.data.\*.attributes.results.Kaspersky.engine_name | string | | |
+action_result.data.\*.attributes.results.Kaspersky.engine_version | string | | |
+action_result.data.\*.attributes.results.Kaspersky.engine_update | string | | |
+action_result.data.\*.attributes.results.Kaspersky.method | string | | |
+action_result.data.\*.attributes.results.Kaspersky.result | string | | |
+action_result.data.\*.attributes.results.Kaspersky.vendor | string | | |
+action_result.data.\*.attributes.results.BitDefender.category | string | | |
+action_result.data.\*.attributes.results.BitDefender.engine_name | string | | |
+action_result.data.\*.attributes.results.BitDefender.engine_version | string | | |
+action_result.data.\*.attributes.results.BitDefender.engine_update | string | | |
+action_result.data.\*.attributes.results.BitDefender.method | string | | |
+action_result.data.\*.attributes.results.BitDefender.result | string | | |
+action_result.data.\*.attributes.results.BitDefender.vendor | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.category | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.engine_name | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.engine_version | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.engine_update | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.method | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.result | string | | |
+action_result.data.\*.attributes.results.NANO_Antivirus.vendor | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.category | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.engine_name | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.engine_version | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.engine_update | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.method | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.result | string | | |
+action_result.data.\*.attributes.results.SUPERAntiSpyware.vendor | string | | |
+action_result.data.\*.attributes.results.Rising.category | string | | |
+action_result.data.\*.attributes.results.Rising.engine_name | string | | |
+action_result.data.\*.attributes.results.Rising.engine_version | string | | |
+action_result.data.\*.attributes.results.Rising.engine_update | string | | |
+action_result.data.\*.attributes.results.Rising.method | string | | |
+action_result.data.\*.attributes.results.Rising.result | string | | |
+action_result.data.\*.attributes.results.Rising.vendor | string | | |
+action_result.data.\*.attributes.results.Emsisoft.category | string | | |
+action_result.data.\*.attributes.results.Emsisoft.engine_name | string | | |
+action_result.data.\*.attributes.results.Emsisoft.engine_version | string | | |
+action_result.data.\*.attributes.results.Emsisoft.engine_update | string | | |
+action_result.data.\*.attributes.results.Emsisoft.method | string | | |
+action_result.data.\*.attributes.results.Emsisoft.result | string | | |
+action_result.data.\*.attributes.results.Emsisoft.vendor | string | | |
+action_result.data.\*.attributes.results.F_Secure.category | string | | |
+action_result.data.\*.attributes.results.F_Secure.engine_name | string | | |
+action_result.data.\*.attributes.results.F_Secure.engine_version | string | | |
+action_result.data.\*.attributes.results.F_Secure.engine_update | string | | |
+action_result.data.\*.attributes.results.F_Secure.method | string | | |
+action_result.data.\*.attributes.results.F_Secure.result | string | | |
+action_result.data.\*.attributes.results.F_Secure.vendor | string | | |
+action_result.data.\*.attributes.results.DrWeb.category | string | | |
+action_result.data.\*.attributes.results.DrWeb.engine_name | string | | |
+action_result.data.\*.attributes.results.DrWeb.engine_version | string | | |
+action_result.data.\*.attributes.results.DrWeb.engine_update | string | | |
+action_result.data.\*.attributes.results.DrWeb.method | string | | |
+action_result.data.\*.attributes.results.DrWeb.result | string | | |
+action_result.data.\*.attributes.results.DrWeb.vendor | string | | |
+action_result.data.\*.attributes.results.VIPRE.category | string | | |
+action_result.data.\*.attributes.results.VIPRE.engine_name | string | | |
+action_result.data.\*.attributes.results.VIPRE.engine_version | string | | |
+action_result.data.\*.attributes.results.VIPRE.engine_update | string | | |
+action_result.data.\*.attributes.results.VIPRE.method | string | | |
+action_result.data.\*.attributes.results.VIPRE.result | string | | |
+action_result.data.\*.attributes.results.VIPRE.vendor | string | | |
+action_result.data.\*.attributes.results.TrendMicro.category | string | | |
+action_result.data.\*.attributes.results.TrendMicro.engine_name | string | | |
+action_result.data.\*.attributes.results.TrendMicro.engine_version | string | | |
+action_result.data.\*.attributes.results.TrendMicro.engine_update | string | | |
+action_result.data.\*.attributes.results.TrendMicro.method | string | | |
+action_result.data.\*.attributes.results.TrendMicro.result | string | | |
+action_result.data.\*.attributes.results.TrendMicro.vendor | string | | |
+action_result.data.\*.attributes.results.McAfeeD.category | string | | |
+action_result.data.\*.attributes.results.McAfeeD.engine_name | string | | |
+action_result.data.\*.attributes.results.McAfeeD.engine_version | string | | |
+action_result.data.\*.attributes.results.McAfeeD.engine_update | string | | |
+action_result.data.\*.attributes.results.McAfeeD.method | string | | |
+action_result.data.\*.attributes.results.McAfeeD.result | string | | |
+action_result.data.\*.attributes.results.McAfeeD.vendor | string | | |
+action_result.data.\*.attributes.results.CMC.category | string | | |
+action_result.data.\*.attributes.results.CMC.engine_name | string | | |
+action_result.data.\*.attributes.results.CMC.engine_version | string | | |
+action_result.data.\*.attributes.results.CMC.engine_update | string | | |
+action_result.data.\*.attributes.results.CMC.method | string | | |
+action_result.data.\*.attributes.results.CMC.result | string | | |
+action_result.data.\*.attributes.results.CMC.vendor | string | | |
+action_result.data.\*.attributes.results.Sophos.category | string | | |
+action_result.data.\*.attributes.results.Sophos.engine_name | string | | |
+action_result.data.\*.attributes.results.Sophos.engine_version | string | | |
+action_result.data.\*.attributes.results.Sophos.engine_update | string | | |
+action_result.data.\*.attributes.results.Sophos.method | string | | |
+action_result.data.\*.attributes.results.Sophos.result | string | | |
+action_result.data.\*.attributes.results.Sophos.vendor | string | | |
+action_result.data.\*.attributes.results.Ikarus.category | string | | |
+action_result.data.\*.attributes.results.Ikarus.engine_name | string | | |
+action_result.data.\*.attributes.results.Ikarus.engine_version | string | | |
+action_result.data.\*.attributes.results.Ikarus.engine_update | string | | |
+action_result.data.\*.attributes.results.Ikarus.method | string | | |
+action_result.data.\*.attributes.results.Ikarus.result | string | | |
+action_result.data.\*.attributes.results.Ikarus.vendor | string | | |
+action_result.data.\*.attributes.results.Jiangmin.category | string | | |
+action_result.data.\*.attributes.results.Jiangmin.engine_name | string | | |
+action_result.data.\*.attributes.results.Jiangmin.engine_version | string | | |
+action_result.data.\*.attributes.results.Jiangmin.engine_update | string | | |
+action_result.data.\*.attributes.results.Jiangmin.method | string | | |
+action_result.data.\*.attributes.results.Jiangmin.result | string | | |
+action_result.data.\*.attributes.results.Jiangmin.vendor | string | | |
+action_result.data.\*.attributes.results.Google.category | string | | |
+action_result.data.\*.attributes.results.Google.engine_name | string | | |
+action_result.data.\*.attributes.results.Google.engine_version | string | | |
+action_result.data.\*.attributes.results.Google.engine_update | string | | |
+action_result.data.\*.attributes.results.Google.method | string | | |
+action_result.data.\*.attributes.results.Google.result | string | | |
+action_result.data.\*.attributes.results.Google.vendor | string | | |
+action_result.data.\*.attributes.results.Avira.category | string | | |
+action_result.data.\*.attributes.results.Avira.engine_name | string | | |
+action_result.data.\*.attributes.results.Avira.engine_version | string | | |
+action_result.data.\*.attributes.results.Avira.engine_update | string | | |
+action_result.data.\*.attributes.results.Avira.method | string | | |
+action_result.data.\*.attributes.results.Avira.result | string | | |
+action_result.data.\*.attributes.results.Avira.vendor | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.category | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.engine_name | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.engine_version | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.engine_update | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.method | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.result | string | | |
+action_result.data.\*.attributes.results.Antiy_AVL.vendor | string | | |
+action_result.data.\*.attributes.results.Kingsoft.category | string | | |
+action_result.data.\*.attributes.results.Kingsoft.engine_name | string | | |
+action_result.data.\*.attributes.results.Kingsoft.engine_version | string | | |
+action_result.data.\*.attributes.results.Kingsoft.engine_update | string | | |
+action_result.data.\*.attributes.results.Kingsoft.method | string | | |
+action_result.data.\*.attributes.results.Kingsoft.result | string | | |
+action_result.data.\*.attributes.results.Kingsoft.vendor | string | | |
+action_result.data.\*.attributes.results.Microsoft.category | string | | |
+action_result.data.\*.attributes.results.Microsoft.engine_name | string | | |
+action_result.data.\*.attributes.results.Microsoft.engine_version | string | | |
+action_result.data.\*.attributes.results.Microsoft.engine_update | string | | |
+action_result.data.\*.attributes.results.Microsoft.method | string | | |
+action_result.data.\*.attributes.results.Microsoft.result | string | | |
+action_result.data.\*.attributes.results.Microsoft.vendor | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.category | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.engine_name | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.engine_version | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.engine_update | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.method | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.result | string | | |
+action_result.data.\*.attributes.results.Gridinsoft.vendor | string | | |
+action_result.data.\*.attributes.results.Xcitium.category | string | | |
+action_result.data.\*.attributes.results.Xcitium.engine_name | string | | |
+action_result.data.\*.attributes.results.Xcitium.engine_version | string | | |
+action_result.data.\*.attributes.results.Xcitium.engine_update | string | | |
+action_result.data.\*.attributes.results.Xcitium.method | string | | |
+action_result.data.\*.attributes.results.Xcitium.result | string | | |
+action_result.data.\*.attributes.results.Xcitium.vendor | string | | |
+action_result.data.\*.attributes.results.Acrabit.category | string | | |
+action_result.data.\*.attributes.results.Acrabit.engine_name | string | | |
+action_result.data.\*.attributes.results.Acrabit.engine_version | string | | |
+action_result.data.\*.attributes.results.Acrabit.engine_update | string | | |
+action_result.data.\*.attributes.results.Acrabit.method | string | | |
+action_result.data.\*.attributes.results.Acrabit.result | string | | |
+action_result.data.\*.attributes.results.Acrabit.vendor | string | | |
+action_result.data.\*.attributes.results.ViRobot.category | string | | |
+action_result.data.\*.attributes.results.ViRobot.engine_name | string | | |
+action_result.data.\*.attributes.results.ViRobot.engine_version | string | | |
+action_result.data.\*.attributes.results.ViRobot.engine_update | string | | |
+action_result.data.\*.attributes.results.ViRobot.method | string | | |
+action_result.data.\*.attributes.results.ViRobot.result | string | | |
+action_result.data.\*.attributes.results.ViRobot.vendor | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.category | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.engine_name | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.engine_version | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.engine_update | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.method | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.result | string | | |
+action_result.data.\*.attributes.results.ZoneAlarm.vendor | string | | |
+action_result.data.\*.attributes.results.GData.category | string | | |
+action_result.data.\*.attributes.results.GData.engine_name | string | | |
+action_result.data.\*.attributes.results.GData.engine_version | string | | |
+action_result.data.\*.attributes.results.GData.engine_update | string | | |
+action_result.data.\*.attributes.results.GData.method | string | | |
+action_result.data.\*.attributes.results.GData.result | string | | |
+action_result.data.\*.attributes.results.GData.vendor | string | | |
+action_result.data.\*.attributes.results.Varist.category | string | | |
+action_result.data.\*.attributes.results.Varist.engine_name | string | | |
+action_result.data.\*.attributes.results.Varist.engine_version | string | | |
+action_result.data.\*.attributes.results.Varist.engine_update | string | | |
+action_result.data.\*.attributes.results.Varist.method | string | | |
+action_result.data.\*.attributes.results.Varist.result | string | | |
+action_result.data.\*.attributes.results.Varist.vendor | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.category | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.engine_name | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.engine_version | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.engine_update | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.method | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.result | string | | |
+action_result.data.\*.attributes.results.AhnLab_V3.vendor | string | | |
+action_result.data.\*.attributes.results.Acronis.category | string | | |
+action_result.data.\*.attributes.results.Acronis.engine_name | string | | |
+action_result.data.\*.attributes.results.Acronis.engine_version | string | | |
+action_result.data.\*.attributes.results.Acronis.engine_update | string | | |
+action_result.data.\*.attributes.results.Acronis.method | string | | |
+action_result.data.\*.attributes.results.Acronis.result | string | | |
+action_result.data.\*.attributes.results.Acronis.vendor | string | | |
+action_result.data.\*.attributes.results.VBA32.category | string | | |
+action_result.data.\*.attributes.results.VBA32.engine_name | string | | |
+action_result.data.\*.attributes.results.VBA32.engine_version | string | | |
+action_result.data.\*.attributes.results.VBA32.engine_update | string | | |
+action_result.data.\*.attributes.results.VBA32.method | string | | |
+action_result.data.\*.attributes.results.VBA32.result | string | | |
+action_result.data.\*.attributes.results.VBA32.vendor | string | | |
+action_result.data.\*.attributes.results.TACHYON.category | string | | |
+action_result.data.\*.attributes.results.TACHYON.engine_name | string | | |
+action_result.data.\*.attributes.results.TACHYON.engine_version | string | | |
+action_result.data.\*.attributes.results.TACHYON.engine_update | string | | |
+action_result.data.\*.attributes.results.TACHYON.method | string | | |
+action_result.data.\*.attributes.results.TACHYON.result | string | | |
+action_result.data.\*.attributes.results.TACHYON.vendor | string | | |
+action_result.data.\*.attributes.results.Zoner.category | string | | |
+action_result.data.\*.attributes.results.Zoner.engine_name | string | | |
+action_result.data.\*.attributes.results.Zoner.engine_version | string | | |
+action_result.data.\*.attributes.results.Zoner.engine_update | string | | |
+action_result.data.\*.attributes.results.Zoner.method | string | | |
+action_result.data.\*.attributes.results.Zoner.result | string | | |
+action_result.data.\*.attributes.results.Zoner.vendor | string | | |
+action_result.data.\*.attributes.results.Tencent.category | string | | |
+action_result.data.\*.attributes.results.Tencent.engine_name | string | | |
+action_result.data.\*.attributes.results.Tencent.engine_version | string | | |
+action_result.data.\*.attributes.results.Tencent.engine_update | string | | |
+action_result.data.\*.attributes.results.Tencent.method | string | | |
+action_result.data.\*.attributes.results.Tencent.result | string | | |
+action_result.data.\*.attributes.results.Tencent.vendor | string | | |
+action_result.data.\*.attributes.results.Yandex.category | string | | |
+action_result.data.\*.attributes.results.Yandex.engine_name | string | | |
+action_result.data.\*.attributes.results.Yandex.engine_version | string | | |
+action_result.data.\*.attributes.results.Yandex.engine_update | string | | |
+action_result.data.\*.attributes.results.Yandex.method | string | | |
+action_result.data.\*.attributes.results.Yandex.result | string | | |
+action_result.data.\*.attributes.results.Yandex.vendor | string | | |
+action_result.data.\*.attributes.results.TrellixENS.category | string | | |
+action_result.data.\*.attributes.results.TrellixENS.engine_name | string | | |
+action_result.data.\*.attributes.results.TrellixENS.engine_version | string | | |
+action_result.data.\*.attributes.results.TrellixENS.engine_update | string | | |
+action_result.data.\*.attributes.results.TrellixENS.method | string | | |
+action_result.data.\*.attributes.results.TrellixENS.result | string | | |
+action_result.data.\*.attributes.results.TrellixENS.vendor | string | | |
+action_result.data.\*.attributes.results.huorong.category | string | | |
+action_result.data.\*.attributes.results.huorong.engine_name | string | | |
+action_result.data.\*.attributes.results.huorong.engine_version | string | | |
+action_result.data.\*.attributes.results.huorong.engine_update | string | | |
+action_result.data.\*.attributes.results.huorong.method | string | | |
+action_result.data.\*.attributes.results.huorong.result | string | | |
+action_result.data.\*.attributes.results.huorong.vendor | string | | |
+action_result.data.\*.attributes.results.MaxSecure.category | string | | |
+action_result.data.\*.attributes.results.MaxSecure.engine_name | string | | |
+action_result.data.\*.attributes.results.MaxSecure.engine_version | string | | |
+action_result.data.\*.attributes.results.MaxSecure.engine_update | string | | |
+action_result.data.\*.attributes.results.MaxSecure.method | string | | |
+action_result.data.\*.attributes.results.MaxSecure.result | string | | |
+action_result.data.\*.attributes.results.MaxSecure.vendor | string | | |
+action_result.data.\*.attributes.results.Fortinet.category | string | | |
+action_result.data.\*.attributes.results.Fortinet.engine_name | string | | |
+action_result.data.\*.attributes.results.Fortinet.engine_version | string | | |
+action_result.data.\*.attributes.results.Fortinet.engine_update | string | | |
+action_result.data.\*.attributes.results.Fortinet.method | string | | |
+action_result.data.\*.attributes.results.Fortinet.result | string | | |
+action_result.data.\*.attributes.results.Fortinet.vendor | string | | |
+action_result.data.\*.attributes.results.AVG.category | string | | |
+action_result.data.\*.attributes.results.AVG.engine_name | string | | |
+action_result.data.\*.attributes.results.AVG.engine_version | string | | |
+action_result.data.\*.attributes.results.AVG.engine_update | string | | |
+action_result.data.\*.attributes.results.AVG.method | string | | |
+action_result.data.\*.attributes.results.AVG.result | string | | |
+action_result.data.\*.attributes.results.AVG.vendor | string | | |
+action_result.data.\*.attributes.results.Panda.category | string | | |
+action_result.data.\*.attributes.results.Panda.engine_name | string | | |
+action_result.data.\*.attributes.results.Panda.engine_version | string | | |
+action_result.data.\*.attributes.results.Panda.engine_update | string | | |
+action_result.data.\*.attributes.results.Panda.method | string | | |
+action_result.data.\*.attributes.results.Panda.result | string | | |
+action_result.data.\*.attributes.results.Panda.vendor | string | | |
+action_result.data.\*.attributes.results.alibabacloud.category | string | | |
+action_result.data.\*.attributes.results.alibabacloud.engine_name | string | | |
+action_result.data.\*.attributes.results.alibabacloud.engine_version | string | | |
+action_result.data.\*.attributes.results.alibabacloud.engine_update | string | | |
+action_result.data.\*.attributes.results.alibabacloud.method | string | | |
+action_result.data.\*.attributes.results.alibabacloud.result | string | | |
+action_result.data.\*.attributes.results.alibabacloud.vendor | string | | |
+action_result.data.\*.attributes.results.VirIT.category | string | | |
+action_result.data.\*.attributes.results.VirIT.engine_name | string | | |
+action_result.data.\*.attributes.results.VirIT.engine_version | string | | |
+action_result.data.\*.attributes.results.VirIT.engine_update | string | | |
+action_result.data.\*.attributes.results.VirIT.method | string | | |
+action_result.data.\*.attributes.results.VirIT.result | string | | |
+action_result.data.\*.attributes.results.VirIT.vendor | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.category | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.engine_name | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.engine_version | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.engine_update | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.method | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.result | string | | |
+action_result.data.\*.attributes.results.CAT_QuickHeal.vendor | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.category | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.engine_name | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.engine_version | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.engine_update | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.method | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.result | string | | |
+action_result.data.\*.attributes.results.Avast_Mobile.vendor | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.category | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.engine_name | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.engine_version | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.engine_update | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.method | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.result | string | | |
+action_result.data.\*.attributes.results.SymantecMobileInsight.vendor | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.category | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.engine_name | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.engine_version | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.engine_update | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.method | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.result | string | | |
+action_result.data.\*.attributes.results.BitDefenderFalx.vendor | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.category | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.engine_name | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.engine_version | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.engine_update | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.method | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.result | string | | |
+action_result.data.\*.attributes.results.DeepInstinct.vendor | string | | |
+action_result.data.\*.attributes.results.Elastic.category | string | | |
+action_result.data.\*.attributes.results.Elastic.engine_name | string | | |
+action_result.data.\*.attributes.results.Elastic.engine_version | string | | |
+action_result.data.\*.attributes.results.Elastic.engine_update | string | | |
+action_result.data.\*.attributes.results.Elastic.method | string | | |
+action_result.data.\*.attributes.results.Elastic.result | string | | |
+action_result.data.\*.attributes.results.Elastic.vendor | string | | |
+action_result.data.\*.attributes.results.APEX.category | string | | |
+action_result.data.\*.attributes.results.APEX.engine_name | string | | |
+action_result.data.\*.attributes.results.APEX.engine_version | string | | |
+action_result.data.\*.attributes.results.APEX.engine_update | string | | |
+action_result.data.\*.attributes.results.APEX.method | string | | |
+action_result.data.\*.attributes.results.APEX.result | string | | |
+action_result.data.\*.attributes.results.APEX.vendor | string | | |
+action_result.data.\*.attributes.results.Paloalto.category | string | | |
+action_result.data.\*.attributes.results.Paloalto.engine_name | string | | |
+action_result.data.\*.attributes.results.Paloalto.engine_version | string | | |
+action_result.data.\*.attributes.results.Paloalto.engine_update | string | | |
+action_result.data.\*.attributes.results.Paloalto.method | string | | |
+action_result.data.\*.attributes.results.Paloalto.result | string | | |
+action_result.data.\*.attributes.results.Paloalto.vendor | string | | |
+action_result.data.\*.attributes.results.Trapmine.category | string | | |
+action_result.data.\*.attributes.results.Trapmine.engine_name | string | | |
+action_result.data.\*.attributes.results.Trapmine.engine_version | string | | |
+action_result.data.\*.attributes.results.Trapmine.engine_update | string | | |
+action_result.data.\*.attributes.results.Trapmine.method | string | | |
+action_result.data.\*.attributes.results.Trapmine.result | string | | |
+action_result.data.\*.attributes.results.Trapmine.vendor | string | | |
+action_result.data.\*.attributes.results.Alibaba.category | string | | |
+action_result.data.\*.attributes.results.Alibaba.engine_name | string | | |
+action_result.data.\*.attributes.results.Alibaba.engine_version | string | | |
+action_result.data.\*.attributes.results.Alibaba.engine_update | string | | |
+action_result.data.\*.attributes.results.Alibaba.method | string | | |
+action_result.data.\*.attributes.results.Alibaba.result | string | | |
+action_result.data.\*.attributes.results.Alibaba.vendor | string | | |
+action_result.data.\*.attributes.results.Webroot.category | string | | |
+action_result.data.\*.attributes.results.Webroot.engine_name | string | | |
+action_result.data.\*.attributes.results.Webroot.engine_version | string | | |
+action_result.data.\*.attributes.results.Webroot.engine_update | string | | |
+action_result.data.\*.attributes.results.Webroot.method | string | | |
+action_result.data.\*.attributes.results.Webroot.result | string | | |
+action_result.data.\*.attributes.results.Webroot.vendor | string | | |
+action_result.data.\*.attributes.results.Cylance.category | string | | |
+action_result.data.\*.attributes.results.Cylance.engine_name | string | | |
+action_result.data.\*.attributes.results.Cylance.engine_version | string | | |
+action_result.data.\*.attributes.results.Cylance.engine_update | string | | |
+action_result.data.\*.attributes.results.Cylance.method | string | | |
+action_result.data.\*.attributes.results.Cylance.result | string | | |
+action_result.data.\*.attributes.results.Cylance.vendor | string | | |
+action_result.data.\*.attributes.results.SentinelOne.category | string | | |
+action_result.data.\*.attributes.results.SentinelOne.engine_name | string | | |
+action_result.data.\*.attributes.results.SentinelOne.engine_version | string | | |
+action_result.data.\*.attributes.results.SentinelOne.engine_update | string | | |
+action_result.data.\*.attributes.results.SentinelOne.method | string | | |
+action_result.data.\*.attributes.results.SentinelOne.result | string | | |
+action_result.data.\*.attributes.results.SentinelOne.vendor | string | | |
+action_result.data.\*.attributes.results.tehtris.category | string | | |
+action_result.data.\*.attributes.results.tehtris.engine_name | string | | |
+action_result.data.\*.attributes.results.tehtris.engine_version | string | | |
+action_result.data.\*.attributes.results.tehtris.engine_update | string | | |
+action_result.data.\*.attributes.results.tehtris.method | string | | |
+action_result.data.\*.attributes.results.tehtris.result | string | | |
+action_result.data.\*.attributes.results.tehtris.vendor | string | | |
+action_result.data.\*.attributes.results.Trustlook.category | string | | |
+action_result.data.\*.attributes.results.Trustlook.engine_name | string | | |
+action_result.data.\*.attributes.results.Trustlook.engine_version | string | | |
+action_result.data.\*.attributes.results.Trustlook.engine_update | string | | |
+action_result.data.\*.attributes.results.Trustlook.method | string | | |
+action_result.data.\*.attributes.results.Trustlook.result | string | | |
+action_result.data.\*.attributes.results.Trustlook.vendor | string | | |
+action_result.data.\*.attributes.results.OpenPhish.category | string | | |
+action_result.data.\*.attributes.results.OpenPhish.engine_name | string | | |
+action_result.data.\*.attributes.results.OpenPhish.engine_version | string | | |
+action_result.data.\*.attributes.results.OpenPhish.engine_update | string | | |
+action_result.data.\*.attributes.results.OpenPhish.method | string | | |
+action_result.data.\*.attributes.results.OpenPhish.result | string | | |
+action_result.data.\*.attributes.results.OpenPhish.vendor | string | | |
+action_result.data.\*.attributes.results.Nucleon.category | string | | |
+action_result.data.\*.attributes.results.Nucleon.engine_name | string | | |
+action_result.data.\*.attributes.results.Nucleon.engine_version | string | | |
+action_result.data.\*.attributes.results.Nucleon.engine_update | string | | |
+action_result.data.\*.attributes.results.Nucleon.method | string | | |
+action_result.data.\*.attributes.results.Nucleon.result | string | | |
+action_result.data.\*.attributes.results.Nucleon.vendor | string | | |
+action_result.data.\*.attributes.stats.malicious | numeric | | |
+action_result.data.\*.attributes.stats.suspicious | numeric | | |
+action_result.data.\*.attributes.stats.undetected | numeric | | |
+action_result.data.\*.attributes.stats.harmless | numeric | | |
+action_result.data.\*.attributes.stats.timeout | numeric | | |
+action_result.data.\*.attributes.stats.confirmed_timeout | numeric | | |
+action_result.data.\*.attributes.stats.failure | numeric | | |
+action_result.data.\*.attributes.stats.type_unsupported | numeric | | |
+action_result.data.\*.attributes.status | string | | completed |
+action_result.data.\*.id | string | `virustotal scan id` | MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw== |
+action_result.data.\*.links.item | string | | https://www.virustotal.com/api/v3/files/917c72a2684d1573ea363b2f91e3aedcef1996fc34668ba9d369ad9123d1380f |
+action_result.data.\*.links.self | string | | https://www.virustotal.com/api/v3/analyses/ZDhhNjY5NmU2NDJlYzUyMDUwMmEwNWE0YWRkOGMxNzk6MTY3ODY4OTQ5Mg== |
+action_result.data.\*.type | string | | |
+action_result.data.\*.meta.file_info.md5 | string | `md5` | 299999999992c49c91a0206ee7a8c00e659 |
+action_result.data.\*.meta.file_info.name | string | | update_cr.py |
+action_result.data.\*.meta.file_info.sha1 | string | `sha1` | 9999999999142292710254cde97df84e46dfe33a |
+action_result.data.\*.meta.file_info.sha256 | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.file_info.size | numeric | | 6285 |
+action_result.data.\*.meta.url_info.id | string | `sha256` | e87051ea8e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe |
+action_result.data.\*.meta.url_info.url | string | | https://www.virustotal.com/api/v3/domains/test.com |
+action_result.summary.scan_id | string | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.timeout | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -2127,17 +4128,17 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.data.\*.date_added | string | | |
-action_result.data.\*.date_expires | string | | |
-action_result.data.\*.key | string | | |
-action_result.data.\*.seconds_left | numeric | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.data.\*.entries.\*.key | string | | |
+action_result.data.\*.entries.\*.date_added | string | | |
+action_result.data.\*.entries.\*.date_expires | string | | |
+action_result.data.\*.entries.\*.seconds_left | numeric | | |
 action_result.summary.count | numeric | | |
 action_result.summary.expiration_interval | numeric | | |
-action_result.summary.max_cache_length | numeric | | 1000 |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.max_cache_length | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'clear cache'
 
@@ -2154,13 +4155,11 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.data.\*.status | string | | success |
-action_result.data.status | string | | |
-action_result.summary.status | string | | |
+action_result.status | string | | success failure |
 action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.data.\*.status | string | | success |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'get quotas'
 
@@ -2179,56 +4178,56 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.user_id | string | | vt_user |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.user_id | string | | |
 action_result.data.\*.api_requests_daily.group.allowed | numeric | | 500 |
 action_result.data.\*.api_requests_daily.group.inherited_from | string | | vt_group |
 action_result.data.\*.api_requests_daily.group.used | numeric | | 2 |
 action_result.data.\*.api_requests_daily.user.allowed | numeric | | 500 |
 action_result.data.\*.api_requests_daily.user.used | numeric | | 2 |
-action_result.data.\*.api_requests_hourly.group.allowed | numeric | | 240 |
+action_result.data.\*.api_requests_hourly.group.allowed | numeric | | 500 |
 action_result.data.\*.api_requests_hourly.group.inherited_from | string | | vt_group |
-action_result.data.\*.api_requests_hourly.group.used | numeric | | 0 |
-action_result.data.\*.api_requests_hourly.user.allowed | numeric | | 240 |
-action_result.data.\*.api_requests_hourly.user.used | numeric | | 0 |
-action_result.data.\*.api_requests_monthly.group.allowed | numeric | | 0 |
-action_result.data.\*.api_requests_monthly.group.inherited_from | string | | testuser |
-action_result.data.\*.api_requests_monthly.group.used | numeric | | 0 |
-action_result.data.\*.api_requests_monthly.user.allowed | numeric | | 1000000000 |
-action_result.data.\*.api_requests_monthly.user.used | numeric | | 5 |
-action_result.data.\*.collections_creation_monthly.user.allowed | numeric | | 20 |
-action_result.data.\*.collections_creation_monthly.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_downloads_monthly.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_downloads_monthly.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_graphs_private.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_graphs_private.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_hunting_rules.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_hunting_rules.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_searches_monthly.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_searches_monthly.user.used | numeric | | 0 |
-action_result.data.\*.intelligence_vtdiff_creation_monthly.user.allowed | numeric | | 0 |
-action_result.data.\*.intelligence_vtdiff_creation_monthly.user.used | numeric | | 0 |
-action_result.data.\*.monitor_storage_bytes.user.allowed | numeric | | 0 |
-action_result.data.\*.monitor_storage_bytes.user.used | numeric | | 0 |
-action_result.data.\*.monitor_storage_files.user.allowed | numeric | | 0 |
-action_result.data.\*.monitor_storage_files.user.used | numeric | | 0 |
-action_result.data.\*.monitor_uploaded_bytes.user.allowed | numeric | | 0 |
-action_result.data.\*.monitor_uploaded_bytes.user.used | numeric | | 0 |
-action_result.data.\*.monitor_uploaded_files.user.allowed | numeric | | 0 |
-action_result.data.\*.monitor_uploaded_files.user.used | numeric | | 0 |
-action_result.data.\*.private_scans_monthly.user.allowed | numeric | | 0 |
-action_result.data.\*.private_scans_monthly.user.used | numeric | | 0 |
-action_result.data.\*.private_scans_per_minute.user.allowed | numeric | | 0 |
-action_result.data.\*.private_scans_per_minute.user.used | numeric | | 0 |
-action_result.summary.group_daily_api_ratio | numeric | | 0 |
-action_result.summary.group_hourly_api_ratio | numeric | | 0 |
-action_result.summary.group_monthly_api_ratio | numeric | | 0 |
-action_result.summary.user_daily_api_ratio | numeric | | 0 |
-action_result.summary.user_hourly_api_ratio | numeric | | 0 |
-action_result.summary.user_monthly_api_ratio | numeric | | 0 |
-action_result.message | string | | User hourly api ratio: 0, User daily api ratio: 0, User monthly api ratio: 0, |
+action_result.data.\*.api_requests_hourly.group.used | numeric | | 2 |
+action_result.data.\*.api_requests_hourly.user.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_hourly.user.used | numeric | | 2 |
+action_result.data.\*.api_requests_monthly.group.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_monthly.group.inherited_from | string | | vt_group |
+action_result.data.\*.api_requests_monthly.group.used | numeric | | 2 |
+action_result.data.\*.api_requests_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.api_requests_monthly.user.used | numeric | | 2 |
+action_result.data.\*.collections_creation_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.collections_creation_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_downloads_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_downloads_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_graphs_private.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_graphs_private.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_hunting_rules.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_hunting_rules.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_retrohunt_jobs_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_searches_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_searches_monthly.user.used | numeric | | 2 |
+action_result.data.\*.intelligence_vtdiff_creation_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.intelligence_vtdiff_creation_monthly.user.used | numeric | | 2 |
+action_result.data.\*.monitor_storage_bytes.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_storage_bytes.user.used | numeric | | 2 |
+action_result.data.\*.monitor_storage_files.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_storage_files.user.used | numeric | | 2 |
+action_result.data.\*.monitor_uploaded_bytes.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_uploaded_bytes.user.used | numeric | | 2 |
+action_result.data.\*.monitor_uploaded_files.user.allowed | numeric | | 500 |
+action_result.data.\*.monitor_uploaded_files.user.used | numeric | | 2 |
+action_result.data.\*.private_scans_monthly.user.allowed | numeric | | 500 |
+action_result.data.\*.private_scans_monthly.user.used | numeric | | 2 |
+action_result.data.\*.private_scans_per_minute.user.allowed | numeric | | 500 |
+action_result.data.\*.private_scans_per_minute.user.used | numeric | | 2 |
+action_result.summary.user_hourly_api_ratio | numeric | | |
+action_result.summary.group_hourly_api_ratio | numeric | | |
+action_result.summary.user_daily_api_ratio | numeric | | |
+action_result.summary.group_daily_api_ratio | numeric | | |
+action_result.summary.user_monthly_api_ratio | numeric | | |
+action_result.summary.group_monthly_api_ratio | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
