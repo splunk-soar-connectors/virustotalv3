@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -430,7 +430,7 @@ def http_action(
 ) -> CustomMakeRequestOutput:
     client = asset.get_client()
 
-    if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
+    if params.endpoint.startswith("https://") or params.endpoint.startswith("http://"):
         raise ActionFailure(
             f"Invalid endpoint: {params.endpoint}. Please do not include the base url in the endpoint. The base url is already included in the asset."
         )
