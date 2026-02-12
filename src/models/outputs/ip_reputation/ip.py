@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,14 +26,14 @@ class IPAttributes(ActionOutput):
     country: Optional[str] = OutputField(column_name="Country")
     continent: Optional[str] = OutputField(column_name="Continent")
     jarm: Optional[str]
-    last_analysis_date: int = OutputField(cef_types=["timestamp"])
-    last_analysis_results: IPAnalysisResults
-    last_analysis_stats: IPAnalysisStats
+    last_analysis_date: Optional[int] = OutputField(cef_types=["timestamp"])
+    last_analysis_results: Optional[IPAnalysisResults]
+    last_analysis_stats: Optional[IPAnalysisStats]
     last_https_certificate: Optional[HTTPSCertificate]
     last_https_certificate_date: Optional[int] = OutputField(cef_types=["timestamp"])
-    last_modification_date: int = OutputField(cef_types=["timestamp"])
-    reputation: int
-    total_votes: TotalVotes
+    last_modification_date: Optional[int] = OutputField(cef_types=["timestamp"])
+    reputation: Optional[int]
+    total_votes: Optional[TotalVotes]
     whois: Optional[str]
     whois_date: Optional[int] = OutputField(cef_types=["timestamp"])
-    tags: list[str]
+    tags: Optional[list[str]]

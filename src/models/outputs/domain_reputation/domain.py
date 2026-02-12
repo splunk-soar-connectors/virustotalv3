@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Splunk Inc.
+# Copyright (c) 2025-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,15 +59,15 @@ class DomainAttributes(ActionOutput):
     creation_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635130]
     )
-    last_analysis_results: DomainAnalysisResults
-    total_votes: TotalVotes
+    last_analysis_results: Optional[DomainAnalysisResults]
+    total_votes: Optional[TotalVotes]
     whois_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635130]
     )
     expiration_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635130]
     )
-    last_modification_date: int = OutputField(
+    last_modification_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635210]
     )
     whois: Optional[str] = OutputField(
@@ -75,19 +75,19 @@ class DomainAttributes(ActionOutput):
             "Test data Domain Name: TEST.COM Registry Domain ID: 9999999999_DOMAIN_COM-VRSN Registrar WHOIS Server: whois.test.com Registrar URL: http://www.test.com Updated Date: 2021-02-17T07:07:07Z Creation Date: 2021-02-17T07:07:07Z Registry Expiry Date: 2022-02-17T07:07:07Z Registrar: Test Registrar, Inc. Registrar IANA ID: 9999 Registrar Abuse Contact Email:"
         ]
     )
-    reputation: int
-    last_dns_records: list[DNSRecord]
+    reputation: Optional[int]
+    last_dns_records: Optional[list[DNSRecord]]
     last_https_certificate: Optional[HTTPSCertificate]
-    tld: str = OutputField(example_values=["com"])
+    tld: Optional[str] = OutputField(example_values=["com"])
     last_https_certificate_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635210]
     )
-    last_analysis_stats: DomainAnalysisStats
+    last_analysis_stats: Optional[DomainAnalysisStats]
     registrar: Optional[str]
-    categories: DomainCategories
-    popularity_ranks: PopularityRanks
+    categories: Optional[DomainCategories]
+    popularity_ranks: Optional[PopularityRanks]
     last_update_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1613635210]
     )
     rdap: Optional[RDAP]
-    tags: list[str]
+    tags: Optional[list[str]]
