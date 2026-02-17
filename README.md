@@ -1459,6 +1459,10 @@ action_result.data.\*.attributes.popular_threat_classification.popular_threat_ca
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | |
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | |
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 

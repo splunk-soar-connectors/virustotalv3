@@ -223,7 +223,9 @@ def _check_rate_limit(asset, count=1) -> None:
     logger.debug("Rate limit check complete.")
 
 
-def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
+def _make_request(
+    asset: Asset, method: str, endpoint: str, raise_for_status: bool = True, **kwargs
+) -> dict:
     if endpoint.startswith(("http://", "https://")):
         client = httpx.Client(
             timeout=asset.timeout,
@@ -255,7 +257,8 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
     # Check rate limit before making request
     _check_rate_limit(asset)
     response = client.request(method, endpoint, **kwargs)
-    response.raise_for_status()
+    if raise_for_status:
+        response.raise_for_status()
     if asset.rate_limit:
         app.actions_manager.asset_cache["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
@@ -359,11 +362,14 @@ def domain_reputation(
     if params.domain.startswith("http") or params.domain.startswith("https"):
         logger.info(f"Domain {params.domain} is a URL, converting to domain")
         params.domain = params.domain.split("//")[1].split("/")[0]
-    resp_json = _make_request(asset, "GET", f"domains/{params.domain}")
+    resp_json = _make_request(
+        asset, "GET", f"domains/{params.domain}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for domain {params.domain}")
+        soar.set_message(f"No data found for domain {params.domain}")
+        return ActionOutput()
 
     source = resp_json.get("results-source", "new from virustotal")
     sanitized_data = sanitize_key_names(data)
@@ -529,18 +535,21 @@ class FileReputationSummary(ActionOutput):
     description="Queries VirusTotal for file reputation info",
     action_type="investigate",
     render_as="table",
+    summary_type=FileReputationSummary,
 )
 def file_reputation(
     params: FileReputationParams,
     soar: SOARClient,
     asset: Asset,
-    summary_type=FileReputationSummary,
 ) -> FileReputationOutput:
-    resp_json = _make_request(asset, "GET", f"files/{params.hash}")
+    resp_json = _make_request(
+        asset, "GET", f"files/{params.hash}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for file {params.hash}")
+        soar.set_message(f"No data found for file {params.hash}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
@@ -625,11 +634,14 @@ class IpReputationSummary(ActionOutput):
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
-    resp_json = _make_request(asset, "GET", f"ip_addresses/{params.ip}")
+    resp_json = _make_request(
+        asset, "GET", f"ip_addresses/{params.ip}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for IP {params.ip}")
+        soar.set_message(f"No data found for IP {params.ip}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
@@ -688,11 +700,12 @@ def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
 ) -> UrlReputationOutput:
     url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
-    resp_json = _make_request(asset, "GET", f"urls/{url_id}")
+    resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for URL {params.url}")
+        soar.set_message(f"No data found for URL {params.url}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     attributes = sanitized_data.get("attributes", {})
