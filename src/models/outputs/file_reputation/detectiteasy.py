@@ -17,11 +17,11 @@ from typing import Optional
 
 class DetectItEasyValue(ActionOutput):
     info: Optional[str]
-    name: str
+    name: Optional[str]
     type: Optional[str]
     version: Optional[str]
 
 
 class DetectItEasyResult(ActionOutput):
-    filetype: str
-    values: list[DetectItEasyValue]
+    filetype: Optional[str]
+    values: Optional[list[DetectItEasyValue]]

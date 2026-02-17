@@ -1,2 +1,3 @@
 **Unreleased**
 * fix: don't raise an exception when no data is available for an observable [SOARHELP-6242]
+* fix: make all output fields optional in case VirusTotal doesn't return everything [SOARHELP-6242]

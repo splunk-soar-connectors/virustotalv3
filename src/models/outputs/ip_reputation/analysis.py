@@ -16,18 +16,18 @@ from soar_sdk.action_results import ActionOutput, OutputField
 
 
 class IPAnalysisResult(ActionOutput):
-    engine_name: str
-    category: str
-    method: str
-    result: str
+    engine_name: Optional[str]
+    category: Optional[str]
+    method: Optional[str]
+    result: Optional[str]
 
 
 class IPAnalysisStats(ActionOutput):
-    harmless: int
-    malicious: int
-    suspicious: int
-    timeout: int
-    undetected: int
+    harmless: Optional[int]
+    malicious: Optional[int]
+    suspicious: Optional[int]
+    timeout: Optional[int]
+    undetected: Optional[int]
 
 
 class IPAnalysisResults(ActionOutput):

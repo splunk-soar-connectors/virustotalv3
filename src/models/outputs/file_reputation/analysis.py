@@ -16,22 +16,22 @@ from soar_sdk.action_results import ActionOutput
 
 
 class FileAnalysisStats(ActionOutput):
-    malicious: int
-    suspicious: int
-    undetected: int
-    harmless: int
-    timeout: int
+    malicious: Optional[int]
+    suspicious: Optional[int]
+    undetected: Optional[int]
+    harmless: Optional[int]
+    timeout: Optional[int]
     confirmed_timeout: Optional[int]
     failure: Optional[int]
     type_unsupported: Optional[int]
 
 
 class FileAnalysisResult(ActionOutput):
-    category: str
-    engine_name: str
+    category: Optional[str]
+    engine_name: Optional[str]
     engine_version: Optional[str]
     engine_update: Optional[str]
-    method: str
+    method: Optional[str]
     result: Optional[str]  # Can be null
     vendor: Optional[str]
 

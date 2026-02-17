@@ -16,8 +16,10 @@ from typing import Optional
 
 
 class PopularityRank(ActionOutput):
-    rank: int
-    timestamp: int = OutputField(cef_types=["timestamp"], example_values=[1613635210])
+    rank: Optional[int]
+    timestamp: Optional[int] = OutputField(
+        cef_types=["timestamp"], example_values=[1613635210]
+    )
 
 
 class PopularityRanks(ActionOutput):
