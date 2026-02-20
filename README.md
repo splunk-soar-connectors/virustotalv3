@@ -4,7 +4,7 @@ Publisher: Splunk <br>
 Connector Version: 2.0.7 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
-Minimum Product Version: 6.4.0
+Minimum Product Version: 7.0.0
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
 
@@ -1976,8 +1976,8 @@ action_result.data.\*.attributes.categories.Sophos | string | | |
 action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
 action_result.data.\*.attributes.favicon.dhash | string | | |
 action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
-action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
@@ -1992,8 +1992,8 @@ action_result.data.\*.attributes.last_final_url | string | | |
 action_result.data.\*.attributes.last_http_response_code | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
-action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.outgoing_links.\* | string | | |
 action_result.data.\*.attributes.redirection_chain.\* | string | | |
 action_result.data.\*.attributes.reputation | numeric | | |
@@ -2047,8 +2047,8 @@ action_result.data.\*.attributes.categories.Sophos | string | | |
 action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
 action_result.data.\*.attributes.favicon.dhash | string | | |
 action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
-action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
@@ -2063,8 +2063,8 @@ action_result.data.\*.attributes.last_final_url | string | | |
 action_result.data.\*.attributes.last_http_response_code | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
-action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.outgoing_links.\* | string | | |
 action_result.data.\*.attributes.redirection_chain.\* | string | | |
 action_result.data.\*.attributes.reputation | numeric | | |

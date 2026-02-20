@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from typing import Optional
 
 from models.outputs.url_reputation.analysis import URLAnalysisStats, URLAnalysisResult
@@ -31,19 +31,19 @@ class Favicon(ActionOutput):
     raw_md5: str = OutputField(cef_types=["md5"])
 
 
-class URLAttributes(ActionOutput):
+class URLAttributes(PermissiveActionOutput):
     categories: Optional[URLCategories]
     favicon: Optional[Favicon]
-    first_submission_date: str = OutputField(cef_types=["timestamp"])
-    last_analysis_date: str = OutputField(cef_types=["timestamp"])
+    first_submission_date: int = OutputField(cef_types=["timestamp"])
+    last_analysis_date: int = OutputField(cef_types=["timestamp"])
     last_analysis_results: list[URLAnalysisResult]
     last_analysis_stats: URLAnalysisStats
     last_final_url: Optional[str]
     last_http_response_code: Optional[int]
     last_http_response_content_length: Optional[int]
     last_http_response_content_sha256: Optional[str] = OutputField(cef_types=["sha256"])
-    last_modification_date: str = OutputField(cef_types=["timestamp"])
-    last_submission_date: str = OutputField(cef_types=["timestamp"])
+    last_modification_date: int = OutputField(cef_types=["timestamp"])
+    last_submission_date: int = OutputField(cef_types=["timestamp"])
     outgoing_links: Optional[list[str]]
     redirection_chain: Optional[list[str]]
     reputation: int

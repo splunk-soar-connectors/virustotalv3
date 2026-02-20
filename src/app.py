@@ -193,7 +193,7 @@ def _check_rate_limit(asset, count=1) -> None:
         raise ActionFailure("Rate limit reached. Please try again later.")
 
     current_time = time.time()
-    timestamps = app.actions_manager.asset_cache.get("rate_limit_timestamps", [])
+    timestamps = asset.cache_state.get("rate_limit_timestamps", [])
 
     # Convert all timestamps to float and remove timestamps older than 60 seconds
     recent_timestamps = []
@@ -205,7 +205,7 @@ def _check_rate_limit(asset, count=1) -> None:
         except (ValueError, TypeError):
             logger.debug(f"Skipping invalid timestamp: {ts}")
             continue
-    app.actions_manager.asset_cache["rate_limit_timestamps"] = recent_timestamps
+    asset.cache_state["rate_limit_timestamps"] = recent_timestamps
 
     # If we have 4 or more recent requests, wait until we can make another
     if len(recent_timestamps) >= 4:
@@ -238,7 +238,7 @@ def _make_request(
         client = asset.get_client()
 
     if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
-        saved_cache = app.actions_manager.asset_cache.get("vt_cache")
+        saved_cache = asset.cache_state.get("vt_cache")
         datacache = DataCache(
             asset.cache_expiration_interval, asset.cache_size, saved_cache
         )
@@ -260,7 +260,7 @@ def _make_request(
     if raise_for_status:
         response.raise_for_status()
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -268,7 +268,7 @@ def _make_request(
     if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
-        app.actions_manager.asset_cache["vt_cache"] = datacache.cache
+        asset.cache_state["vt_cache"] = datacache.cache
 
     return resp_json
 
@@ -498,7 +498,7 @@ def http_action(
     response = client.request(**request_kwargs)
     response.raise_for_status()
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -585,7 +585,7 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
     _check_rate_limit(asset)
     response = client.get(f"files/{params.hash}/download")
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -1049,7 +1049,7 @@ class GetCachedEnteriesSummary(ActionOutput):
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
 ) -> GetCachedEntriesOutput:
-    saved_cache = app.actions_manager.asset_cache.get("vt_cache", {})
+    saved_cache = asset.cache_state.get("vt_cache", {})
 
     datacache = DataCache(
         asset.cache_expiration_interval, asset.cache_size, saved_cache
@@ -1095,8 +1095,8 @@ class ClearCacheOutput(ActionOutput):
     render_as="json",
 )
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
-    if "vt_cache" in app.actions_manager.asset_cache:
-        app.actions_manager.asset_cache["vt_cache"] = {}
+    if "vt_cache" in asset.cache_state:
+        asset.cache_state["vt_cache"] = {}
     soar.set_message("cache cleared")
     return ClearCacheOutput(status="success")
 
