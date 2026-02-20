@@ -11,29 +11,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Optional
 from soar_sdk.action_results import ActionOutput
 
 
 class PDFInfo(ActionOutput):
-    acroform: int
-    autoaction: int
-    embedded_file: int
-    encrypted: int
-    flash: int
-    header: str
-    javascript: int
-    jbig2_compression: int
-    js: int
-    num_endobj: int
-    num_endstream: int
-    num_launch_actions: int
-    num_obj: int
-    num_object_streams: int
-    num_pages: int
-    num_stream: int
-    openaction: int
-    startxref: int
-    suspicious_colors: int
-    trailer: int
-    xfa: int
-    xref: int
+    acroform: Optional[int]
+    autoaction: Optional[int]
+    embedded_file: Optional[int]
+    encrypted: Optional[int]
+    flash: Optional[int]
+    header: Optional[str]
+    javascript: Optional[int]
+    jbig2_compression: Optional[int]
+    js: Optional[int]
+    num_endobj: Optional[int]
+    num_endstream: Optional[int]
+    num_launch_actions: Optional[int]
+    num_obj: Optional[int]
+    num_object_streams: Optional[int]
+    num_pages: Optional[int]
+    num_stream: Optional[int]
+    openaction: Optional[int]
+    startxref: Optional[int]
+    suspicious_colors: Optional[int]
+    trailer: Optional[int]
+    xfa: Optional[int]
+    xref: Optional[int]

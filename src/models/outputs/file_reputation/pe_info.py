@@ -16,82 +16,82 @@ from soar_sdk.action_results import ActionOutput, OutputField
 
 
 class PEDebugCodeView(ActionOutput):
-    age: int
+    age: Optional[int]
     guid: Optional[str]
-    name: str
+    name: Optional[str]
     offset: Optional[int]
-    signature: str
+    signature: Optional[str]
     timestamp: Optional[str]
 
 
 class PEFPO(ActionOutput):
-    functions: int
+    functions: Optional[int]
 
 
 class PEMisc(ActionOutput):
-    datatype: int
-    length: int
-    is_unicode: int = OutputField(alias="unicode")
-    data: str
-    reserved: str
+    datatype: Optional[int]
+    length: Optional[int]
+    is_unicode: Optional[int] = OutputField(alias="unicode")
+    data: Optional[str]
+    reserved: Optional[str]
 
 
 class PEReserved10(ActionOutput):
-    value: str
+    value: Optional[str]
 
 
 class PEDebugEntry(ActionOutput):
     codeview: Optional[PEDebugCodeView]
     fpo: Optional[PEFPO]
     misc: Optional[PEMisc]
-    offset: int
+    offset: Optional[int]
     reserved10: Optional[PEReserved10]
-    size: int
-    timestamp: str
-    type: int
-    type_str: str
+    size: Optional[int]
+    timestamp: Optional[str]
+    type: Optional[int]
+    type_str: Optional[str]
 
 
 class PEImportEntry(ActionOutput):
-    imported_functions: list[str]
-    library_name: str
+    imported_functions: Optional[list[str]]
+    library_name: Optional[str]
 
 
 class PEOverlay(ActionOutput):
-    chi2: float
-    entropy: float
+    chi2: Optional[float]
+    entropy: Optional[float]
     filetype: Optional[str]
-    md5: str = OutputField(cef_types=["md5"])
-    offset: int
-    size: int
+    md5: Optional[str] = OutputField(cef_types=["md5"])
+    offset: Optional[int]
+    size: Optional[int]
 
 
 class PEResourceDetail(ActionOutput):
-    chi2: float
-    entropy: float
+    chi2: Optional[float]
+    entropy: Optional[float]
     filetype: Optional[str]
-    lang: str
-    sha256: str = OutputField(cef_types=["sha256"])
-    type: str
+    lang: Optional[str]
+    sha256: Optional[str] = OutputField(cef_types=["sha256"])
+    type: Optional[str]
 
 
 class PESection(ActionOutput):
-    entropy: float
-    md5: str = OutputField(cef_types=["md5"])
-    name: str
-    raw_size: int
-    virtual_address: int
-    virtual_size: int
+    entropy: Optional[float]
+    md5: Optional[str] = OutputField(cef_types=["md5"])
+    name: Optional[str]
+    raw_size: Optional[int]
+    virtual_address: Optional[int]
+    virtual_size: Optional[int]
 
 
 class PEInfo(ActionOutput):
     debug: Optional[list[PEDebugEntry]]
-    entry_point: int
+    entry_point: Optional[int]
     exports: Optional[list[str]]
-    imphash: str
-    import_list: list[PEImportEntry]
-    machine_type: str
+    imphash: Optional[str]
+    import_list: Optional[list[PEImportEntry]]
+    machine_type: Optional[str]
     overlay: Optional[PEOverlay]
     resource_details: Optional[list[PEResourceDetail]]
-    sections: list[PESection]
-    timestamp: int = OutputField(cef_types=["timestamp"])
+    sections: Optional[list[PESection]]
+    timestamp: Optional[int] = OutputField(cef_types=["timestamp"])

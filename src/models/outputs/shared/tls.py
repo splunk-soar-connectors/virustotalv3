@@ -16,17 +16,17 @@ from typing import Optional
 
 
 class CertificateSignature(ActionOutput):
-    signature: str
-    signature_algorithm: str
+    signature: Optional[str]
+    signature_algorithm: Optional[str]
 
 
 class CAKeyIdentifier(ActionOutput):
-    keyid: str
+    keyid: Optional[str]
 
 
 class CAInformationAccess(ActionOutput):
-    CA_Issuers: str = OutputField(cef_types=["url"])
-    OCSP: str = OutputField(cef_types=["url"])
+    CA_Issuers: Optional[str] = OutputField(cef_types=["url"])
+    OCSP: Optional[str] = OutputField(cef_types=["url"])
 
 
 class CertificateExtensions(ActionOutput):
@@ -45,18 +45,18 @@ class CertificateExtensions(ActionOutput):
 
 
 class CertificateValidity(ActionOutput):
-    not_before: str = OutputField(cef_types=["date"])
-    not_after: str = OutputField(cef_types=["date"])
+    not_before: Optional[str] = OutputField(cef_types=["date"])
+    not_after: Optional[str] = OutputField(cef_types=["date"])
 
 
 class RSAParameters(ActionOutput):
-    exponent: str
-    key_size: int
-    modulus: str
+    exponent: Optional[str]
+    key_size: Optional[int]
+    modulus: Optional[str]
 
 
 class CertificatePublicKey(ActionOutput):
-    algorithm: str
+    algorithm: Optional[str]
     rsa: Optional[RSAParameters]
 
 

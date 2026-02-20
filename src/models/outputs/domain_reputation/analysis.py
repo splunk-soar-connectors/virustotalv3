@@ -16,10 +16,10 @@ from typing import Optional
 
 
 class DomainAnalysisResult(ActionOutput):
-    category: str = OutputField(example_values=["malicious"])
-    engine_name: str = OutputField(example_values=["CMC"])
-    method: str = OutputField(example_values=["blacklist"])
-    result: str = OutputField(example_values=["Trojan.GenericKD.3275421"])
+    category: Optional[str] = OutputField(example_values=["malicious"])
+    engine_name: Optional[str] = OutputField(example_values=["CMC"])
+    method: Optional[str] = OutputField(example_values=["blacklist"])
+    result: Optional[str] = OutputField(example_values=["Trojan.GenericKD.3275421"])
 
 
 class DomainAnalysisResults(ActionOutput):

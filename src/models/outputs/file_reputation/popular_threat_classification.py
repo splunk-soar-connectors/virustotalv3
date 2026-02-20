@@ -11,15 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Optional
 from soar_sdk.action_results import ActionOutput
 
 
 class PopularThreatCategory(ActionOutput):
-    value: str
-    count: int
+    value: Optional[str]
+    count: Optional[int]
 
 
 class PopularThreatClassification(ActionOutput):
-    suggested_threat_label: str
-    popular_threat_category: list[PopularThreatCategory]
-    popular_threat_name: list[PopularThreatCategory]
+    suggested_threat_label: Optional[str]
+    popular_threat_category: Optional[list[PopularThreatCategory]]
+    popular_threat_name: Optional[list[PopularThreatCategory]]

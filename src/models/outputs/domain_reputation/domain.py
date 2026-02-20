@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Optional
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 
 from models.outputs.shared.rdap import RDAP
 from models.outputs.domain_reputation.popularity import PopularityRanks
@@ -44,7 +44,7 @@ class DomainCategories(ActionOutput):
     Forcepoint_ThreatSeeker: Optional[str]
 
 
-class DomainAttributes(ActionOutput):
+class DomainAttributes(PermissiveActionOutput):
     last_dns_records_date: Optional[int] = OutputField(
         cef_types=["timestamp"], example_values=[1757503155]
     )
