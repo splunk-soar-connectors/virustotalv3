@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Optional
-from soar_sdk.action_results import OutputField, PermissiveActionOutput
+from soar_sdk.action_results import OutputField, ActionOutput
 
 from models.outputs.shared.main import TotalVotes
 from models.outputs.ip_reputation.analysis import IPAnalysisResults, IPAnalysisStats
 from models.outputs.shared.tls import HTTPSCertificate
 
 
-class IPAttributes(PermissiveActionOutput):
+class IPAttributes(ActionOutput):
     as_owner: Optional[str]
     asn: Optional[int]
     network: Optional[str] = OutputField(cef_types=["ip"], column_name="Network")

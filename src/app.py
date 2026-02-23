@@ -14,7 +14,7 @@
 import httpx
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.app import App
 from soar_sdk.asset import AssetField, BaseAsset
 from soar_sdk.exceptions import ActionFailure, AssetMisconfiguration
@@ -304,7 +304,7 @@ class DomainReputationParams(Params):
     )
 
 
-class DomainReputationOutput(ActionOutput):
+class DomainReputationOutput(PermissiveActionOutput):
     id: str = OutputField(cef_types=["domain"], example_values=["test.com"])
     type: str = OutputField(example_values=["domain"])
     links: APILinks
@@ -514,7 +514,7 @@ class FileReputationParams(Params):
     )
 
 
-class FileReputationOutput(ActionOutput):
+class FileReputationOutput(PermissiveActionOutput):
     id: str = OutputField(cef_types=["sha256"])
     type: str = OutputField(example_values=["file"])
     links: APILinks
@@ -607,7 +607,7 @@ class IpReputationParams(Params):
     )
 
 
-class IpReputationOutput(ActionOutput):
+class IpReputationOutput(PermissiveActionOutput):
     id: str = OutputField(
         cef_types=["ip"], example_values=["2.3.4.5"], column_name="IP"
     )
@@ -679,7 +679,7 @@ class UrlReputationParams(Params):
     )
 
 
-class UrlReputationOutput(ActionOutput):
+class UrlReputationOutput(PermissiveActionOutput):
     attributes: URLAttributes
     id: str = OutputField(
         example_values=[
@@ -740,7 +740,7 @@ class DetonateUrlParams(Params):
     wait_time: float = Param(description="Number of seconds to wait", required=False)
 
 
-class DetonateUrlOutput(ActionOutput):
+class DetonateUrlOutput(PermissiveActionOutput):
     attributes: URLAttributes
     data: Optional[PollingData]
     id: str = OutputField(
@@ -836,7 +836,7 @@ class DetonateFileParams(Params):
     wait_time: float = Param(description="Number of seconds to wait", required=False)
 
 
-class DetonateFileOutput(ActionOutput):
+class DetonateFileOutput(PermissiveActionOutput):
     vault_id: str
     attributes: DetonateFileAttributes
     data: Optional[PollingData]

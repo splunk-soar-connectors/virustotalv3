@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Optional
-from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
+from soar_sdk.action_results import ActionOutput, OutputField
 
 from models.outputs.shared.main import TotalVotes
 from models.outputs.file_reputation.sandbox import FileSandboxVerdicts
@@ -45,7 +45,7 @@ class KnownFileDistributors(ActionOutput):
     data_sources: list[str]
 
 
-class FileAttributes(PermissiveActionOutput):
+class FileAttributes(ActionOutput):
     first_submission_date: Optional[int] = OutputField(cef_types=["timestamp"])
     known_distributors: Optional[KnownFileDistributors]
     type_tag: Optional[str]

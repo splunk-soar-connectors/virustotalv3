@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
+from soar_sdk.action_results import ActionOutput, OutputField
 from typing import Optional
 
 from models.outputs.url_reputation.analysis import URLAnalysisStats, URLAnalysisResult
@@ -31,7 +31,7 @@ class Favicon(ActionOutput):
     raw_md5: str = OutputField(cef_types=["md5"])
 
 
-class URLAttributes(PermissiveActionOutput):
+class URLAttributes(ActionOutput):
     categories: Optional[URLCategories]
     favicon: Optional[Favicon]
     first_submission_date: int = OutputField(cef_types=["timestamp"])
