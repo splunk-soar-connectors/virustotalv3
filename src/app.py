@@ -158,7 +158,7 @@ def _is_valid_query_string(query_string: str) -> bool:
         query_string: The query string to validate (without leading ?)
 
     Returns:
-        bool: True if valid format, False otherwise
+        bool: True if it is valid format, False otherwise
     """
     if not query_string or not query_string.strip():
         return False
