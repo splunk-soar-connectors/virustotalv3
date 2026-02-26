@@ -99,15 +99,15 @@ class RDAP(ActionOutput):
     entities: Optional[list[RDAPEntity]]
     object_class_name: Optional[str]
     status: Optional[list[str]]
-    secure_dns: RDAPSecureDNS
-    port43: str
-    unicode_name: str
-    punycode: str
-    type: str
-    links: list[RDAPLink]
-    switch_name: str
-    public_ids: list[RDAPPublicID]
-    lang: str
-    remarks: list[str]
-    nask0_state: str
-    variants: list[str]
+    secure_dns: Optional[RDAPSecureDNS]
+    port43: Optional[str]
+    unicode_name: Optional[str]
+    punycode: Optional[str]
+    type: Optional[str]
+    links: Optional[list[RDAPLink]]
+    switch_name: Optional[str]
+    public_ids: Optional[list[RDAPPublicID]]
+    lang: Optional[str]
+    remarks: Optional[list[str]]
+    nask0_state: Optional[str]
+    variants: Optional[list[str]]
