@@ -1,3 +1,1 @@
 **Unreleased**
-* Update the semgrep hook in pre-commit to fix the build pipeline
-* Release this as 3.0.0 since it uses the new SOAR SDK

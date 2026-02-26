@@ -1,6 +1,6 @@
 [project]
 name = "virustotalv3"
-version = "2.0.7"
+version = "3.0.0"
 description = "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs"
 license = "Copyright (c) 2021-2025 Splunk Inc."
 requires-python = ">=3.13, <3.15"
