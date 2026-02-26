@@ -152,7 +152,7 @@ def _get_cache_key(endpoint: str) -> str:
 
 def _is_valid_query_string(query_string: str) -> bool:
     """
-    Validate that a query string follows the key=value&key2=value2 format.
+    Validate that the query string follows the key=value&key2=value2 format.
 
     Args:
         query_string: The query string to validate (without leading ?)
