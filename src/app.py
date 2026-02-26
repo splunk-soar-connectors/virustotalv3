@@ -14,7 +14,7 @@
 import httpx
 
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
 from soar_sdk.app import App
 from soar_sdk.asset import AssetField, BaseAsset
 from soar_sdk.exceptions import ActionFailure, AssetMisconfiguration
@@ -193,7 +193,7 @@ def _check_rate_limit(asset, count=1) -> None:
         raise ActionFailure("Rate limit reached. Please try again later.")
 
     current_time = time.time()
-    timestamps = app.actions_manager.asset_cache.get("rate_limit_timestamps", [])
+    timestamps = asset.cache_state.get("rate_limit_timestamps", [])
 
     # Convert all timestamps to float and remove timestamps older than 60 seconds
     recent_timestamps = []
@@ -205,7 +205,7 @@ def _check_rate_limit(asset, count=1) -> None:
         except (ValueError, TypeError):
             logger.debug(f"Skipping invalid timestamp: {ts}")
             continue
-    app.actions_manager.asset_cache["rate_limit_timestamps"] = recent_timestamps
+    asset.cache_state["rate_limit_timestamps"] = recent_timestamps
 
     # If we have 4 or more recent requests, wait until we can make another
     if len(recent_timestamps) >= 4:
@@ -223,7 +223,9 @@ def _check_rate_limit(asset, count=1) -> None:
     logger.debug("Rate limit check complete.")
 
 
-def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
+def _make_request(
+    asset: Asset, method: str, endpoint: str, raise_for_status: bool = True, **kwargs
+) -> dict:
     if endpoint.startswith(("http://", "https://")):
         client = httpx.Client(
             timeout=asset.timeout,
@@ -236,7 +238,7 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
         client = asset.get_client()
 
     if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
-        saved_cache = app.actions_manager.asset_cache.get("vt_cache")
+        saved_cache = asset.cache_state.get("vt_cache")
         datacache = DataCache(
             asset.cache_expiration_interval, asset.cache_size, saved_cache
         )
@@ -255,9 +257,10 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
     # Check rate limit before making request
     _check_rate_limit(asset)
     response = client.request(method, endpoint, **kwargs)
-    response.raise_for_status()
+    if raise_for_status:
+        response.raise_for_status()
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -265,7 +268,7 @@ def _make_request(asset: Asset, method: str, endpoint: str, **kwargs) -> dict:
     if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
-        app.actions_manager.asset_cache["vt_cache"] = datacache.cache
+        asset.cache_state["vt_cache"] = datacache.cache
 
     return resp_json
 
@@ -301,7 +304,7 @@ class DomainReputationParams(Params):
     )
 
 
-class DomainReputationOutput(ActionOutput):
+class DomainReputationOutput(PermissiveActionOutput):
     id: str = OutputField(cef_types=["domain"], example_values=["test.com"])
     type: str = OutputField(example_values=["domain"])
     links: APILinks
@@ -359,11 +362,14 @@ def domain_reputation(
     if params.domain.startswith("http") or params.domain.startswith("https"):
         logger.info(f"Domain {params.domain} is a URL, converting to domain")
         params.domain = params.domain.split("//")[1].split("/")[0]
-    resp_json = _make_request(asset, "GET", f"domains/{params.domain}")
+    resp_json = _make_request(
+        asset, "GET", f"domains/{params.domain}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for domain {params.domain}")
+        soar.set_message(f"No data found for domain {params.domain}")
+        return ActionOutput()
 
     source = resp_json.get("results-source", "new from virustotal")
     sanitized_data = sanitize_key_names(data)
@@ -492,7 +498,7 @@ def http_action(
     response = client.request(**request_kwargs)
     response.raise_for_status()
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -508,7 +514,7 @@ class FileReputationParams(Params):
     )
 
 
-class FileReputationOutput(ActionOutput):
+class FileReputationOutput(PermissiveActionOutput):
     id: str = OutputField(cef_types=["sha256"])
     type: str = OutputField(example_values=["file"])
     links: APILinks
@@ -529,18 +535,21 @@ class FileReputationSummary(ActionOutput):
     description="Queries VirusTotal for file reputation info",
     action_type="investigate",
     render_as="table",
+    summary_type=FileReputationSummary,
 )
 def file_reputation(
     params: FileReputationParams,
     soar: SOARClient,
     asset: Asset,
-    summary_type=FileReputationSummary,
 ) -> FileReputationOutput:
-    resp_json = _make_request(asset, "GET", f"files/{params.hash}")
+    resp_json = _make_request(
+        asset, "GET", f"files/{params.hash}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for file {params.hash}")
+        soar.set_message(f"No data found for file {params.hash}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
@@ -576,7 +585,7 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
     _check_rate_limit(asset)
     response = client.get(f"files/{params.hash}/download")
     if asset.rate_limit:
-        app.actions_manager.asset_cache["rate_limit_timestamps"].append(
+        asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
@@ -598,7 +607,7 @@ class IpReputationParams(Params):
     )
 
 
-class IpReputationOutput(ActionOutput):
+class IpReputationOutput(PermissiveActionOutput):
     id: str = OutputField(
         cef_types=["ip"], example_values=["2.3.4.5"], column_name="IP"
     )
@@ -625,11 +634,14 @@ class IpReputationSummary(ActionOutput):
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
-    resp_json = _make_request(asset, "GET", f"ip_addresses/{params.ip}")
+    resp_json = _make_request(
+        asset, "GET", f"ip_addresses/{params.ip}", raise_for_status=False
+    )
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for IP {params.ip}")
+        soar.set_message(f"No data found for IP {params.ip}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     logger.debug(f"Sanitized data: {sanitized_data}")
@@ -667,7 +679,7 @@ class UrlReputationParams(Params):
     )
 
 
-class UrlReputationOutput(ActionOutput):
+class UrlReputationOutput(PermissiveActionOutput):
     attributes: URLAttributes
     id: str = OutputField(
         example_values=[
@@ -688,11 +700,12 @@ def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
 ) -> UrlReputationOutput:
     url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
-    resp_json = _make_request(asset, "GET", f"urls/{url_id}")
+    resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
 
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for URL {params.url}")
+        soar.set_message(f"No data found for URL {params.url}")
+        return ActionOutput()
 
     sanitized_data = sanitize_key_names(data)
     attributes = sanitized_data.get("attributes", {})
@@ -727,7 +740,7 @@ class DetonateUrlParams(Params):
     wait_time: float = Param(description="Number of seconds to wait", required=False)
 
 
-class DetonateUrlOutput(ActionOutput):
+class DetonateUrlOutput(PermissiveActionOutput):
     attributes: URLAttributes
     data: Optional[PollingData]
     id: str = OutputField(
@@ -823,7 +836,7 @@ class DetonateFileParams(Params):
     wait_time: float = Param(description="Number of seconds to wait", required=False)
 
 
-class DetonateFileOutput(ActionOutput):
+class DetonateFileOutput(PermissiveActionOutput):
     vault_id: str
     attributes: DetonateFileAttributes
     data: Optional[PollingData]
@@ -1036,7 +1049,7 @@ class GetCachedEnteriesSummary(ActionOutput):
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
 ) -> GetCachedEntriesOutput:
-    saved_cache = app.actions_manager.asset_cache.get("vt_cache", {})
+    saved_cache = asset.cache_state.get("vt_cache", {})
 
     datacache = DataCache(
         asset.cache_expiration_interval, asset.cache_size, saved_cache
@@ -1082,8 +1095,8 @@ class ClearCacheOutput(ActionOutput):
     render_as="json",
 )
 def clear_cache(params: Params, soar: SOARClient, asset: Asset) -> ClearCacheOutput:
-    if "vt_cache" in app.actions_manager.asset_cache:
-        app.actions_manager.asset_cache["vt_cache"] = {}
+    if "vt_cache" in asset.cache_state:
+        asset.cache_state["vt_cache"] = {}
     soar.set_message("cache cleared")
     return ClearCacheOutput(status="success")
 

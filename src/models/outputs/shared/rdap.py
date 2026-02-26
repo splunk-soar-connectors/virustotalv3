@@ -11,102 +11,103 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Optional
 from soar_sdk.action_results import ActionOutput, OutputField
 
 
 class RDAPLink(ActionOutput):
-    value: str = OutputField(cef_types=["url"])
-    rel: str
-    href: str = OutputField(cef_types=["url"])
-    type: str
-    title: str
-    media: str
-    href_lang: list[str]
+    value: Optional[str] = OutputField(cef_types=["url"])
+    rel: Optional[str]
+    href: Optional[str] = OutputField(cef_types=["url"])
+    type: Optional[str]
+    title: Optional[str]
+    media: Optional[str]
+    href_lang: Optional[list[str]]
 
 
 class RDAPEvent(ActionOutput):
-    event_action: str
-    event_date: str = OutputField(cef_types=["date"])
-    event_actor: str
-    links: list[RDAPLink]
+    event_action: Optional[str]
+    event_date: Optional[str] = OutputField(cef_types=["date"])
+    event_actor: Optional[str]
+    links: Optional[list[RDAPLink]]
 
 
 class RDAPNotice(ActionOutput):
-    title: str
-    description: list[str]
-    type: str
-    links: list[RDAPLink]
+    title: Optional[str]
+    description: Optional[list[str]]
+    type: Optional[str]
+    links: Optional[list[RDAPLink]]
 
 
 class VCard(ActionOutput):
-    name: str
-    type: str
-    values: list[str]
+    name: Optional[str]
+    type: Optional[str]
+    values: Optional[list[str]]
 
 
 class RDAPPublicID(ActionOutput):
-    type: str
-    identifier: str
+    type: Optional[str]
+    identifier: Optional[str]
 
 
 class RDAPEntity(ActionOutput):
-    vcard_array: list[VCard]
-    roles: list[str]
-    remarks: list[RDAPNotice]
-    events: list[RDAPEvent]
-    handle: str
-    public_ids: list[RDAPPublicID]
-    links: list[RDAPLink]
-    port43: str
-    networks: list[str]
-    autnums: list[str]
-    url: str = OutputField(cef_types=["url"])
-    lang: str
-    rdap_conformance: list[str]
+    vcard_array: Optional[list[VCard]]
+    roles: Optional[list[str]]
+    remarks: Optional[list[RDAPNotice]]
+    events: Optional[list[RDAPEvent]]
+    handle: Optional[str]
+    public_ids: Optional[list[RDAPPublicID]]
+    links: Optional[list[RDAPLink]]
+    port43: Optional[str]
+    networks: Optional[list[str]]
+    autnums: Optional[list[str]]
+    url: Optional[str] = OutputField(cef_types=["url"])
+    lang: Optional[str]
+    rdap_conformance: Optional[list[str]]
 
 
 class RDAPSecureDNS(ActionOutput):
-    zone_signed: bool
-    delegation_signed: bool
-    max_sig_life: int
-    ds_data: list[str]
-    key_data: list[str]
+    zone_signed: Optional[bool]
+    delegation_signed: Optional[bool]
+    max_sig_life: Optional[int]
+    ds_data: Optional[list[str]]
+    key_data: Optional[list[str]]
 
 
 class RDAPNameserver(ActionOutput):
-    ldh_name: str
-    events: list[RDAPEvent]
-    object_class_name: str
-    status: list[str]
-    handle: str
-    unicode_name: str
-    links: list[RDAPLink]
-    notices: list[RDAPNotice]
-    lang: str
-    port43: str
-    entities: list[RDAPEntity]
-    remarks: list[RDAPNotice]
+    ldh_name: Optional[str]
+    events: Optional[list[RDAPEvent]]
+    object_class_name: Optional[str]
+    status: Optional[list[str]]
+    handle: Optional[str]
+    unicode_name: Optional[str]
+    links: Optional[list[RDAPLink]]
+    notices: Optional[list[RDAPNotice]]
+    lang: Optional[str]
+    port43: Optional[str]
+    entities: Optional[list[RDAPEntity]]
+    remarks: Optional[list[RDAPNotice]]
 
 
 class RDAP(ActionOutput):
-    handle: str
-    ldh_name: str
-    events: list[RDAPEvent]
-    notices: list[RDAPNotice]
-    nameservers: list[RDAPNameserver]
-    rdap_conformance: list[str]
-    entities: list[RDAPEntity]
-    object_class_name: str
-    status: list[str]
-    secure_dns: RDAPSecureDNS
-    port43: str
-    unicode_name: str
-    punycode: str
-    type: str
-    links: list[RDAPLink]
-    switch_name: str
-    public_ids: list[RDAPPublicID]
-    lang: str
-    remarks: list[str]
-    nask0_state: str
-    variants: list[str]
+    handle: Optional[str]
+    ldh_name: Optional[str]
+    events: Optional[list[RDAPEvent]]
+    notices: Optional[list[RDAPNotice]]
+    nameservers: Optional[list[RDAPNameserver]]
+    rdap_conformance: Optional[list[str]]
+    entities: Optional[list[RDAPEntity]]
+    object_class_name: Optional[str]
+    status: Optional[list[str]]
+    secure_dns: Optional[RDAPSecureDNS]
+    port43: Optional[str]
+    unicode_name: Optional[str]
+    punycode: Optional[str]
+    type: Optional[str]
+    links: Optional[list[RDAPLink]]
+    switch_name: Optional[str]
+    public_ids: Optional[list[RDAPPublicID]]
+    lang: Optional[str]
+    remarks: Optional[list[str]]
+    nask0_state: Optional[str]
+    variants: Optional[list[str]]

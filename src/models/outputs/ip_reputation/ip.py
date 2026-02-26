@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from typing import Optional
-from soar_sdk.action_results import ActionOutput, OutputField
+from soar_sdk.action_results import OutputField, ActionOutput
 
 from models.outputs.shared.main import TotalVotes
 from models.outputs.ip_reputation.analysis import IPAnalysisResults, IPAnalysisStats

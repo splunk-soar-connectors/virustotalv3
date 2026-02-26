@@ -1,10 +1,10 @@
 # VirusTotal v3
 
 Publisher: Splunk <br>
-Connector Version: 2.0.6 <br>
+Connector Version: 3.0.0 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
-Minimum Product Version: 6.4.0
+Minimum Product Version: 7.0.0
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs
 
@@ -1459,6 +1459,10 @@ action_result.data.\*.attributes.popular_threat_classification.popular_threat_ca
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_category.\*.count | numeric | | |
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.value | string | | |
 action_result.data.\*.attributes.popular_threat_classification.popular_threat_name.\*.count | numeric | | |
+action_result.summary.harmless | numeric | | |
+action_result.summary.malicious | numeric | | |
+action_result.summary.suspicious | numeric | | |
+action_result.summary.undetected | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -1972,8 +1976,8 @@ action_result.data.\*.attributes.categories.Sophos | string | | |
 action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
 action_result.data.\*.attributes.favicon.dhash | string | | |
 action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
-action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
@@ -1988,8 +1992,8 @@ action_result.data.\*.attributes.last_final_url | string | | |
 action_result.data.\*.attributes.last_http_response_code | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
-action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.outgoing_links.\* | string | | |
 action_result.data.\*.attributes.redirection_chain.\* | string | | |
 action_result.data.\*.attributes.reputation | numeric | | |
@@ -2043,8 +2047,8 @@ action_result.data.\*.attributes.categories.Sophos | string | | |
 action_result.data.\*.attributes.categories.Forcepoint_ThreatSeeker | string | | |
 action_result.data.\*.attributes.favicon.dhash | string | | |
 action_result.data.\*.attributes.favicon.raw_md5 | string | `md5` | |
-action_result.data.\*.attributes.first_submission_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_analysis_date | string | `timestamp` | |
+action_result.data.\*.attributes.first_submission_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_analysis_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.last_analysis_results.\*.category | string | | malicious |
 action_result.data.\*.attributes.last_analysis_results.\*.engine_name | string | | CMC |
 action_result.data.\*.attributes.last_analysis_results.\*.method | string | | blacklist |
@@ -2059,8 +2063,8 @@ action_result.data.\*.attributes.last_final_url | string | | |
 action_result.data.\*.attributes.last_http_response_code | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_length | numeric | | |
 action_result.data.\*.attributes.last_http_response_content_sha256 | string | `sha256` | |
-action_result.data.\*.attributes.last_modification_date | string | `timestamp` | |
-action_result.data.\*.attributes.last_submission_date | string | `timestamp` | |
+action_result.data.\*.attributes.last_modification_date | numeric | `timestamp` | |
+action_result.data.\*.attributes.last_submission_date | numeric | `timestamp` | |
 action_result.data.\*.attributes.outgoing_links.\* | string | | |
 action_result.data.\*.attributes.redirection_chain.\* | string | | |
 action_result.data.\*.attributes.reputation | numeric | | |

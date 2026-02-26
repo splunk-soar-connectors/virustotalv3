@@ -1,9 +1,9 @@
 [project]
 name = "virustotalv3"
-version = "2.0.6"
+version = "3.0.0"
 description = "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs"
 license = "Copyright (c) 2021-2025 Splunk Inc."
-requires-python = ">=3.9, <3.14"
+requires-python = ">=3.13, <3.15"
 authors = [
     { name = "jang@splunk.com" },
 ]
@@ -33,18 +33,18 @@ url = "https://pypi.python.org/simple"
 
 [tool.uv]
 environments = [
-    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.9'",
-    "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.9'",
-    "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.9'",
-    "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.9'",
     "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.13'",
     "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.13'",
     "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.13'",
     "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.13'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.14'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.14'",
+    "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.14'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.14'",
 ]
 required-environments = [
-    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.9'",
     "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.13'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.14'",
 ]
 
 [tool.ruff]
