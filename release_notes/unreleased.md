@@ -1,1 +1,2 @@
 **Unreleased**
+* fix detonate_url and detonate_file _make_request calls

@@ -777,7 +777,7 @@ def detonate_url(
     params: DetonateUrlParams, soar: SOARClient, asset: Asset
 ) -> DetonateUrlOutput:
     url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
-    resp_json = _make_request(asset, "GET", f"urls/{url_id}")
+    resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
         resp_json = _make_request(asset, "POST", "urls", json={"url": params.url})
@@ -932,7 +932,9 @@ def detonate_file(
     file_path = attachment.path
     file_hash = attachment.hash
 
-    resp_json = _make_request(asset, "GET", f"files/{file_hash}")
+    resp_json = _make_request(
+        asset, "GET", f"files/{file_hash}", raise_for_status=False
+    )
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
         with open(file_path, "rb") as file_handle:
