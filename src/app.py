@@ -106,7 +106,6 @@ class Asset(BaseAsset):
     def get_client(self) -> httpx.Client:
         headers = {
             "x-apikey": self.apikey,
-            "Content-Type": "application/json",
         }
         return httpx.Client(
             base_url="https://www.virustotal.com/api/v3/",
@@ -231,7 +230,6 @@ def _make_request(
             timeout=asset.timeout,
             headers={
                 "x-apikey": asset.apikey,
-                "Content-Type": "application/json",
             },
         )
     else:
@@ -780,7 +778,7 @@ def detonate_url(
     resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
-        resp_json = _make_request(asset, "POST", "urls", json={"url": params.url})
+        resp_json = _make_request(asset, "POST", "urls", data={"url": params.url})
         if not (scan_id := resp_json.get("data", {}).get("id")):
             raise ActionFailure(f"No scan ID found for URL {params.url}")
 
