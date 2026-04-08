@@ -885,7 +885,7 @@ def poll_for_result(
                 undetected=attributes.get("stats", {}).get("undetected", 0),
             )
 
-            return resp_json, summary
+            return resp_json["data"], summary
 
         num_attempts -= 1
         time.sleep(60)
