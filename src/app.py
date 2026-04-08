@@ -106,7 +106,6 @@ class Asset(BaseAsset):
     def get_client(self) -> httpx.Client:
         headers = {
             "x-apikey": self.apikey,
-            "Content-Type": "application/json",
         }
         return httpx.Client(
             base_url="https://www.virustotal.com/api/v3/",
@@ -231,13 +230,20 @@ def _make_request(
             timeout=asset.timeout,
             headers={
                 "x-apikey": asset.apikey,
-                "Content-Type": "application/json",
             },
         )
     else:
         client = asset.get_client()
 
-    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+    # Skip caching for analyses/ endpoints since their responses change as
+    # analysis progresses — caching them breaks polling in detonate actions.
+    use_cache = (
+        asset.cache_reputation_checks
+        and asset.cache_expiration_interval > 0
+        and not endpoint.startswith("analyses/")
+    )
+
+    if use_cache:
         saved_cache = asset.cache_state.get("vt_cache")
         datacache = DataCache(
             asset.cache_expiration_interval, asset.cache_size, saved_cache
@@ -265,7 +271,7 @@ def _make_request(
         )
 
     resp_json = response.json()
-    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+    if use_cache:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
         asset.cache_state["vt_cache"] = datacache.cache
@@ -780,7 +786,7 @@ def detonate_url(
     resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
-        resp_json = _make_request(asset, "POST", "urls", json={"url": params.url})
+        resp_json = _make_request(asset, "POST", "urls", data={"url": params.url})
         if not (scan_id := resp_json.get("data", {}).get("id")):
             raise ActionFailure(f"No scan ID found for URL {params.url}")
 
@@ -879,7 +885,7 @@ def poll_for_result(
                 undetected=attributes.get("stats", {}).get("undetected", 0),
             )
 
-            return resp_json, summary
+            return resp_json["data"], summary
 
         num_attempts -= 1
         time.sleep(60)
