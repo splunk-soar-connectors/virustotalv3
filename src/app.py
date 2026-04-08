@@ -235,7 +235,15 @@ def _make_request(
     else:
         client = asset.get_client()
 
-    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+    # Skip caching for analyses/ endpoints since their responses change as
+    # analysis progresses — caching them breaks polling in detonate actions.
+    use_cache = (
+        asset.cache_reputation_checks
+        and asset.cache_expiration_interval > 0
+        and not endpoint.startswith("analyses/")
+    )
+
+    if use_cache:
         saved_cache = asset.cache_state.get("vt_cache")
         datacache = DataCache(
             asset.cache_expiration_interval, asset.cache_size, saved_cache
@@ -263,7 +271,7 @@ def _make_request(
         )
 
     resp_json = response.json()
-    if asset.cache_reputation_checks and asset.cache_expiration_interval > 0:
+    if use_cache:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
         asset.cache_state["vt_cache"] = datacache.cache
