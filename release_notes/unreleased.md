@@ -1,2 +1,1 @@
 **Unreleased**
-* Upgrade SOAR SDK to 3.20.1 to include NOTICE and LICENSE in built package
