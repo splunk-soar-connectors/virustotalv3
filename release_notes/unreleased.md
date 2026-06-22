@@ -1,1 +1,3 @@
 **Unreleased**
+
+* Bumped splunk-soar-sdk to 3.25.1 to fix compatibility with modern SOAR AB
