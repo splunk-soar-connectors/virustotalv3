@@ -3,3 +3,4 @@
 * Fixed unsafe JavaScript interpolation in action widgets.
 * Restricted large-file upload URLs to the trusted VirusTotal HTTPS origin.
 * Encoded action parameters as single VirusTotal API path segments.
+* Removed cookies and credential-bearing headers from URL action output.

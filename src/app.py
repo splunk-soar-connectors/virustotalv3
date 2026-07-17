@@ -56,6 +56,7 @@ import time
 from utils import (
     encode_api_path_segment,
     sanitize_key_names,
+    sanitize_url_object,
     validate_upload_url,
 )
 
@@ -721,7 +722,7 @@ def url_reputation(
         soar.set_message(f"No data found for URL {params.url}")
         return ActionOutput()
 
-    sanitized_data = sanitize_key_names(data)
+    sanitized_data = sanitize_url_object(sanitize_key_names(data))
     attributes = sanitized_data.get("attributes", {})
     if "last_analysis_results" in attributes:
         last_analysis_results = [
@@ -811,7 +812,7 @@ def detonate_url(
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for URL {params.url}")
 
-    sanitized_data = sanitize_key_names(data)
+    sanitized_data = sanitize_url_object(sanitize_key_names(data))
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     # if last_analysis_results exists, reorganize to support standard data path format of
