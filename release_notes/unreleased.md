@@ -1,3 +1,3 @@
 **Unreleased**
 
-* - chore: Refresh development tooling.
+* Fixed unsafe JavaScript interpolation in action widgets.

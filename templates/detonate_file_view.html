@@ -111,7 +111,7 @@
             <td>
               <a href="javascript:;"
                  class="context-menu-trigger"
-                 onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.vault_id }}' }], 0, {{ container.id }}, null, false);"
+                 onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.vault_id|escapejs }}' }], 0, {{ container.id }}, null, false);"
                  title="Click for actions">
                 {{ result.vault_id }}
                 &nbsp;
@@ -136,7 +136,7 @@
                 <td>
                   <a href="javascript:;"
                      class="context-menu-trigger"
-                     onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.vault_id }}' }], 0, {{ container.id }}, null, false);"
+                     onclick="context_menu(this, [{'contains': ['vault id', 'sha1'], 'value':'{{ result.vault_id|escapejs }}' }], 0, {{ container.id }}, null, false);"
                      title="Click for actions">
                     {{ result.vault_id }}
                     &nbsp;
@@ -147,7 +147,7 @@
                   {% if result.scan_id %}
                     <a href="javascript:;"
                        class="context-menu-trigger"
-                       onclick="context_menu(this, [{'contains': ['virustotal scan id'], 'value':'{{ result.scan_id }}' }], 0, {{ container.id }}, null, false);"
+                       onclick="context_menu(this, [{'contains': ['virustotal scan id'], 'value':'{{ result.scan_id|escapejs }}' }], 0, {{ container.id }}, null, false);"
                        title="Click for actions">
                       {{ result.scan_id }}
                       &nbsp;
@@ -161,7 +161,7 @@
                   {% if result.sha256 %}
                     <a href="javascript:;"
                        class="context-menu-trigger"
-                       onclick="context_menu(this, [{'contains': ['sha256'], 'value':'{{ result.sha256 }}' }], 0, {{ container.id }}, null, false);"
+                       onclick="context_menu(this, [{'contains': ['sha256'], 'value':'{{ result.sha256|escapejs }}' }], 0, {{ container.id }}, null, false);"
                        title="Click for actions">
                       {{ result.sha256 }}
                       &nbsp;
