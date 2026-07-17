@@ -54,6 +54,7 @@ import json
 import time
 
 from utils import (
+    encode_api_path_segment,
     sanitize_key_names,
     validate_upload_url,
 )
@@ -373,7 +374,10 @@ def domain_reputation(
         logger.info(f"Domain {params.domain} is a URL, converting to domain")
         params.domain = params.domain.split("//")[1].split("/")[0]
     resp_json = _make_request(
-        asset, "GET", f"domains/{params.domain}", raise_for_status=False
+        asset,
+        "GET",
+        f"domains/{encode_api_path_segment(params.domain)}",
+        raise_for_status=False,
     )
 
     logger.debug(f"VirusTotal response: {resp_json}")
@@ -871,7 +875,9 @@ def poll_for_result(
     # since we sleep for 1 minute, num_attempts is the number of minutes to poll
     num_attempts = poll_interval
     while num_attempts > 0:
-        resp_json = _make_request(asset, "GET", f"analyses/{scan_id}")
+        resp_json = _make_request(
+            asset, "GET", f"analyses/{encode_api_path_segment(scan_id)}"
+        )
         if isinstance(resp_json, dict):
             resp_json = sanitize_key_names(resp_json)
 
@@ -1300,7 +1306,7 @@ class GetQuotasSummaryOutput(ActionOutput):
 def get_quotas(
     params: GetQuotasParams, soar: SOARClient, asset: Asset
 ) -> GetQuotasOutput:
-    quotas_endpoint = f"users/{params.user_id}/overall_quotas"
+    quotas_endpoint = f"users/{encode_api_path_segment(params.user_id)}/overall_quotas"
     resp_json = _make_request(asset, "GET", quotas_endpoint)
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
