@@ -53,7 +53,13 @@ import datetime
 import json
 import time
 
-from utils import sanitize_key_names
+from utils import (
+    encode_api_path_segment,
+    sanitize_key_names,
+    sanitize_url_object,
+    validate_upload_url,
+    verify_downloaded_file,
+)
 
 logger = getLogger()
 
@@ -226,6 +232,7 @@ def _make_request(
     asset: Asset, method: str, endpoint: str, raise_for_status: bool = True, **kwargs
 ) -> dict:
     if endpoint.startswith(("http://", "https://")):
+        endpoint = validate_upload_url(endpoint)
         client = httpx.Client(
             timeout=asset.timeout,
             headers={
@@ -369,7 +376,10 @@ def domain_reputation(
         logger.info(f"Domain {params.domain} is a URL, converting to domain")
         params.domain = params.domain.split("//")[1].split("/")[0]
     resp_json = _make_request(
-        asset, "GET", f"domains/{params.domain}", raise_for_status=False
+        asset,
+        "GET",
+        f"domains/{encode_api_path_segment(params.domain)}",
+        raise_for_status=False,
     )
 
     logger.debug(f"VirusTotal response: {resp_json}")
@@ -589,13 +599,14 @@ class GetFileParams(Params):
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
     client = asset.get_client()
     _check_rate_limit(asset)
-    response = client.get(f"files/{params.hash}/download")
+    response = client.get(f"files/{encode_api_path_segment(params.hash)}/download")
     if asset.rate_limit:
         asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
     response.raise_for_status()
+    verify_downloaded_file(params.hash, response.content)
 
     soar.vault.create_attachment(
         soar.get_executing_container_id(), response.content, params.hash
@@ -713,7 +724,7 @@ def url_reputation(
         soar.set_message(f"No data found for URL {params.url}")
         return ActionOutput()
 
-    sanitized_data = sanitize_key_names(data)
+    sanitized_data = sanitize_url_object(sanitize_key_names(data))
     attributes = sanitized_data.get("attributes", {})
     if "last_analysis_results" in attributes:
         last_analysis_results = [
@@ -803,7 +814,7 @@ def detonate_url(
     if not (data := resp_json.get("data")):
         raise ActionFailure(f"No data found for URL {params.url}")
 
-    sanitized_data = sanitize_key_names(data)
+    sanitized_data = sanitize_url_object(sanitize_key_names(data))
     logger.debug(f"Sanitized data: {sanitized_data}")
 
     # if last_analysis_results exists, reorganize to support standard data path format of
@@ -867,7 +878,9 @@ def poll_for_result(
     # since we sleep for 1 minute, num_attempts is the number of minutes to poll
     num_attempts = poll_interval
     while num_attempts > 0:
-        resp_json = _make_request(asset, "GET", f"analyses/{scan_id}")
+        resp_json = _make_request(
+            asset, "GET", f"analyses/{encode_api_path_segment(scan_id)}"
+        )
         if isinstance(resp_json, dict):
             resp_json = sanitize_key_names(resp_json)
 
@@ -950,7 +963,9 @@ def detonate_file(
                 if not (upload_url := resp_json.get("data", {})):
                     raise ActionFailure(f"No upload URL found for file {file_hash}")
 
-                file_upload_json = _make_request(asset, "POST", upload_url, files=files)
+                file_upload_json = _make_request(
+                    asset, "POST", validate_upload_url(upload_url), files=files
+                )
             else:
                 file_upload_json = _make_request(asset, "POST", "files", files=files)
 
@@ -1294,7 +1309,7 @@ class GetQuotasSummaryOutput(ActionOutput):
 def get_quotas(
     params: GetQuotasParams, soar: SOARClient, asset: Asset
 ) -> GetQuotasOutput:
-    quotas_endpoint = f"users/{params.user_id}/overall_quotas"
+    quotas_endpoint = f"users/{encode_api_path_segment(params.user_id)}/overall_quotas"
     resp_json = _make_request(asset, "GET", quotas_endpoint)
     logger.debug(f"VirusTotal response: {resp_json}")
     if not (data := resp_json.get("data")):
