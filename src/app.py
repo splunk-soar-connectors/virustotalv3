@@ -58,6 +58,7 @@ from utils import (
     sanitize_key_names,
     sanitize_url_object,
     validate_upload_url,
+    verify_downloaded_file,
 )
 
 logger = getLogger()
@@ -598,13 +599,14 @@ class GetFileParams(Params):
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
     client = asset.get_client()
     _check_rate_limit(asset)
-    response = client.get(f"files/{params.hash}/download")
+    response = client.get(f"files/{encode_api_path_segment(params.hash)}/download")
     if asset.rate_limit:
         asset.cache_state["rate_limit_timestamps"].append(
             response.headers.get("Date", time.time())
         )
 
     response.raise_for_status()
+    verify_downloaded_file(params.hash, response.content)
 
     soar.vault.create_attachment(
         soar.get_executing_container_id(), response.content, params.hash
