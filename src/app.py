@@ -53,7 +53,10 @@ import datetime
 import json
 import time
 
-from utils import sanitize_key_names
+from utils import (
+    sanitize_key_names,
+    validate_upload_url,
+)
 
 logger = getLogger()
 
@@ -226,6 +229,7 @@ def _make_request(
     asset: Asset, method: str, endpoint: str, raise_for_status: bool = True, **kwargs
 ) -> dict:
     if endpoint.startswith(("http://", "https://")):
+        endpoint = validate_upload_url(endpoint)
         client = httpx.Client(
             timeout=asset.timeout,
             headers={
@@ -950,7 +954,9 @@ def detonate_file(
                 if not (upload_url := resp_json.get("data", {})):
                     raise ActionFailure(f"No upload URL found for file {file_hash}")
 
-                file_upload_json = _make_request(asset, "POST", upload_url, files=files)
+                file_upload_json = _make_request(
+                    asset, "POST", validate_upload_url(upload_url), files=files
+                )
             else:
                 file_upload_json = _make_request(asset, "POST", "files", files=files)
 
