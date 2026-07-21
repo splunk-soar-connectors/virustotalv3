@@ -22,6 +22,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **cache_reputation_checks** | optional | boolean | Cache virustotal reputation checks |
 **cache_expiration_interval** | optional | numeric | Number of seconds until cached reputation checks expire. Any other value than positive integer will disable caching (Default: 3600 seconds) |
 **cache_size** | optional | numeric | Maximum number of entries in cache. Values of zero or less will not limit size and decimal value will be converted to floor value (Default: 1000) |
+**max_file_download_size_mib** | optional | numeric | Maximum size in MiB for a file downloaded by the get file action (Default: 100 MiB) |
 
 ### Supported Actions
 
@@ -1473,6 +1474,8 @@ Downloads a file from VirusTotal and adds it to the vault
 Type: **investigate** <br>
 Read only: **True**
 
+<b>get file</b> streams the requested file into the vault and verifies its requested hash before it is added. Downloads larger than the asset's maximum file download size are rejected; the default limit is 100 MiB.
+
 #### Action Parameters
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
@@ -2021,9 +2024,9 @@ summary.total_objects_successful | numeric | | 1 |
 Load a URL to Virus Total and retrieve analysis results
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
-<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.
+<b>detonate url</b> sends a URL to VirusTotal for a fresh analysis and polls for the result. A URL already known to VirusTotal is explicitly reanalyzed rather than returning its prior verdict. This action can change remote analysis state and is not read only. If polling does not finish in the configured time, the action fails with the scan ID in its summary; use <b>get report</b> to continue polling it.<br/>Wait time parameter takes precedence over the asset configuration value.
 
 #### Action Parameters
 
@@ -2667,9 +2670,9 @@ summary.total_objects_successful | numeric | | 1 |
 Upload a file to Virus Total and retrieve the analysis results
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
-<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.
+<b>detonate file</b> uploads an unknown file to VirusTotal or explicitly requests a fresh analysis when the file is already known, then polls for the result. This action can change remote analysis state and is not read only. If polling does not finish in the configured time, the action fails with the scan ID in its summary; use <b>get report</b> to continue polling it.<br/>Wait time parameter takes precedence over the asset configuration value.
 
 #### Action Parameters
 

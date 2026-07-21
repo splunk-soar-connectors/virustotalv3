@@ -33,7 +33,7 @@ repos:
         args: [ "--fix", "--unsafe-fixes"] # Allow unsafe fixes (ruff pretty strict about what it can fix)
       - id: ruff-format
   - repo: https://github.com/djlint/djLint
-    rev: v1.40.7
+    rev: v1.42.1
     hooks:
       - id: djlint-reformat-django
       - id: djlint-django
@@ -61,7 +61,7 @@ repos:
         exclude: "README.md"
   # Central hooks
   - repo: https://github.com/phantomcyber/dev-cicd-tools
-    rev: v2.2.0
+    rev: v2.2.8
     hooks:
       - id: build-docs
         language: python
