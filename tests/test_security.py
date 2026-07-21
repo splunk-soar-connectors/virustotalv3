@@ -11,13 +11,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import base64
 import hashlib
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from soar_sdk.exceptions import ActionFailure
 
-from app import GetFileParams, get_file
+import app
+from app import DetonateFileParams, DetonateUrlParams, GetFileParams, get_file
 from utils import (
     encode_api_path_segment,
     sanitize_url_object,
@@ -159,6 +162,60 @@ class DownloadAsset:
         return DownloadClient(self.response)
 
 
+class DetonationAsset:
+    poll_interval = 1
+    waiting_time = 0
+
+
+class DetonationSoar:
+    def __init__(self, attachments=None):
+        self.vault = SimpleNamespace(get_attachment=lambda **_kwargs: attachments or [])
+
+    def set_summary(self, _summary) -> None:
+        return None
+
+    def set_message(self, _message: str) -> None:
+        return None
+
+
+class StopPolling(Exception):
+    pass
+
+
+class JsonResponse:
+    def __init__(self):
+        self.headers = {}
+
+    def raise_for_status(self) -> None:
+        return None
+
+    def json(self) -> dict:
+        return {"data": {"id": "response"}}
+
+
+class RequestClient:
+    def __init__(self):
+        self.calls = []
+
+    def request(self, method: str, endpoint: str, **kwargs) -> JsonResponse:
+        self.calls.append((method, endpoint, kwargs))
+        return JsonResponse()
+
+
+class CacheAsset:
+    cache_reputation_checks = True
+    cache_expiration_interval = 3600
+    cache_size = 10
+    rate_limit = False
+
+    def __init__(self):
+        self.client = RequestClient()
+        self.cache_state = {"rate_limit_timestamps": []}
+
+    def get_client(self) -> RequestClient:
+        return self.client
+
+
 def test_stream_download_to_file_enforces_advertised_size(tmp_path: Path):
     digest = hashlib.sha256(b"small").hexdigest()
     response = StreamResponse([b"small"], content_length="6")
@@ -201,3 +258,110 @@ def test_get_file_streams_to_vault_temp_and_removes_temp_dir(tmp_path: Path):
     assert soar.vault.attachment_content == content
     assert soar.message == "File downloaded and added to the vault."
     assert list(tmp_path.iterdir()) == []
+
+
+def test_non_get_requests_are_never_cached():
+    asset = CacheAsset()
+
+    app._make_request(asset, "POST", "urls", data={"url": "https://example.com"})
+
+    assert asset.client.calls == [
+        ("POST", "urls", {"data": {"url": "https://example.com"}})
+    ]
+    assert "vt_cache" not in asset.cache_state
+
+
+def test_detonate_url_reanalyzes_known_url_and_polls_returned_id(monkeypatch):
+    calls = []
+    url_id = base64.urlsafe_b64encode(b"https://example.com").decode().strip("=")
+
+    def make_request(*args, **kwargs):
+        calls.append((args[1], args[2], kwargs))
+        return {"data": {"id": "known-url" if len(calls) == 1 else "analysis-url"}}
+
+    def stop_polling(scan_id, *_args):
+        assert scan_id == "analysis-url"
+        raise StopPolling
+
+    monkeypatch.setattr(app, "_make_request", make_request)
+    monkeypatch.setattr(app, "poll_for_result", stop_polling)
+
+    with pytest.raises(StopPolling):
+        app.detonate_url.__wrapped__(
+            DetonateUrlParams(url="https://example.com"),
+            DetonationSoar(),
+            DetonationAsset(),
+        )
+
+    assert calls == [
+        (
+            "GET",
+            f"urls/{url_id}",
+            {"raise_for_status": False, "cacheable": False},
+        ),
+        (
+            "POST",
+            f"urls/{url_id}/analyse",
+            {},
+        ),
+    ]
+
+
+def test_detonate_url_submits_unknown_url_and_polls_returned_id(monkeypatch):
+    calls = []
+
+    def make_request(*args, **kwargs):
+        calls.append((args[1], args[2], kwargs))
+        if len(calls) == 1:
+            return {"error": {"code": "NotFoundError"}}
+        return {"data": {"id": "submitted-url"}}
+
+    def stop_polling(scan_id, *_args):
+        assert scan_id == "submitted-url"
+        raise StopPolling
+
+    monkeypatch.setattr(app, "_make_request", make_request)
+    monkeypatch.setattr(app, "poll_for_result", stop_polling)
+
+    with pytest.raises(StopPolling):
+        app.detonate_url.__wrapped__(
+            DetonateUrlParams(url="https://example.com"),
+            DetonationSoar(),
+            DetonationAsset(),
+        )
+
+    assert calls[1] == ("POST", "urls", {"data": {"url": "https://example.com"}})
+
+
+def test_detonate_file_reanalyzes_known_file_and_polls_returned_id(monkeypatch):
+    file_hash = "a" * 64
+    attachment = SimpleNamespace(name="sample", path="unused", hash=file_hash, size=1)
+    calls = []
+
+    def make_request(*args, **kwargs):
+        calls.append((args[1], args[2], kwargs))
+        return {"data": {"id": "known-file" if len(calls) == 1 else "analysis-file"}}
+
+    def stop_polling(scan_id, *_args):
+        assert scan_id == "analysis-file"
+        raise StopPolling
+
+    monkeypatch.setattr(app, "_make_request", make_request)
+    monkeypatch.setattr(app, "poll_for_result", stop_polling)
+
+    with pytest.raises(StopPolling):
+        app.detonate_file.__wrapped__(
+            DetonateFileParams(vault_id="vault-id"),
+            DetonationSoar([attachment]),
+            DetonationAsset(),
+        )
+
+    assert calls == [
+        ("GET", f"files/{file_hash}", {"raise_for_status": False, "cacheable": False}),
+        ("POST", f"files/{file_hash}/analyse", {}),
+    ]
+
+
+def test_detonate_actions_are_not_read_only():
+    assert app.detonate_url.meta.read_only is False
+    assert app.detonate_file.meta.read_only is False

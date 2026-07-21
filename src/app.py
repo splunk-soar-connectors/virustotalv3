@@ -237,7 +237,12 @@ def _check_rate_limit(asset, count=1) -> None:
 
 
 def _make_request(
-    asset: Asset, method: str, endpoint: str, raise_for_status: bool = True, **kwargs
+    asset: Asset,
+    method: str,
+    endpoint: str,
+    raise_for_status: bool = True,
+    cacheable: bool = True,
+    **kwargs,
 ) -> dict:
     if endpoint.startswith(("http://", "https://")):
         endpoint = validate_upload_url(endpoint)
@@ -250,10 +255,12 @@ def _make_request(
     else:
         client = asset.get_client()
 
-    # Skip caching for analyses/ endpoints since their responses change as
-    # analysis progresses — caching them breaks polling in detonate actions.
+    # Only cache ordinary reputation GETs. Detonation/reanalysis callers opt out,
+    # and mutating requests must never be satisfied from or stored in the cache.
     use_cache = (
-        asset.cache_reputation_checks
+        cacheable
+        and method.upper() == "GET"
+        and asset.cache_reputation_checks
         and asset.cache_expiration_interval > 0
         and not endpoint.startswith("analyses/")
     )
@@ -814,7 +821,8 @@ def detonate_url_view(outputs: list[DetonateUrlOutput]) -> dict:
 @app.action(
     description="Load a URL to Virus Total and retrieve analysis results",
     action_type="investigate",
-    verbose="<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given URL has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    verbose="<b>detonate url</b> sends a URL to VirusTotal for a fresh analysis and polls for the result. A URL already known to VirusTotal is explicitly reanalyzed rather than returning its prior verdict. This action can change remote analysis state and is not read only. If polling does not finish in the configured time, the action fails with the scan ID in its summary; use <b>get report</b> to continue polling it.<br/>Wait time parameter takes precedence over the asset configuration value.",
+    read_only=False,
     summary_type=DetonateSummary,
     view_handler=detonate_url_view,
 )
@@ -822,54 +830,29 @@ def detonate_url(
     params: DetonateUrlParams, soar: SOARClient, asset: Asset
 ) -> DetonateUrlOutput:
     url_id = base64.urlsafe_b64encode(params.url.encode()).decode().strip("=")
-    resp_json = _make_request(asset, "GET", f"urls/{url_id}", raise_for_status=False)
+    resp_json = _make_request(
+        asset, "GET", f"urls/{url_id}", raise_for_status=False, cacheable=False
+    )
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
         resp_json = _make_request(asset, "POST", "urls", data={"url": params.url})
-        if not (scan_id := resp_json.get("data", {}).get("id")):
-            raise ActionFailure(f"No scan ID found for URL {params.url}")
+    else:
+        if not resp_json.get("data"):
+            raise ActionFailure(f"No data found for URL {params.url}")
+        resp_json = _make_request(asset, "POST", f"urls/{url_id}/analyse")
 
-        output, summary = poll_for_result(
-            scan_id,
-            asset.poll_interval,
-            params.wait_time or asset.waiting_time,
-            asset,
-        )
-        soar.set_summary(summary)
-        soar.set_message(summary.get_message())
-        return DetonateUrlOutput(**output)
+    if not (scan_id := resp_json.get("data", {}).get("id")):
+        raise ActionFailure(f"No scan ID found for URL {params.url}")
 
-    if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for URL {params.url}")
-
-    sanitized_data = sanitize_url_object(sanitize_key_names(data))
-    logger.debug(f"Sanitized data: {sanitized_data}")
-
-    # if last_analysis_results exists, reorganize to support standard data path format of
-    # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
-    attributes = sanitized_data.get("attributes", {})
-    if "last_analysis_results" in attributes:
-        last_analysis_results = [
-            {"vendor": vendor, **results}
-            for vendor, results in attributes["last_analysis_results"].items()
-        ]
-        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
-
-    new_scan_id = f"u-{sanitized_data['id']}-{attributes['last_submission_date']}"
-    if "last_analysis_stats" in attributes:
-        summary = DetonateSummary(
-            scan_id=new_scan_id,
-            harmless=attributes["last_analysis_stats"]["harmless"],
-            malicious=attributes["last_analysis_stats"]["malicious"],
-            suspicious=attributes["last_analysis_stats"]["suspicious"],
-            timeout=attributes["last_analysis_stats"]["timeout"],
-            undetected=attributes["last_analysis_stats"]["undetected"],
-        )
-        soar.set_summary(summary)
-        soar.set_message(summary.get_message())
-
-    logger.debug(f"Sanitized data: {sanitized_data}")
-    return DetonateUrlOutput(**sanitized_data, scan_id=new_scan_id)
+    output, summary = poll_for_result(
+        scan_id,
+        asset.poll_interval,
+        params.wait_time or asset.waiting_time,
+        asset,
+    )
+    soar.set_summary(summary)
+    soar.set_message(summary.get_message())
+    return DetonateUrlOutput(**output)
 
 
 class DetonateFileParams(Params):
@@ -907,7 +890,10 @@ def poll_for_result(
     num_attempts = poll_interval
     while num_attempts > 0:
         resp_json = _make_request(
-            asset, "GET", f"analyses/{encode_api_path_segment(scan_id)}"
+            asset,
+            "GET",
+            f"analyses/{encode_api_path_segment(scan_id)}",
+            cacheable=False,
         )
         if isinstance(resp_json, dict):
             resp_json = sanitize_key_names(resp_json)
@@ -959,7 +945,8 @@ def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
 @app.action(
     description="Upload a file to Virus Total and retrieve the analysis results",
     action_type="investigate",
-    verbose="<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it cannot get the finished results in this amount of time, it will fail and in the summary it will return the <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.<br/>Wait time parameter will be considered only if the given file has not been previously submitted to the VirusTotal Server. For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
+    verbose="<b>detonate file</b> uploads an unknown file to VirusTotal or explicitly requests a fresh analysis when the file is already known, then polls for the result. This action can change remote analysis state and is not read only. If polling does not finish in the configured time, the action fails with the scan ID in its summary; use <b>get report</b> to continue polling it.<br/>Wait time parameter takes precedence over the asset configuration value.",
+    read_only=False,
     summary_type=DetonateSummary,
     view_handler=detonate_file_view,
 )
@@ -980,7 +967,11 @@ def detonate_file(
     file_hash = attachment.hash
 
     resp_json = _make_request(
-        asset, "GET", f"files/{file_hash}", raise_for_status=False
+        asset,
+        "GET",
+        f"files/{file_hash}",
+        raise_for_status=False,
+        cacheable=False,
     )
 
     if resp_json.get("error", {}).get("code") in PASS_ERROR_CODE.values():
@@ -1008,43 +999,18 @@ def detonate_file(
 
         return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
 
-    if not (data := resp_json.get("data")):
+    if not resp_json.get("data"):
         raise ActionFailure(f"No data found for file {file_hash}")
+    resp_json = _make_request(asset, "POST", f"files/{file_hash}/analyse")
+    if not (scan_id := resp_json.get("data", {}).get("id")):
+        raise ActionFailure(f"No scan ID found for file {file_hash}")
 
-    sanitized_data = sanitize_key_names(data)
-    logger.debug(f"Sanitized data: {sanitized_data}")
-
-    # if last_analysis_results exists, reorganize to support standard data path format of
-    # data.*.attributes.last_analysis_results.*.vendor since vendors are always changing
-    attributes = sanitized_data.get("attributes", {})
-    if "last_analysis_results" in attributes:
-        last_analysis_results = [
-            {"vendor": vendor, **results}
-            for vendor, results in attributes["last_analysis_results"].items()
-        ]
-        sanitized_data["attributes"]["last_analysis_results"] = last_analysis_results
-
-    if "last_analysis_date" in attributes:
-        new_scan_id = f"{attributes['md5']}:{attributes['last_analysis_date']}"
-    else:
-        new_scan_id = f"{attributes['md5']}:{attributes['last_submission_date']}"
-
-    new_scan_id = base64.b64encode(new_scan_id.encode()).decode()
-
-    if "last_analysis_stats" in attributes:
-        summary = DetonateSummary(
-            scan_id=new_scan_id,
-            harmless=attributes["last_analysis_stats"]["harmless"],
-            malicious=attributes["last_analysis_stats"]["malicious"],
-            suspicious=attributes["last_analysis_stats"]["suspicious"],
-            timeout=attributes["last_analysis_stats"]["timeout"],
-            undetected=attributes["last_analysis_stats"]["undetected"],
-        )
-        soar.set_summary(summary)
-        soar.set_message(summary.get_message())
-
-    logger.debug(f"Sanitized data: {sanitized_data}")
-    return DetonateFileOutput(**sanitized_data, vault_id=vault_id, scan_id=new_scan_id)
+    output, summary = poll_for_result(
+        scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
+    )
+    soar.set_summary(summary)
+    soar.set_message(summary.get_message())
+    return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
 
 
 class GetReportParams(Params):
