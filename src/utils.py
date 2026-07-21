@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import hashlib
+from pathlib import Path
 from urllib.parse import quote, urlsplit
 
 from soar_sdk.exceptions import ActionFailure
@@ -25,6 +26,7 @@ SENSITIVE_RESPONSE_HEADERS = {
     "set-cookie",
     "www-authenticate",
 }
+DOWNLOAD_CHUNK_SIZE = 1024 * 1024
 
 
 def encode_api_path_segment(value: str) -> str:
@@ -67,8 +69,8 @@ def sanitize_url_object(data: dict) -> dict:
     return data
 
 
-def verify_downloaded_file(file_hash: str, content: bytes) -> None:
-    """Fail closed unless downloaded bytes match the requested content digest."""
+def _get_hash_details(file_hash: str) -> tuple[str, str]:
+    """Return the normalized expected digest and its supported algorithm."""
     normalized_hash = file_hash.strip().lower()
     algorithm = {32: "md5", 40: "sha1", 64: "sha256"}.get(len(normalized_hash))
     if algorithm is None or any(
@@ -76,11 +78,62 @@ def verify_downloaded_file(file_hash: str, content: bytes) -> None:
     ):
         raise ActionFailure("File hash must be an MD5, SHA-1, or SHA-256 digest")
 
-    computed_hash = hashlib.new(algorithm, content, usedforsecurity=False).hexdigest()
-    if computed_hash != normalized_hash:
+    return normalized_hash, algorithm
+
+
+def verify_downloaded_file_digest(file_hash: str, actual_hash: str) -> None:
+    """Fail closed unless a downloaded file digest matches the requested digest."""
+    normalized_hash, _algorithm = _get_hash_details(file_hash)
+    if actual_hash != normalized_hash:
         raise ActionFailure(
             "Downloaded file content does not match the requested hash; refusing to vault it"
         )
+
+
+def verify_downloaded_file(file_hash: str, content: bytes) -> None:
+    """Fail closed unless downloaded bytes match the requested content digest."""
+    normalized_hash, algorithm = _get_hash_details(file_hash)
+
+    computed_hash = hashlib.new(algorithm, content, usedforsecurity=False).hexdigest()
+    verify_downloaded_file_digest(normalized_hash, computed_hash)
+
+
+def stream_download_to_file(
+    response, file_path: Path, file_hash: str, max_bytes: int
+) -> int:
+    """Stream a download to disk while enforcing advertised and observed size limits."""
+    if max_bytes <= 0:
+        raise ActionFailure("Maximum file download size must be greater than zero")
+
+    advertised_size = response.headers.get("Content-Length")
+    if advertised_size is not None:
+        try:
+            advertised_bytes = int(advertised_size)
+        except (TypeError, ValueError) as exc:
+            raise ActionFailure(
+                "VirusTotal returned an invalid Content-Length"
+            ) from exc
+        if advertised_bytes < 0 or advertised_bytes > max_bytes:
+            raise ActionFailure(
+                "VirusTotal file exceeds the configured maximum download size"
+            )
+
+    _normalized_hash, algorithm = _get_hash_details(file_hash)
+    hasher = hashlib.new(algorithm, usedforsecurity=False)
+    observed_bytes = 0
+
+    with file_path.open("wb") as file_handle:
+        for chunk in response.iter_bytes(chunk_size=DOWNLOAD_CHUNK_SIZE):
+            observed_bytes += len(chunk)
+            if observed_bytes > max_bytes:
+                raise ActionFailure(
+                    "VirusTotal file exceeds the configured maximum download size"
+                )
+            file_handle.write(chunk)
+            hasher.update(chunk)
+
+    verify_downloaded_file_digest(file_hash, hasher.hexdigest())
+    return observed_bytes
 
 
 def sanitize_key_names(data: dict) -> dict:

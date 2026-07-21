@@ -12,13 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import hashlib
+from pathlib import Path
 
 import pytest
 from soar_sdk.exceptions import ActionFailure
 
+from app import GetFileParams, get_file
 from utils import (
     encode_api_path_segment,
     sanitize_url_object,
+    stream_download_to_file,
     validate_upload_url,
     verify_downloaded_file,
 )
@@ -79,3 +82,122 @@ def test_verify_downloaded_file_rejects_mismatched_content():
     digest = hashlib.sha256(b"expected").hexdigest()
     with pytest.raises(ActionFailure, match="does not match"):
         verify_downloaded_file(digest, b"substituted")
+
+
+class StreamResponse:
+    def __init__(self, chunks: list[bytes], content_length: str | None = None):
+        self.chunks = chunks
+        self.headers = {}
+        if content_length is not None:
+            self.headers["Content-Length"] = content_length
+
+    def iter_bytes(self, chunk_size: int):
+        assert chunk_size > 0
+        yield from self.chunks
+
+    def raise_for_status(self) -> None:
+        return None
+
+
+class StreamContext:
+    def __init__(self, response: StreamResponse):
+        self.response = response
+
+    def __enter__(self) -> StreamResponse:
+        return self.response
+
+    def __exit__(self, *_args) -> None:
+        return None
+
+
+class DownloadClient:
+    def __init__(self, response: StreamResponse):
+        self.response = response
+
+    def stream(self, method: str, endpoint: str) -> StreamContext:
+        assert method == "GET"
+        assert endpoint.endswith("/download")
+        return StreamContext(self.response)
+
+
+class DownloadVault:
+    def __init__(self, temp_dir: Path):
+        self.temp_dir = temp_dir
+        self.attachment_content = None
+
+    def get_vault_tmp_dir(self) -> str:
+        return str(self.temp_dir)
+
+    def add_attachment(
+        self, _container_id: int, file_path: str, _file_name: str
+    ) -> str:
+        self.attachment_content = Path(file_path).read_bytes()
+        return "vault-id"
+
+
+class DownloadSoar:
+    def __init__(self, temp_dir: Path):
+        self.vault = DownloadVault(temp_dir)
+        self.message = None
+
+    def get_executing_container_id(self) -> int:
+        return 1
+
+    def set_message(self, message: str) -> None:
+        self.message = message
+
+
+class DownloadAsset:
+    rate_limit = False
+    max_file_download_size_mib = 100.0
+
+    def __init__(self, response: StreamResponse):
+        self.response = response
+        self.cache_state = {}
+
+    def get_client(self) -> DownloadClient:
+        return DownloadClient(self.response)
+
+
+def test_stream_download_to_file_enforces_advertised_size(tmp_path: Path):
+    digest = hashlib.sha256(b"small").hexdigest()
+    response = StreamResponse([b"small"], content_length="6")
+
+    with pytest.raises(ActionFailure, match="maximum download size"):
+        stream_download_to_file(response, tmp_path / "download", digest, max_bytes=5)
+
+
+def test_stream_download_to_file_enforces_observed_size(tmp_path: Path):
+    content = b"too-large"
+    digest = hashlib.sha256(content).hexdigest()
+    response = StreamResponse([b"too-", b"large"], content_length="1")
+
+    with pytest.raises(ActionFailure, match="maximum download size"):
+        stream_download_to_file(response, tmp_path / "download", digest, max_bytes=5)
+
+
+def test_stream_download_to_file_writes_verified_content(tmp_path: Path):
+    content = b"streamed sample"
+    digest = hashlib.sha256(content).hexdigest()
+    destination = tmp_path / "download"
+    response = StreamResponse(
+        [b"streamed ", b"sample"], content_length=str(len(content))
+    )
+
+    assert stream_download_to_file(
+        response, destination, digest, max_bytes=1024
+    ) == len(content)
+    assert destination.read_bytes() == content
+
+
+def test_get_file_streams_to_vault_temp_and_removes_temp_dir(tmp_path: Path):
+    content = b"streamed sample"
+    digest = hashlib.sha256(content).hexdigest()
+    soar = DownloadSoar(tmp_path)
+    asset = DownloadAsset(StreamResponse([content], content_length=str(len(content))))
+
+    get_file.__wrapped__(GetFileParams(hash=digest), soar, asset)
+
+    assert soar.vault.attachment_content == content
+    assert soar.message == "File downloaded and added to the vault."
+    assert list(tmp_path.iterdir()) == []

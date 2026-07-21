@@ -22,6 +22,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **cache_reputation_checks** | optional | boolean | Cache virustotal reputation checks |
 **cache_expiration_interval** | optional | numeric | Number of seconds until cached reputation checks expire. Any other value than positive integer will disable caching (Default: 3600 seconds) |
 **cache_size** | optional | numeric | Maximum number of entries in cache. Values of zero or less will not limit size and decimal value will be converted to floor value (Default: 1000) |
+**max_file_download_size_mib** | optional | numeric | Maximum size in MiB for a file downloaded by the get file action (Default: 100 MiB) |
 
 ### Supported Actions
 
@@ -1472,6 +1473,8 @@ Downloads a file from VirusTotal and adds it to the vault
 
 Type: **investigate** <br>
 Read only: **True**
+
+<b>get file</b> streams the requested file into the vault and verifies its requested hash before it is added. Downloads larger than the asset's maximum file download size are rejected; the default limit is 100 MiB.
 
 #### Action Parameters
 

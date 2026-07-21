@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import httpx
+from pathlib import Path
+import shutil
+import tempfile
 
 from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
@@ -57,8 +60,8 @@ from utils import (
     encode_api_path_segment,
     sanitize_key_names,
     sanitize_url_object,
+    stream_download_to_file,
     validate_upload_url,
-    verify_downloaded_file,
 )
 
 logger = getLogger()
@@ -107,6 +110,11 @@ class Asset(BaseAsset):
         required=False,
         description="Maximum number of entries in cache. Values of zero or less will not limit size and decimal value will be converted to floor value (Default: 1000)",
         default=1000.0,
+    )
+    max_file_download_size_mib: float = AssetField(
+        required=False,
+        description="Maximum size in MiB for a file downloaded by the get file action (Default: 100 MiB)",
+        default=100.0,
     )
 
     def get_client(self) -> httpx.Client:
@@ -594,23 +602,43 @@ class GetFileParams(Params):
 @app.action(
     description="Downloads a file from VirusTotal and adds it to the vault",
     action_type="investigate",
+    verbose="<b>get file</b> streams the requested file into the vault and verifies its requested hash before it is added. Downloads larger than the asset's maximum file download size are rejected; the default limit is 100 MiB.",
     render_as="table",
 )
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
-    client = asset.get_client()
-    _check_rate_limit(asset)
-    response = client.get(f"files/{encode_api_path_segment(params.hash)}/download")
-    if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
+    try:
+        max_bytes = int(asset.max_file_download_size_mib * 1024 * 1024)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise AssetMisconfiguration(
+            "Maximum file download size must be a positive number"
+        ) from exc
+    if max_bytes <= 0:
+        raise AssetMisconfiguration(
+            "Maximum file download size must be greater than zero"
         )
 
-    response.raise_for_status()
-    verify_downloaded_file(params.hash, response.content)
+    client = asset.get_client()
+    _check_rate_limit(asset)
+    vault_temp_dir = Path(soar.vault.get_vault_tmp_dir())
+    download_dir = Path(tempfile.mkdtemp(prefix="virustotalv3-", dir=vault_temp_dir))
+    download_path = download_dir / "download"
 
-    soar.vault.create_attachment(
-        soar.get_executing_container_id(), response.content, params.hash
-    )
+    try:
+        with client.stream(
+            "GET", f"files/{encode_api_path_segment(params.hash)}/download"
+        ) as response:
+            if asset.rate_limit:
+                asset.cache_state["rate_limit_timestamps"].append(
+                    response.headers.get("Date", time.time())
+                )
+            response.raise_for_status()
+            stream_download_to_file(response, download_path, params.hash, max_bytes)
+
+        soar.vault.add_attachment(
+            soar.get_executing_container_id(), str(download_path), params.hash
+        )
+    finally:
+        shutil.rmtree(download_dir, ignore_errors=True)
 
     soar.set_message("File downloaded and added to the vault.")
     return ActionOutput()

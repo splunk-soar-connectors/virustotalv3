@@ -1,3 +1,3 @@
 **Unreleased**
 
-* Refresh development tooling.
+* Limit streamed get file downloads to the configured maximum size.
