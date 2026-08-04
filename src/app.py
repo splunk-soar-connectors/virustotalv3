@@ -309,6 +309,11 @@ def _make_request(
         asset.cache_state["rate_limit_timestamps"].append(time.time())
 
     resp_json = response.json()
+    if not isinstance(resp_json, dict):
+        raise ActionFailure("VirusTotal returned JSON that was not an object")
+    if "error" in resp_json and not isinstance(resp_json["error"], dict):
+        raise ActionFailure("VirusTotal returned an invalid JSON error object")
+
     if use_cache:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))

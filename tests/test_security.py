@@ -283,24 +283,31 @@ class StopPolling(Exception):
     pass
 
 
+DEFAULT_PAYLOAD = object()
+
+
 class JsonResponse:
-    def __init__(self):
+    def __init__(self, payload=DEFAULT_PAYLOAD):
         self.headers = {}
+        self.payload = (
+            {"data": {"id": "response"}} if payload is DEFAULT_PAYLOAD else payload
+        )
 
     def raise_for_status(self) -> None:
         return None
 
-    def json(self) -> dict:
-        return {"data": {"id": "response"}}
+    def json(self):
+        return self.payload
 
 
 class RequestClient:
-    def __init__(self):
+    def __init__(self, payload=DEFAULT_PAYLOAD):
         self.calls = []
+        self.payload = payload
 
     def request(self, method: str, endpoint: str, **kwargs) -> JsonResponse:
         self.calls.append((method, endpoint, kwargs))
-        return JsonResponse()
+        return JsonResponse(self.payload)
 
 
 class CacheAsset:
@@ -309,12 +316,30 @@ class CacheAsset:
     cache_size = 10
     rate_limit = False
 
-    def __init__(self):
-        self.client = RequestClient()
+    def __init__(self, payload=DEFAULT_PAYLOAD):
+        self.client = RequestClient(payload)
         self.cache_state = {"rate_limit_timestamps": []}
 
     def get_client(self) -> RequestClient:
         return self.client
+
+
+@pytest.mark.parametrize("payload", [[], "unexpected", None])
+def test_make_request_rejects_non_object_json(payload):
+    asset = CacheAsset(payload)
+    asset.cache_reputation_checks = False
+
+    with pytest.raises(ActionFailure, match="JSON that was not an object"):
+        app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
+
+
+@pytest.mark.parametrize("error", [[], "unexpected", None])
+def test_make_request_rejects_non_object_error(error):
+    asset = CacheAsset({"error": error})
+    asset.cache_reputation_checks = False
+
+    with pytest.raises(ActionFailure, match="invalid JSON error object"):
+        app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
 
 
 def test_stream_download_to_file_enforces_advertised_size(tmp_path: Path):
