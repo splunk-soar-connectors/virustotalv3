@@ -53,8 +53,11 @@ from typing import Optional
 from cache import DataCache
 import base64
 import datetime
+import ipaddress
 import json
 import time
+
+from pydantic import field_validator
 
 from utils import (
     encode_api_path_segment,
@@ -658,6 +661,17 @@ class IpReputationParams(Params):
         cef_types=["ip", "ipv6"],
     )
 
+    @field_validator("ip")
+    @classmethod
+    def validate_ip(cls, value: str) -> str:
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError as exc:
+            raise ValueError("IP must be a valid IPv4 or IPv6 address") from exc
+        if isinstance(address, ipaddress.IPv6Address) and address.scope_id is not None:
+            raise ValueError("IP must not include an IPv6 scope ID")
+        return value
+
 
 class IpReputationOutput(PermissiveActionOutput):
     id: str = OutputField(
@@ -687,7 +701,10 @@ def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
     resp_json = _make_request(
-        asset, "GET", f"ip_addresses/{params.ip}", raise_for_status=False
+        asset,
+        "GET",
+        f"ip_addresses/{encode_api_path_segment(params.ip)}",
+        raise_for_status=False,
     )
 
     logger.debug(f"VirusTotal response: {resp_json}")

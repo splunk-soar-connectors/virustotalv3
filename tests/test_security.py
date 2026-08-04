@@ -20,7 +20,13 @@ import pytest
 from soar_sdk.exceptions import ActionFailure
 
 import app
-from app import DetonateFileParams, DetonateUrlParams, GetFileParams, get_file
+from app import (
+    DetonateFileParams,
+    DetonateUrlParams,
+    GetFileParams,
+    IpReputationParams,
+    get_file,
+)
 from utils import (
     encode_api_path_segment,
     sanitize_url_object,
@@ -32,6 +38,49 @@ from utils import (
 
 def test_encode_api_path_segment_prevents_scope_changes():
     assert encode_api_path_segment("../users/me?x=1") == "..%2Fusers%2Fme%3Fx%3D1"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "../domains/example.com",
+        "8.8.8.8?relationships=resolutions",
+        "2001:db8::1%?relationships=resolutions",
+        "fe80::1%eth0",
+        "not-an-ip",
+    ],
+)
+def test_ip_reputation_params_reject_invalid_or_scoped_addresses(value):
+    with pytest.raises(ValueError, match="IP must"):
+        IpReputationParams(ip=value)
+
+
+@pytest.mark.parametrize("value", ["8.8.8.8", "2001:db8::1"])
+def test_ip_reputation_params_accept_ip_literals(value):
+    assert IpReputationParams(ip=value).ip == value
+
+
+def test_ip_reputation_encodes_ipv6_path_segment(monkeypatch):
+    calls = []
+
+    def make_request(*args, **kwargs):
+        calls.append((args[1], args[2], kwargs))
+        return {}
+
+    soar = SimpleNamespace(set_message=lambda _message: None)
+    monkeypatch.setattr(app, "_make_request", make_request)
+
+    app.ip_reputation.__wrapped__(
+        IpReputationParams(ip="2001:db8::1"), soar, SimpleNamespace()
+    )
+
+    assert calls == [
+        (
+            "GET",
+            "ip_addresses/2001%3Adb8%3A%3A1",
+            {"raise_for_status": False},
+        )
+    ]
 
 
 @pytest.mark.parametrize(
