@@ -20,7 +20,14 @@ import pytest
 from soar_sdk.exceptions import ActionFailure
 
 import app
-from app import DetonateFileParams, DetonateUrlParams, GetFileParams, get_file
+from app import (
+    Asset,
+    DetonateFileParams,
+    DetonateUrlParams,
+    GetFileParams,
+    IpReputationParams,
+    get_file,
+)
 from utils import (
     encode_api_path_segment,
     sanitize_url_object,
@@ -32,6 +39,100 @@ from utils import (
 
 def test_encode_api_path_segment_prevents_scope_changes():
     assert encode_api_path_segment("../users/me?x=1") == "..%2Fusers%2Fme%3Fx%3D1"
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        "../domains/example.com",
+        "8.8.8.8?relationships=resolutions",
+        "2001:db8::1%?relationships=resolutions",
+        "fe80::1%eth0",
+        "not-an-ip",
+    ],
+)
+def test_ip_reputation_params_reject_invalid_or_scoped_addresses(value):
+    with pytest.raises(ValueError, match="IP must"):
+        IpReputationParams(ip=value)
+
+
+@pytest.mark.parametrize("value", ["8.8.8.8", "2001:db8::1"])
+def test_ip_reputation_params_accept_ip_literals(value):
+    assert IpReputationParams(ip=value).ip == value
+
+
+def test_ip_reputation_encodes_ipv6_path_segment(monkeypatch):
+    calls = []
+
+    def make_request(*args, **kwargs):
+        calls.append((args[1], args[2], kwargs))
+        return {}
+
+    soar = SimpleNamespace(set_message=lambda _message: None)
+    monkeypatch.setattr(app, "_make_request", make_request)
+
+    app.ip_reputation.__wrapped__(
+        IpReputationParams(ip="2001:db8::1"), soar, SimpleNamespace()
+    )
+
+    assert calls == [
+        (
+            "GET",
+            "ip_addresses/2001%3Adb8%3A%3A1",
+            {"raise_for_status": False},
+        )
+    ]
+
+
+def test_rate_limit_prunes_stale_timestamps_and_never_sleeps_negative(monkeypatch):
+    asset = SimpleNamespace(
+        rate_limit=True,
+        cache_state={"rate_limit_timestamps": [0, 50, 60, 70, 80]},
+    )
+    current_times = iter([100, 111])
+    sleeps = []
+    monkeypatch.setattr(app.time, "time", lambda: next(current_times))
+    monkeypatch.setattr(app.time, "sleep", sleeps.append)
+
+    app._check_rate_limit(asset)
+
+    assert sleeps == [10]
+    assert asset.cache_state["rate_limit_timestamps"] == [60, 70, 80]
+
+
+def test_make_request_tracks_numeric_local_rate_limit_timestamp(monkeypatch):
+    asset = CacheAsset()
+    asset.rate_limit = True
+    asset.cache_reputation_checks = False
+    monkeypatch.setattr(app.time, "time", lambda: 123.0)
+
+    app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
+
+    assert asset.cache_state["rate_limit_timestamps"] == [123.0]
+
+
+@pytest.mark.parametrize("value", [-1, 900.1, float("inf"), float("nan")])
+def test_asset_rejects_unsafe_waiting_time(value):
+    with pytest.raises(ValueError, match="between 0 and 900"):
+        Asset(apikey="key", waiting_time=value)  # pragma: allowlist secret
+
+
+@pytest.mark.parametrize("value", [0, 900])
+def test_asset_accepts_bounded_waiting_time(value):
+    asset = Asset(apikey="key", waiting_time=value)  # pragma: allowlist secret
+    assert asset.waiting_time == value
+
+
+@pytest.mark.parametrize("value", [-1, 900.1, float("inf"), float("nan")])
+def test_poll_for_result_rejects_unsafe_wait_before_sleep(value, monkeypatch):
+    monkeypatch.setattr(
+        app.time,
+        "sleep",
+        lambda _seconds: pytest.fail("unsafe wait reached time.sleep"),
+    )
+
+    with pytest.raises(ActionFailure, match="between 0 and 900"):
+        app.poll_for_result("scan-id", 1, value, SimpleNamespace())
 
 
 @pytest.mark.parametrize(
@@ -182,24 +283,31 @@ class StopPolling(Exception):
     pass
 
 
+DEFAULT_PAYLOAD = object()
+
+
 class JsonResponse:
-    def __init__(self):
+    def __init__(self, payload=DEFAULT_PAYLOAD):
         self.headers = {}
+        self.payload = (
+            {"data": {"id": "response"}} if payload is DEFAULT_PAYLOAD else payload
+        )
 
     def raise_for_status(self) -> None:
         return None
 
-    def json(self) -> dict:
-        return {"data": {"id": "response"}}
+    def json(self):
+        return self.payload
 
 
 class RequestClient:
-    def __init__(self):
+    def __init__(self, payload=DEFAULT_PAYLOAD):
         self.calls = []
+        self.payload = payload
 
     def request(self, method: str, endpoint: str, **kwargs) -> JsonResponse:
         self.calls.append((method, endpoint, kwargs))
-        return JsonResponse()
+        return JsonResponse(self.payload)
 
 
 class CacheAsset:
@@ -208,12 +316,30 @@ class CacheAsset:
     cache_size = 10
     rate_limit = False
 
-    def __init__(self):
-        self.client = RequestClient()
+    def __init__(self, payload=DEFAULT_PAYLOAD):
+        self.client = RequestClient(payload)
         self.cache_state = {"rate_limit_timestamps": []}
 
     def get_client(self) -> RequestClient:
         return self.client
+
+
+@pytest.mark.parametrize("payload", [[], "unexpected", None])
+def test_make_request_rejects_non_object_json(payload):
+    asset = CacheAsset(payload)
+    asset.cache_reputation_checks = False
+
+    with pytest.raises(ActionFailure, match="JSON that was not an object"):
+        app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
+
+
+@pytest.mark.parametrize("error", [[], "unexpected", None])
+def test_make_request_rejects_non_object_error(error):
+    asset = CacheAsset({"error": error})
+    asset.cache_reputation_checks = False
+
+    with pytest.raises(ActionFailure, match="invalid JSON error object"):
+        app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
 
 
 def test_stream_download_to_file_enforces_advertised_size(tmp_path: Path):
@@ -247,16 +373,21 @@ def test_stream_download_to_file_writes_verified_content(tmp_path: Path):
     assert destination.read_bytes() == content
 
 
-def test_get_file_streams_to_vault_temp_and_removes_temp_dir(tmp_path: Path):
+def test_get_file_streams_to_vault_temp_and_removes_temp_dir(
+    tmp_path: Path, monkeypatch
+):
     content = b"streamed sample"
     digest = hashlib.sha256(content).hexdigest()
     soar = DownloadSoar(tmp_path)
     asset = DownloadAsset(StreamResponse([content], content_length=str(len(content))))
+    asset.rate_limit = True
+    monkeypatch.setattr(app.time, "time", lambda: 456.0)
 
     get_file.__wrapped__(GetFileParams(hash=digest), soar, asset)
 
     assert soar.vault.attachment_content == content
     assert soar.message == "File downloaded and added to the vault."
+    assert asset.cache_state["rate_limit_timestamps"] == [456.0]
     assert list(tmp_path.iterdir()) == []
 
 

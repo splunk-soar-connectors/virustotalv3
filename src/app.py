@@ -53,8 +53,12 @@ from typing import Optional
 from cache import DataCache
 import base64
 import datetime
+import ipaddress
 import json
+import math
 import time
+
+from pydantic import field_validator
 
 from utils import (
     encode_api_path_segment,
@@ -72,6 +76,15 @@ PASS_ERROR_CODE = {
     404: "NotFoundError",
     409: "AlreadyExistsError",
 }
+MAX_WAIT_TIME_SECONDS = 900.0
+
+
+def _validate_wait_time(value: float) -> float:
+    if not math.isfinite(value) or value < 0 or value > MAX_WAIT_TIME_SECONDS:
+        raise ValueError(
+            f"Wait time must be between 0 and {MAX_WAIT_TIME_SECONDS:g} seconds"
+        )
+    return value
 
 
 class Asset(BaseAsset):
@@ -116,6 +129,11 @@ class Asset(BaseAsset):
         description="Maximum size in MiB for a file downloaded by the get file action (Default: 100 MiB)",
         default=100.0,
     )
+
+    @field_validator("waiting_time")
+    @classmethod
+    def validate_waiting_time(cls, value: float) -> float:
+        return _validate_wait_time(value)
 
     def get_client(self) -> httpx.Client:
         headers = {
@@ -223,7 +241,7 @@ def _check_rate_limit(asset, count=1) -> None:
     # If we have 4 or more recent requests, wait until we can make another
     if len(recent_timestamps) >= 4:
         # Calculate how long to wait (until the oldest timestamp is 60+ seconds old)
-        wait_time = 60 - (current_time - min(recent_timestamps))
+        wait_time = max(0.0, 60 - (current_time - min(recent_timestamps)))
 
         if wait_time > 0:
             logger.info(
@@ -288,11 +306,14 @@ def _make_request(
     if raise_for_status:
         response.raise_for_status()
     if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
-        )
+        asset.cache_state["rate_limit_timestamps"].append(time.time())
 
     resp_json = response.json()
+    if not isinstance(resp_json, dict):
+        raise ActionFailure("VirusTotal returned JSON that was not an object")
+    if "error" in resp_json and not isinstance(resp_json["error"], dict):
+        raise ActionFailure("VirusTotal returned an invalid JSON error object")
+
     if use_cache:
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
@@ -635,9 +656,7 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
             "GET", f"files/{encode_api_path_segment(params.hash)}/download"
         ) as response:
             if asset.rate_limit:
-                asset.cache_state["rate_limit_timestamps"].append(
-                    response.headers.get("Date", time.time())
-                )
+                asset.cache_state["rate_limit_timestamps"].append(time.time())
             response.raise_for_status()
             stream_download_to_file(response, download_path, params.hash, max_bytes)
 
@@ -657,6 +676,17 @@ class IpReputationParams(Params):
         primary=True,
         cef_types=["ip", "ipv6"],
     )
+
+    @field_validator("ip")
+    @classmethod
+    def validate_ip(cls, value: str) -> str:
+        try:
+            address = ipaddress.ip_address(value)
+        except ValueError as exc:
+            raise ValueError("IP must be a valid IPv4 or IPv6 address") from exc
+        if isinstance(address, ipaddress.IPv6Address) and address.scope_id is not None:
+            raise ValueError("IP must not include an IPv6 scope ID")
+        return value
 
 
 class IpReputationOutput(PermissiveActionOutput):
@@ -687,7 +717,10 @@ def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
 ) -> IpReputationOutput:
     resp_json = _make_request(
-        asset, "GET", f"ip_addresses/{params.ip}", raise_for_status=False
+        asset,
+        "GET",
+        f"ip_addresses/{encode_api_path_segment(params.ip)}",
+        raise_for_status=False,
     )
 
     logger.debug(f"VirusTotal response: {resp_json}")
@@ -883,8 +916,10 @@ class DetonateFileOutput(PermissiveActionOutput):
 def poll_for_result(
     scan_id: str, poll_interval: float, wait_time: float, asset: Asset
 ) -> tuple[dict, DetonateSummary]:
-    if wait_time < 0:
-        raise ActionFailure(f"Wait time must be greater than 0, got {wait_time}")
+    try:
+        wait_time = _validate_wait_time(wait_time)
+    except ValueError as exc:
+        raise ActionFailure(str(exc)) from exc
     time.sleep(wait_time)
     # since we sleep for 1 minute, num_attempts is the number of minutes to poll
     num_attempts = poll_interval
