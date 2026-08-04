@@ -55,6 +55,7 @@ import base64
 import datetime
 import ipaddress
 import json
+import math
 import time
 
 from pydantic import field_validator
@@ -75,6 +76,15 @@ PASS_ERROR_CODE = {
     404: "NotFoundError",
     409: "AlreadyExistsError",
 }
+MAX_WAIT_TIME_SECONDS = 900.0
+
+
+def _validate_wait_time(value: float) -> float:
+    if not math.isfinite(value) or value < 0 or value > MAX_WAIT_TIME_SECONDS:
+        raise ValueError(
+            f"Wait time must be between 0 and {MAX_WAIT_TIME_SECONDS:g} seconds"
+        )
+    return value
 
 
 class Asset(BaseAsset):
@@ -119,6 +129,11 @@ class Asset(BaseAsset):
         description="Maximum size in MiB for a file downloaded by the get file action (Default: 100 MiB)",
         default=100.0,
     )
+
+    @field_validator("waiting_time")
+    @classmethod
+    def validate_waiting_time(cls, value: float) -> float:
+        return _validate_wait_time(value)
 
     def get_client(self) -> httpx.Client:
         headers = {
@@ -896,8 +911,10 @@ class DetonateFileOutput(PermissiveActionOutput):
 def poll_for_result(
     scan_id: str, poll_interval: float, wait_time: float, asset: Asset
 ) -> tuple[dict, DetonateSummary]:
-    if wait_time < 0:
-        raise ActionFailure(f"Wait time must be greater than 0, got {wait_time}")
+    try:
+        wait_time = _validate_wait_time(wait_time)
+    except ValueError as exc:
+        raise ActionFailure(str(exc)) from exc
     time.sleep(wait_time)
     # since we sleep for 1 minute, num_attempts is the number of minutes to poll
     num_attempts = poll_interval

@@ -21,6 +21,7 @@ from soar_sdk.exceptions import ActionFailure
 
 import app
 from app import (
+    Asset,
     DetonateFileParams,
     DetonateUrlParams,
     GetFileParams,
@@ -108,6 +109,30 @@ def test_make_request_tracks_numeric_local_rate_limit_timestamp(monkeypatch):
     app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
 
     assert asset.cache_state["rate_limit_timestamps"] == [123.0]
+
+
+@pytest.mark.parametrize("value", [-1, 900.1, float("inf"), float("nan")])
+def test_asset_rejects_unsafe_waiting_time(value):
+    with pytest.raises(ValueError, match="between 0 and 900"):
+        Asset(apikey="key", waiting_time=value)  # pragma: allowlist secret
+
+
+@pytest.mark.parametrize("value", [0, 900])
+def test_asset_accepts_bounded_waiting_time(value):
+    asset = Asset(apikey="key", waiting_time=value)  # pragma: allowlist secret
+    assert asset.waiting_time == value
+
+
+@pytest.mark.parametrize("value", [-1, 900.1, float("inf"), float("nan")])
+def test_poll_for_result_rejects_unsafe_wait_before_sleep(value, monkeypatch):
+    monkeypatch.setattr(
+        app.time,
+        "sleep",
+        lambda _seconds: pytest.fail("unsafe wait reached time.sleep"),
+    )
+
+    with pytest.raises(ActionFailure, match="between 0 and 900"):
+        app.poll_for_result("scan-id", 1, value, SimpleNamespace())
 
 
 @pytest.mark.parametrize(
