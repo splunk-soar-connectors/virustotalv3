@@ -83,6 +83,33 @@ def test_ip_reputation_encodes_ipv6_path_segment(monkeypatch):
     ]
 
 
+def test_rate_limit_prunes_stale_timestamps_and_never_sleeps_negative(monkeypatch):
+    asset = SimpleNamespace(
+        rate_limit=True,
+        cache_state={"rate_limit_timestamps": [0, 50, 60, 70, 80]},
+    )
+    current_times = iter([100, 111])
+    sleeps = []
+    monkeypatch.setattr(app.time, "time", lambda: next(current_times))
+    monkeypatch.setattr(app.time, "sleep", sleeps.append)
+
+    app._check_rate_limit(asset)
+
+    assert sleeps == [10]
+    assert asset.cache_state["rate_limit_timestamps"] == [60, 70, 80]
+
+
+def test_make_request_tracks_numeric_local_rate_limit_timestamp(monkeypatch):
+    asset = CacheAsset()
+    asset.rate_limit = True
+    asset.cache_reputation_checks = False
+    monkeypatch.setattr(app.time, "time", lambda: 123.0)
+
+    app._make_request(asset, "GET", "ip_addresses/8.8.8.8")
+
+    assert asset.cache_state["rate_limit_timestamps"] == [123.0]
+
+
 @pytest.mark.parametrize(
     "url",
     [
@@ -296,16 +323,21 @@ def test_stream_download_to_file_writes_verified_content(tmp_path: Path):
     assert destination.read_bytes() == content
 
 
-def test_get_file_streams_to_vault_temp_and_removes_temp_dir(tmp_path: Path):
+def test_get_file_streams_to_vault_temp_and_removes_temp_dir(
+    tmp_path: Path, monkeypatch
+):
     content = b"streamed sample"
     digest = hashlib.sha256(content).hexdigest()
     soar = DownloadSoar(tmp_path)
     asset = DownloadAsset(StreamResponse([content], content_length=str(len(content))))
+    asset.rate_limit = True
+    monkeypatch.setattr(app.time, "time", lambda: 456.0)
 
     get_file.__wrapped__(GetFileParams(hash=digest), soar, asset)
 
     assert soar.vault.attachment_content == content
     assert soar.message == "File downloaded and added to the vault."
+    assert asset.cache_state["rate_limit_timestamps"] == [456.0]
     assert list(tmp_path.iterdir()) == []
 
 

@@ -226,7 +226,7 @@ def _check_rate_limit(asset, count=1) -> None:
     # If we have 4 or more recent requests, wait until we can make another
     if len(recent_timestamps) >= 4:
         # Calculate how long to wait (until the oldest timestamp is 60+ seconds old)
-        wait_time = 60 - (current_time - min(recent_timestamps))
+        wait_time = max(0.0, 60 - (current_time - min(recent_timestamps)))
 
         if wait_time > 0:
             logger.info(
@@ -291,9 +291,7 @@ def _make_request(
     if raise_for_status:
         response.raise_for_status()
     if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
-        )
+        asset.cache_state["rate_limit_timestamps"].append(time.time())
 
     resp_json = response.json()
     if use_cache:
@@ -638,9 +636,7 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
             "GET", f"files/{encode_api_path_segment(params.hash)}/download"
         ) as response:
             if asset.rate_limit:
-                asset.cache_state["rate_limit_timestamps"].append(
-                    response.headers.get("Date", time.time())
-                )
+                asset.cache_state["rate_limit_timestamps"].append(time.time())
             response.raise_for_status()
             stream_download_to_file(response, download_path, params.hash, max_bytes)
 
