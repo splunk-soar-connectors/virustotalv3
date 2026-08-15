@@ -383,6 +383,7 @@ def domain_reputation_view(outputs: list[DomainReputationOutput]) -> dict:
     action_type="investigate",
     view_handler=domain_reputation_view,
     summary_type=DomainReputationSummary,
+    read_only=True,
 )
 def domain_reputation(
     params: DomainReputationParams, soar: SOARClient, asset: Asset
@@ -567,6 +568,7 @@ class FileReputationSummary(ActionOutput):
     action_type="investigate",
     render_as="table",
     summary_type=FileReputationSummary,
+    read_only=True,
 )
 def file_reputation(
     params: FileReputationParams,
@@ -611,6 +613,7 @@ class GetFileParams(Params):
     action_type="investigate",
     verbose="<b>get file</b> streams the requested file into the vault and verifies its requested hash before it is added. Downloads larger than the asset's maximum file download size are rejected; the default limit is 100 MiB.",
     render_as="table",
+    read_only=True,
 )
 def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOutput:
     try:
@@ -682,6 +685,7 @@ class IpReputationSummary(ActionOutput):
     description="Queries VirusTotal for IP info",
     action_type="investigate",
     render_as="table",
+    read_only=True,
 )
 def ip_reputation(
     params: IpReputationParams, soar: SOARClient, asset: Asset
@@ -747,6 +751,7 @@ class UrlReputationOutput(PermissiveActionOutput):
     action_type="investigate",
     summary_type=DetonateSummary,
     render_as="table",
+    read_only=True,
 )
 def url_reputation(
     params: UrlReputationParams, soar: SOARClient, asset: Asset
@@ -1026,6 +1031,7 @@ class GetReportParams(Params):
     verbose="For the wait time parameter, the priority will be given to the action parameter over the asset configuration parameter.",
     summary_type=DetonateSummary,
     render_as="table",
+    read_only=True,
 )
 def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
@@ -1062,6 +1068,7 @@ class GetCachedEnteriesSummary(ActionOutput):
     action_type="investigate",
     summary_type=GetCachedEnteriesSummary,
     render_as="table",
+    read_only=True,
 )
 def get_cached_entries(
     params: Params, soar: SOARClient, asset: Asset
@@ -1299,6 +1306,7 @@ class GetQuotasSummaryOutput(ActionOutput):
     action_type="investigate",
     summary_type=GetQuotasSummaryOutput,
     view_handler=get_quotas_view,
+    read_only=True,
 )
 def get_quotas(
     params: GetQuotasParams, soar: SOARClient, asset: Asset
