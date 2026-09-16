@@ -1,5 +1,7 @@
 **Unreleased**
 
+* - Updated the bundled idna dependency to 3.15.
+
 * - Updated the bundled PyJWT dependency to 2.13.0.
 
 * - Updated the bundled click dependency to 8.3.3.
