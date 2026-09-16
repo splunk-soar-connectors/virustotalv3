@@ -1,5 +1,7 @@
 **Unreleased**
 
+* - Updated the bundled joserfc dependency to 1.6.8.
+
 * - Updated the bundled idna dependency to 3.15.
 
 * - Updated the bundled PyJWT dependency to 2.13.0.
