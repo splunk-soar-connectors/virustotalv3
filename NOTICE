@@ -496,9 +496,9 @@ documentation is licensed as follows:
 
 @@@@============================================================================
 
-Library: click - 8.1.8
+Library: click - 8.3.3
 Homepage: https://github.com/pallets/click/
-License: BSD License
+License: BSD-3-Clause
 License Text:
 
 Copyright 2014 Pallets
@@ -3921,7 +3921,7 @@ License Text:
 
 @@@@============================================================================
 
-Library: typer - 0.17.5
+Library: typer - 0.17.4
 Homepage: https://github.com/fastapi/typer
 License: MIT License
 License Text:
