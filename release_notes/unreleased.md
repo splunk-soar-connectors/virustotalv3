@@ -1,1 +1,3 @@
 **Unreleased**
+
+* Updated dependencies.
