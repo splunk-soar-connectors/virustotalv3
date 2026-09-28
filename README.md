@@ -1,7 +1,7 @@
 # VirusTotal v3
 
 Publisher: Splunk <br>
-Connector Version: 3.0.8 <br>
+Connector Version: 3.0.9 <br>
 Product Vendor: VirusTotal <br>
 Product Name: VirusTotal v3 <br>
 Minimum Product Version: 7.0.0
@@ -745,7 +745,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
 **body** | optional | The body to send with the request (JSON object). An example is {'key': 'value', 'key2': 'value2'} | string | |
 **timeout** | optional | The timeout for the request in seconds. | numeric | |
-**verify_ssl** | optional | Whether to verify the SSL certificate. Default is False. | boolean | |
+**verify_ssl** | optional | Whether to verify the SSL certificate. Default is True. | boolean | |
 
 #### Action Output
 
