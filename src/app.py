@@ -1036,14 +1036,12 @@ class GetReportParams(Params):
 def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
     logger.info(f"Polling VirusTotal for report related to {scan_id}")
-    resp_json, summary = poll_for_result(
+    analysis, summary = poll_for_result(
         scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
     )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for scan ID {scan_id}")
-    return PollingData(**data)
+    return PollingData(**analysis)
 
 
 class GetCachedEntry(ActionOutput):
