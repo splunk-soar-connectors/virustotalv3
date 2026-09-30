@@ -117,7 +117,7 @@ class Asset(BaseAsset):
         default=100.0,
     )
 
-    def get_client(self) -> httpx.Client:
+    def get_client(self, verify: bool = True) -> httpx.Client:
         headers = {
             "x-apikey": self.apikey,
         }
@@ -125,6 +125,7 @@ class Asset(BaseAsset):
             base_url="https://www.virustotal.com/api/v3/",
             timeout=self.timeout,
             headers=headers,
+            verify=verify,
         )
 
 
@@ -466,7 +467,7 @@ class VirusTotalMakeRequestParams(MakeRequestParams):
 def http_action(
     params: VirusTotalMakeRequestParams, asset: Asset
 ) -> CustomMakeRequestOutput:
-    client = asset.get_client()
+    client = asset.get_client(verify=params.verify_ssl)
 
     if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
         raise ActionFailure(
@@ -521,8 +522,6 @@ def http_action(
         merged_headers = client.headers.copy()
         merged_headers.update(parsed_headers)
         request_kwargs["headers"] = merged_headers
-    if params.verify_ssl:
-        request_kwargs["verify"] = params.verify_ssl
     if params.timeout:
         request_kwargs["timeout"] = params.timeout
 

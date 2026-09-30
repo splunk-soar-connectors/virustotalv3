@@ -1,6 +1,6 @@
 [project]
 name = "virustotalv3"
-version = "3.0.8"
+version = "3.0.9"
 description = "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs"
 license = "Copyright (c) 2021-2025 Splunk Inc."
 requires-python = ">=3.13, <3.15"
@@ -8,7 +8,7 @@ authors = [
     { name = "jang@splunk.com" },
 ]
 dependencies = [
-    "splunk-soar-sdk>=4.1.2",
+    "splunk-soar-sdk>=5.0.0",
 ]
 
 [tool.soar.app]
@@ -25,7 +25,7 @@ dev = [
     "pytest-mock>=3.14.0,<4",
     "pytest-watch>=4.2.0,<5",
     "ruff>=0.11.6,<1",
-    "splunk-soar-sdk>=4.1.2",
+    "splunk-soar-sdk>=5.0.0",
 ]
 
 [[tool.uv.index]]
