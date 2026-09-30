@@ -11,10 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import httpx
+import hashlib
 from pathlib import Path
 import shutil
 import tempfile
+
+import httpx
 
 from soar_sdk.abstract import SOARClient
 from soar_sdk.action_results import ActionOutput, OutputField, PermissiveActionOutput
@@ -46,8 +48,12 @@ from models.outputs.quotas.quota_models import (
     PrivateScansMonthlyOutput,
     PrivateScansPerMinuteOutput,
 )
-from models.outputs.detonation.attributes import DetonateFileAttributes
-from models.outputs.detonation.data import PollingData, MetaOutput
+from models.outputs.detonation.data import (
+    MetaOutput,
+    PollingData,
+    PollingDataAttributes,
+    ScanLinks,
+)
 from models.outputs.url_reputation.url import URLAttributes
 from typing import Optional
 from cache import DataCache
@@ -194,46 +200,43 @@ def _is_valid_query_string(query_string: str) -> bool:
     return True
 
 
-def _check_rate_limit(asset, count=1) -> None:
+def _check_rate_limit(asset) -> None:
     """Check to see if the rate limit is within the "4 requests per minute" limit enforced by VirusTotal free tier.
     If the rate limit is exceeded, wait for the appropriate amount of time before making the request again.
     """
     if not asset.rate_limit:
         return
-    logger.debug(f"Checking rate limit for the {count}th time")
+    while True:
+        current_time = time.time()
+        timestamps = asset.cache_state.get("rate_limit_timestamps", [])
+        if not isinstance(timestamps, list):
+            timestamps = []
 
-    if count == 5:
-        raise ActionFailure("Rate limit reached. Please try again later.")
+        # Convert timestamps from previous app versions and discard expired ones.
+        recent_timestamps = []
+        for ts in timestamps:
+            try:
+                ts_float = float(ts)
+                if 0 <= current_time - ts_float < 60:
+                    recent_timestamps.append(ts_float)
+            except (ValueError, TypeError):
+                logger.debug(f"Skipping invalid timestamp: {ts}")
 
-    current_time = time.time()
-    timestamps = asset.cache_state.get("rate_limit_timestamps", [])
+        if len(recent_timestamps) < 4:
+            # Cache state returns a copy, so a top-level assignment is required.
+            # Reserve the request even if VirusTotal subsequently rejects it.
+            asset.cache_state["rate_limit_timestamps"] = [
+                *recent_timestamps,
+                current_time,
+            ]
+            logger.debug("Rate limit check complete.")
+            return
 
-    # Convert all timestamps to float and remove timestamps older than 60 seconds
-    recent_timestamps = []
-    for ts in timestamps:
-        try:
-            ts_float = float(ts)
-            if current_time - ts_float < 60:
-                recent_timestamps.append(ts_float)
-        except (ValueError, TypeError):
-            logger.debug(f"Skipping invalid timestamp: {ts}")
-            continue
-    asset.cache_state["rate_limit_timestamps"] = recent_timestamps
-
-    # If we have 4 or more recent requests, wait until we can make another
-    if len(recent_timestamps) >= 4:
-        # Calculate how long to wait (until the oldest timestamp is 60+ seconds old)
-        wait_time = 60 - (current_time - min(recent_timestamps))
-
-        if wait_time > 0:
-            logger.info(
-                f"Rate limit reached. Waiting {wait_time:.2f} seconds before next request"
-            )
-            time.sleep(wait_time)
-
-            return _check_rate_limit(asset, count + 1)
-
-    logger.debug("Rate limit check complete.")
+        wait_time = max(0, 60 - (current_time - min(recent_timestamps)))
+        logger.info(
+            f"Rate limit reached. Waiting {wait_time:.2f} seconds before next request"
+        )
+        time.sleep(wait_time)
 
 
 def _make_request(
@@ -275,25 +278,36 @@ def _make_request(
         if entry := datacache.expire().search(cache_key):
             cached_status = entry[0]
             resp_json = entry[1]
-            if cached_status != "success":
-                raise ActionFailure(
-                    f"Cached response for {endpoint} is not success with error {resp_json}"
-                )
-            resp_json["results-source"] = "retrieved from cache on soar"
-            return resp_json
+            if (
+                cached_status == "success"
+                and isinstance(resp_json, dict)
+                and resp_json.get("data")
+            ):
+                resp_json["results-source"] = "retrieved from cache on soar"
+                return resp_json
+            # Older versions could cache API errors or empty lookups as successes.
+            datacache.cache.pop(cache_key, None)
+            asset.cache_state["vt_cache"] = datacache.cache
 
     # Check rate limit before making request
     _check_rate_limit(asset)
     response = client.request(method, endpoint, **kwargs)
-    if raise_for_status:
+    if getattr(response, "status_code", None) == 429:
+        try:
+            error_body = response.json()
+        except ValueError:
+            error_body = {}
+        error = error_body.get("error", {}) if isinstance(error_body, dict) else {}
+        code = error.get("code", "HTTP 429") if isinstance(error, dict) else "HTTP 429"
+        message = error.get("message", "") if isinstance(error, dict) else ""
+        raise ActionFailure(f"VirusTotal rate limit ({code}): {message}".rstrip())
+    # Lookup actions inspect 400/404/409 themselves. All other HTTP errors must
+    # remain failures rather than masquerading as a successful empty lookup.
+    if raise_for_status or response.status_code not in (400, 404, 409):
         response.raise_for_status()
-    if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
-        )
 
     resp_json = response.json()
-    if use_cache:
+    if use_cache and response.is_success and resp_json.get("data"):
         # we're no longer going to store failed responses in the cache
         datacache.add(cache_key, ("success", resp_json))
         asset.cache_state["vt_cache"] = datacache.cache
@@ -309,11 +323,16 @@ def test_connectivity(soar: SOARClient, asset: Asset) -> None:
         )
 
     client = asset.get_client()
+    _check_rate_limit(asset)
     response = client.get("files/upload_url")
 
     try:
         response.raise_for_status()
     except httpx.HTTPStatusError as e:
+        if e.response.status_code == 429:
+            raise AssetMisconfiguration(
+                "VirusTotal quota exceeded. Retry connectivity when the API quota is available."
+            ) from e
         raise AssetMisconfiguration(
             "Failed to connect to VirusTotal. Please check the API key."
         ) from e
@@ -529,10 +548,6 @@ def http_action(
     _check_rate_limit(asset)
     response = client.request(**request_kwargs)
     response.raise_for_status()
-    if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
-        )
 
     return CustomMakeRequestOutput.from_response(response)
 
@@ -637,10 +652,6 @@ def get_file(params: GetFileParams, soar: SOARClient, asset: Asset) -> ActionOut
         with client.stream(
             "GET", f"files/{encode_api_path_segment(params.hash)}/download"
         ) as response:
-            if asset.rate_limit:
-                asset.cache_state["rate_limit_timestamps"].append(
-                    response.headers.get("Date", time.time())
-                )
             response.raise_for_status()
             stream_download_to_file(response, download_path, params.hash, max_bytes)
 
@@ -798,26 +809,21 @@ class DetonateUrlParams(Params):
 
 
 class DetonateUrlOutput(PermissiveActionOutput):
-    attributes: URLAttributes
-    data: Optional[PollingData]
-    id: str = OutputField(
-        example_values=[
-            "e0583d78eb4bea4078dce1d89e9eaabd7be7b6a8630f88b70a725c607cdce063"  # pragma: allowlist secret
-        ]
-    )
-    links: APILinks
-    meta: Optional[MetaOutput]
-    type: str = OutputField(example_values=["url"])
-    scan_id: Optional[str]
+    attributes: PollingDataAttributes
+    id: str = OutputField(cef_types=["virustotal scan id"])
+    links: Optional[ScanLinks] = None
+    meta: Optional[MetaOutput] = None
+    type: str = OutputField(example_values=["analysis"])
+    url: str = OutputField(cef_types=["url", "domain"])
+    scan_id: str = OutputField(cef_types=["virustotal scan id"])
 
 
 @app.view_handler(template="detonate_url_view.html")
 def detonate_url_view(outputs: list[DetonateUrlOutput]) -> dict:
     logger.debug(f"View handler called with {len(outputs)} outputs")
     result = {"results": []}
-    for _i, output in enumerate(outputs):
-        scan_id = output.data.id if output.data else output.scan_id
-        result["results"].append({"url": output.attributes.url, "scan_id": scan_id})
+    for output in outputs:
+        result["results"].append({"url": output.url, "scan_id": output.scan_id})
 
     result["container"] = {"id": app.soar_client.get_executing_container_id()}
     return result
@@ -857,7 +863,7 @@ def detonate_url(
     )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    return DetonateUrlOutput(**output)
+    return DetonateUrlOutput(**output, url=params.url, scan_id=scan_id)
 
 
 class DetonateFileParams(Params):
@@ -871,18 +877,13 @@ class DetonateFileParams(Params):
 
 class DetonateFileOutput(PermissiveActionOutput):
     vault_id: str
-    attributes: DetonateFileAttributes
-    data: Optional[PollingData]
-    id: str = OutputField(
-        cef_types=["sha256"],
-        example_values=[
-            "9999999999e1bb3c986c0f0bda85352f63e67e0315c58e461a075b5fb7229e6fe"  # pragma: allowlist secret
-        ],
-    )
-    links: APILinks
-    meta: Optional[MetaOutput]
-    type: str = OutputField(example_values=["file"])
-    scan_id: Optional[str]
+    attributes: PollingDataAttributes
+    id: str = OutputField(cef_types=["virustotal scan id"])
+    links: Optional[ScanLinks] = None
+    meta: Optional[MetaOutput] = None
+    type: str = OutputField(example_values=["analysis"])
+    scan_id: str = OutputField(cef_types=["virustotal scan id"])
+    sha256: str = OutputField(cef_types=["sha256"])
 
 
 def poll_for_result(
@@ -891,9 +892,10 @@ def poll_for_result(
     if wait_time < 0:
         raise ActionFailure(f"Wait time must be greater than 0, got {wait_time}")
     time.sleep(wait_time)
-    # since we sleep for 1 minute, num_attempts is the number of minutes to poll
-    num_attempts = poll_interval
-    while num_attempts > 0:
+    # Poll immediately and once more at the end of the configured minute window.
+    minutes_remaining = poll_interval
+    last_status = "unknown"
+    while minutes_remaining >= 0:
         resp_json = _make_request(
             asset,
             "GET",
@@ -903,26 +905,35 @@ def poll_for_result(
         if isinstance(resp_json, dict):
             resp_json = sanitize_key_names(resp_json)
 
-        if "data" in resp_json and resp_json.get("data", {}).get("attributes", {}).get(
-            "results"
-        ):
-            attributes = resp_json["data"]["attributes"]
+        data = resp_json.get("data") if isinstance(resp_json, dict) else None
+        if isinstance(data, dict):
+            attributes = data.get("attributes") or {}
+            if not isinstance(attributes, dict):
+                attributes = {}
+            last_status = attributes.get("status", "unknown")
 
-            summary = DetonateSummary(
-                scan_id=scan_id,
-                harmless=attributes.get("stats", {}).get("harmless", 0),
-                malicious=attributes.get("stats", {}).get("malicious", 0),
-                suspicious=attributes.get("stats", {}).get("suspicious", 0),
-                timeout=attributes.get("stats", {}).get("timeout", 0),
-                undetected=attributes.get("stats", {}).get("undetected", 0),
-            )
+            if last_status == "completed":
+                stats = attributes.get("stats") or {}
+                summary = DetonateSummary(
+                    scan_id=scan_id,
+                    harmless=stats.get("harmless", 0),
+                    malicious=stats.get("malicious", 0),
+                    suspicious=stats.get("suspicious", 0),
+                    timeout=stats.get("timeout", 0),
+                    undetected=stats.get("undetected", 0),
+                )
 
-            return resp_json["data"], summary
+                return data, summary
 
-        num_attempts -= 1
-        time.sleep(60)
+        if minutes_remaining <= 0:
+            break
+        sleep_minutes = min(1.0, minutes_remaining)
+        minutes_remaining -= sleep_minutes
+        time.sleep(60 * sleep_minutes)
 
-    raise ActionFailure(f"No result found for scan ID {scan_id}")
+    raise ActionFailure(
+        f"No result found for scan ID {scan_id}; last analysis status: {last_status}"
+    )
 
 
 @app.view_handler(template="detonate_file_view.html")
@@ -936,7 +947,7 @@ def detonate_file_view(outputs: list[DetonateFileOutput]) -> dict:
         result["results"].append(
             {
                 "vault_id": output.vault_id,
-                "sha256": output.id,
+                "sha256": output.sha256,
                 "scan_id": output.scan_id,
             }
         )
@@ -993,29 +1004,25 @@ def detonate_file(
             else:
                 file_upload_json = _make_request(asset, "POST", "files", files=files)
 
-        if not (scan_id := file_upload_json.get("data", {}).get("id")):
-            raise ActionFailure(f"No scan ID found for file {file_hash}")
-
-        output, summary = poll_for_result(
-            scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
-        )
-        soar.set_summary(summary)
-        soar.set_message(summary.get_message())
-
-        return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
-
-    if not resp_json.get("data"):
+        resp_json = file_upload_json
+    elif resp_json.get("data"):
+        resp_json = _make_request(asset, "POST", f"files/{file_hash}/analyse")
+    else:
         raise ActionFailure(f"No data found for file {file_hash}")
-    resp_json = _make_request(asset, "POST", f"files/{file_hash}/analyse")
+
     if not (scan_id := resp_json.get("data", {}).get("id")):
         raise ActionFailure(f"No scan ID found for file {file_hash}")
 
     output, summary = poll_for_result(
         scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
     )
+    with open(file_path, "rb") as file_handle:
+        file_sha256 = hashlib.file_digest(file_handle, "sha256").hexdigest()
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    return DetonateFileOutput(**output, vault_id=vault_id, scan_id=scan_id)
+    return DetonateFileOutput(
+        **output, vault_id=vault_id, scan_id=scan_id, sha256=file_sha256
+    )
 
 
 class GetReportParams(Params):

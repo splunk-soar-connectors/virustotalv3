@@ -65,13 +65,13 @@ class URLInfo(ActionOutput):
 
 
 class MetaOutput(ActionOutput):
-    file_info: Optional[FileInfo]
-    url_info: Optional[URLInfo]
+    file_info: Optional[FileInfo] = None
+    url_info: Optional[URLInfo] = None
 
 
 class PollingDataAttributes(ActionOutput):
     date: int = OutputField(cef_types=["timestamp"], example_values=[1613651763])
-    results: Optional[FileAnalysisResults]
+    results: Optional[FileAnalysisResults] = None
     stats: FileAnalysisStats
     status: str = OutputField(example_values=["completed"])
 
@@ -82,6 +82,6 @@ class PollingData(ActionOutput):
         cef_types=["virustotal scan id"],
         example_values=["MmU2NTE1M2YyYzQ5YzkxYTAyMDZlZTdhOGMwMGU2NTk6MTYxMzY1MTc2Mw=="],
     )
-    links: ScanLinks
+    links: Optional[ScanLinks] = None
     type: str
-    meta: Optional[MetaOutput]
+    meta: Optional[MetaOutput] = None
