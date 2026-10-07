@@ -992,7 +992,7 @@ wheels = [
 
 [[package]]
 name = "splunk-soar-sdk"
-version = "4.1.2"
+version = "6.1.5"
 source = { registry = "https://pypi.python.org/simple" }
 dependencies = [
     { name = "authlib" },
@@ -1018,9 +1018,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7c/05/7a667c605445278f221dd0d1aa429b491c97842d5c087af68df8b26ac5f3/splunk_soar_sdk-4.1.2.tar.gz", hash = "sha256:3eca2e908727035d1bfbaa9c1c1eb9585e93b3fe7b3ed40900d3b63fa018a342", size = 765856, upload-time = "2026-08-21T22:57:24.905Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/0c/a1/8a54c2d6f57fd53876c065c5b13b095d57fa3ed3ada1c59621e7f8c31cda/splunk_soar_sdk-6.1.5.tar.gz", hash = "sha256:63f05c813d288d925115aa59133cee70707074a20a1ce8a85c0ee32703b2d6ae", size = 985718, upload-time = "2026-10-14T16:10:23.494Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/c5/e0a6297bf1cbecfb36c4d4cd82b2010a4f9a0520846bfd500507046f4670/splunk_soar_sdk-4.1.2-py3-none-any.whl", hash = "sha256:ddff56d12640d8df0d4bbc0697f88f2cfb20a8a0ef3934a57e2cbed665212ce4", size = 224295, upload-time = "2026-08-21T22:57:23.755Z" },
+    { url = "https://files.pythonhosted.org/packages/54/fa/0f774efb639fe7288991e27f101c303f2e77a0127d7b8c18e7d9de5fe2b2/splunk_soar_sdk-6.1.5-py3-none-any.whl", hash = "sha256:d42a45992b1f701cfbd65776454451750e047a06d089b7eb65507cbff6a6bcee", size = 226823, upload-time = "2026-10-14T16:10:21.879Z" },
 ]
 
 [[package]]
@@ -1140,7 +1140,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=4.1.2" }]
+requires-dist = [{ name = "splunk-soar-sdk", specifier = ">=6.1.3,<7.0.0" }]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1151,7 +1151,7 @@ dev = [
     { name = "pytest-mock", specifier = ">=3.14.0,<4" },
     { name = "pytest-watch", specifier = ">=4.2.0,<5" },
     { name = "ruff", specifier = ">=0.11.6,<1" },
-    { name = "splunk-soar-sdk", specifier = ">=4.1.2" },
+    { name = "splunk-soar-sdk", specifier = ">=6.1.3,<7.0.0" },
 ]
 
 [[package]]
