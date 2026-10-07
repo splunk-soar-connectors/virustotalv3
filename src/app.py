@@ -809,15 +809,15 @@ class DetonateUrlOutput(PermissiveActionOutput):
     meta: Optional[MetaOutput]
     type: str = OutputField(example_values=["url"])
     scan_id: Optional[str]
+    url: str = OutputField(cef_types=["url"])
 
 
 @app.view_handler(template="detonate_url_view.html")
 def detonate_url_view(outputs: list[DetonateUrlOutput]) -> dict:
     logger.debug(f"View handler called with {len(outputs)} outputs")
     result = {"results": []}
-    for _i, output in enumerate(outputs):
-        scan_id = output.data.id if output.data else output.scan_id
-        result["results"].append({"url": output.attributes.url, "scan_id": scan_id})
+    for output in outputs:
+        result["results"].append({"url": output.url, "scan_id": output.scan_id})
 
     result["container"] = {"id": app.soar_client.get_executing_container_id()}
     return result
@@ -857,7 +857,7 @@ def detonate_url(
     )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    return DetonateUrlOutput(**output)
+    return DetonateUrlOutput(**output, url=params.url, scan_id=scan_id)
 
 
 class DetonateFileParams(Params):
@@ -1036,14 +1036,12 @@ class GetReportParams(Params):
 def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> PollingData:
     scan_id = params.scan_id
     logger.info(f"Polling VirusTotal for report related to {scan_id}")
-    resp_json, summary = poll_for_result(
+    analysis, summary = poll_for_result(
         scan_id, asset.poll_interval, params.wait_time or asset.waiting_time, asset
     )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for scan ID {scan_id}")
-    return PollingData(**data)
+    return PollingData(**analysis)
 
 
 class GetCachedEntry(ActionOutput):
