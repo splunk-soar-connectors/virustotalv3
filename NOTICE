@@ -384,7 +384,7 @@ SOFTWARE.
 
 @@@@============================================================================
 
-Library: anyio - 4.13.0
+Library: anyio - 4.14.2
 Homepage: https://anyio.readthedocs.io/en/stable/versionhistory.html
 License: MIT
 License Text:
