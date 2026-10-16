@@ -202,6 +202,41 @@ class RequestClient:
         return JsonResponse()
 
 
+class MakeRequestResponse:
+    status_code = 200
+    text = "Success"
+
+    def __init__(self):
+        self.headers = {}
+
+    def raise_for_status(self) -> None:
+        return None
+
+    def json(self) -> dict:
+        return {}
+
+
+class MakeRequestClient:
+    def __init__(self):
+        self.calls = []
+
+    def request(self, **kwargs) -> MakeRequestResponse:
+        self.calls.append(kwargs)
+        return MakeRequestResponse()
+
+
+class MakeRequestAsset:
+    rate_limit = False
+
+    def __init__(self):
+        self.client = MakeRequestClient()
+        self.verify_ssl = None
+
+    def get_client(self, verify: bool) -> MakeRequestClient:
+        self.verify_ssl = verify
+        return self.client
+
+
 class CacheAsset:
     cache_reputation_checks = True
     cache_expiration_interval = 3600
@@ -214,6 +249,19 @@ class CacheAsset:
 
     def get_client(self) -> RequestClient:
         return self.client
+
+
+@pytest.mark.parametrize("verify_ssl", [True, False])
+def test_make_request_configures_ssl_on_client(verify_ssl: bool):
+    asset = MakeRequestAsset()
+    params = app.VirusTotalMakeRequestParams(
+        http_method="GET", endpoint="domains/example.com", verify_ssl=verify_ssl
+    )
+
+    app.http_action.__wrapped__(params, asset)
+
+    assert asset.verify_ssl is verify_ssl
+    assert asset.client.calls == [{"method": "GET", "url": "domains/example.com"}]
 
 
 def test_stream_download_to_file_enforces_advertised_size(tmp_path: Path):
