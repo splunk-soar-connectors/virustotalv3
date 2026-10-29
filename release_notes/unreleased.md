@@ -1,1 +1,3 @@
 **Unreleased**
+
+* Apply make request TLS verification to the HTTP client and close it after use.
