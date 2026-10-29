@@ -117,7 +117,7 @@ class Asset(BaseAsset):
         default=100.0,
     )
 
-    def get_client(self) -> httpx.Client:
+    def get_client(self, *, verify: bool = True) -> httpx.Client:
         headers = {
             "x-apikey": self.apikey,
         }
@@ -125,6 +125,7 @@ class Asset(BaseAsset):
             base_url="https://www.virustotal.com/api/v3/",
             timeout=self.timeout,
             headers=headers,
+            verify=verify,
         )
 
 
@@ -466,8 +467,6 @@ class VirusTotalMakeRequestParams(MakeRequestParams):
 def http_action(
     params: VirusTotalMakeRequestParams, asset: Asset
 ) -> CustomMakeRequestOutput:
-    client = asset.get_client()
-
     if params.endpoint.startswith("https") or params.endpoint.startswith("http"):
         raise ActionFailure(
             f"Invalid endpoint: {params.endpoint}. Please do not include the base url in the endpoint. The base url is already included in the asset."
@@ -518,23 +517,20 @@ def http_action(
             parsed_headers = json.loads(params.headers)
         except (json.JSONDecodeError, TypeError) as e:
             raise ActionFailure(f"Invalid JSON headers: {params.headers}") from e
-        merged_headers = client.headers.copy()
-        merged_headers.update(parsed_headers)
-        request_kwargs["headers"] = merged_headers
-    if params.verify_ssl:
-        request_kwargs["verify"] = params.verify_ssl
+        request_kwargs["headers"] = parsed_headers
     if params.timeout:
         request_kwargs["timeout"] = params.timeout
 
     _check_rate_limit(asset)
-    response = client.request(**request_kwargs)
-    response.raise_for_status()
-    if asset.rate_limit:
-        asset.cache_state["rate_limit_timestamps"].append(
-            response.headers.get("Date", time.time())
-        )
+    with asset.get_client(verify=params.verify_ssl) as client:
+        response = client.request(**request_kwargs)
+        response.raise_for_status()
+        if asset.rate_limit:
+            asset.cache_state["rate_limit_timestamps"].append(
+                response.headers.get("Date", time.time())
+            )
 
-    return CustomMakeRequestOutput.from_response(response)
+        return CustomMakeRequestOutput.from_response(response)
 
 
 class FileReputationParams(Params):
