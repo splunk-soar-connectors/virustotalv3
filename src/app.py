@@ -1037,9 +1037,7 @@ def get_report(params: GetReportParams, soar: SOARClient, asset: Asset) -> Polli
     )
     soar.set_summary(summary)
     soar.set_message(summary.get_message())
-    if not (data := resp_json.get("data")):
-        raise ActionFailure(f"No data found for scan ID {scan_id}")
-    return PollingData(**data)
+    return PollingData(**resp_json)
 
 
 class GetCachedEntry(ActionOutput):
