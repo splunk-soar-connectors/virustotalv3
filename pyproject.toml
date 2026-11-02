@@ -3,12 +3,13 @@ name = "virustotalv3"
 version = "3.0.12"
 description = "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v3 APIs"
 license = "Copyright (c) 2021-2025 Splunk Inc."
-requires-python = ">=3.13, <3.15"
+requires-python = ">=3.13, <3.16, !=3.14.*"
 authors = [
     { name = "jang@splunk.com" },
 ]
 dependencies = [
-    "splunk-soar-sdk>=6.1.3,<7.0.0",
+    "authlib==1.9.1",
+    "splunk-soar-sdk>=7.1.1",
 ]
 
 [tool.soar.app]
@@ -25,7 +26,7 @@ dev = [
     "pytest-mock>=3.14.0,<4",
     "pytest-watch>=4.2.0,<5",
     "ruff>=0.11.6,<1",
-    "splunk-soar-sdk>=6.1.3,<7.0.0",
+    "splunk-soar-sdk>=7.1.1",
 ]
 
 [[tool.uv.index]]
@@ -37,14 +38,14 @@ environments = [
     "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.13'",
     "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.13'",
     "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.13'",
-    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.14'",
-    "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.14'",
-    "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.14'",
-    "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.14'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.15'",
+    "sys_platform == 'linux' and platform_machine == 'aarch64' and python_version == '3.15'",
+    "sys_platform == 'darwin' and platform_machine == 'x86_64' and python_version == '3.15'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64' and python_version == '3.15'",
 ]
 required-environments = [
     "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.13'",
-    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.14'",
+    "sys_platform == 'linux' and platform_machine == 'x86_64' and python_version == '3.15'",
 ]
 
 [tool.ruff]
