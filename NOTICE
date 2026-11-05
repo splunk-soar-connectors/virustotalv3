@@ -4,7 +4,7 @@ Third Party Software Attributions:
 
 @@@@============================================================================
 
-Library: Authlib - 1.7.1
+Library: Authlib - 1.9.4
 Homepage: https://github.com/authlib/authlib
 License: BSD License
 License Text:
@@ -79,7 +79,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @@@@============================================================================
 
-Library: MarkupSafe - 3.0.3
+Library: MarkupSafe - 3.0.4
 Homepage: https://github.com/pallets/markupsafe/
 License: BSD-3-Clause
 License Text:
@@ -116,7 +116,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @@@@============================================================================
 
-Library: PyJWT - 2.13.0
+Library: PyJWT - 2.15.1
 Homepage: https://github.com/jpadilla/pyjwt
 License: MIT
 License Text:
@@ -464,9 +464,9 @@ DEALINGS IN THE SOFTWARE.
 
 @@@@============================================================================
 
-Library: cffi - 2.0.0
+Library: cffi - 2.1.1
 Homepage: https://cffi.readthedocs.io/en/latest/whatsnew.html
-License: MIT
+License: MIT-0
 License Text:
 
 
@@ -593,7 +593,7 @@ SOFTWARE.
 
 @@@@============================================================================
 
-Library: cryptography - 47.0.0
+Library: cryptography - 50.0.2
 Homepage: https://github.com/pyca/cryptography
 License: Apache-2.0 OR BSD-3-Clause
 License Text:
@@ -1725,7 +1725,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 @@@@============================================================================
 
-Library: joserfc - 1.6.8
+Library: joserfc - 1.8.0
 Homepage: https://github.com/authlib/joserfc
 License: BSD License
 License Text:
@@ -3207,7 +3207,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 @@@@============================================================================
 
-Library: pydantic - 2.13.3
+Library: pydantic - 2.14.2
 Homepage: https://github.com/pydantic/pydantic
 License: MIT
 License Text:
@@ -3237,7 +3237,7 @@ SOFTWARE.
 
 @@@@============================================================================
 
-Library: pydantic_core - 2.46.3
+Library: pydantic_core - 2.50.2
 Homepage: https://github.com/pydantic
 License: MIT
 License Text:
@@ -3408,7 +3408,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 @@@@============================================================================
 
-Library: splunk-soar-sdk - 6.1.5
+Library: splunk-soar-sdk - 7.1.2
 Homepage: https://github.com/phantomcyber/splunk-soar-sdk
 License: Apache-2.0
 License Text:
@@ -3951,7 +3951,7 @@ THE SOFTWARE.
 
 @@@@============================================================================
 
-Library: typing-inspection - 0.4.2
+Library: typing-inspection - 0.4.5
 Homepage: https://github.com/pydantic/typing-inspection
 License: MIT
 License Text:
@@ -3981,7 +3981,7 @@ SOFTWARE.
 
 @@@@============================================================================
 
-Library: typing_extensions - 4.15.0
+Library: typing_extensions - 4.16.0
 Homepage: https://github.com/python/typing_extensions
 License: PSF-2.0
 License Text:
